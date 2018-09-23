@@ -41,7 +41,6 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
-    'sphinxcontrib.googleanalytics',
 ]
 
 napoleon_use_ivar = True
@@ -68,7 +67,7 @@ author = 'Avik Pal & Aniket Das'
 # built documents.
 #
 # The short X.Y version.
-version = 'master (' + torchvision.__version__ + ' )'
+version = 'master (' + torchgan.__version__ + ' )'
 # The full version, including alpha/beta/rc tags.
 release = 'master'
 
