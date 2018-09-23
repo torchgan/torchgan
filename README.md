@@ -1,4 +1,4 @@
-# torchgan
+# TorchGAN
 
 | **Development Status** | **Build Status** | **Coverage** |
 |:----------------------:|:----------------:|:------------:|
