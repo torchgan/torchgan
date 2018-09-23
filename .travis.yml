@@ -26,6 +26,7 @@ install:
 # command to run tests
 script:
   - pytest test/
+  - flake8
 
 # command for coverage results
 after_success:
