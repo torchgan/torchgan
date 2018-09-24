@@ -102,7 +102,7 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         self.lambd = lambd
 
     def forward(self, interpolate, d_interpolate):
-        # TODO (Aniket1998) : Check for performance bottlenecks
+        # TODO(Aniket1998): Check for performance bottlenecks
         # If found, write the backprop yourself instead of
         # relying on autograd
         grad_outputs = torch.ones_like(d_interpolate)
