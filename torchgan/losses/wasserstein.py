@@ -54,11 +54,11 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
     """
     def forward(self, fx, fgz):
         if self.reduction == 'elementwise_mean':
-            return torch.mean(fx - fgz) * -1.0
+            return torch.mean(fx - fgz)
         elif self.reduction == 'sum':
-            return torch.sum(fx - fgz) * -1.0
+            return torch.sum(fx - fgz)
         else:
-            return (fx - fgz) * -1.0
+            return (fx - fgz)
 
 
 class WassersteinGradientPenalty(DiscriminatorLoss):

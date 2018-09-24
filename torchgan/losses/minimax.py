@@ -95,5 +95,6 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
         target_zeros = torch.zeros_like(dx)
         loss = F.binary_cross_entropy(dx, target_ones,
                                       reduction=self.reduction)
-        loss += F.binary_cross_entropy(dgz, target_zeros)
+        loss += F.binary_cross_entropy(dgz, target_zeros,
+                                       reduction=self.reduction)
         return loss
