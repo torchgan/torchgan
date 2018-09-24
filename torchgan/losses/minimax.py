@@ -12,16 +12,16 @@ class MinimaxGeneratorLoss(GeneratorLoss):
 
     The loss can be described as:
         L(G) = log(1 - D(G(z)))
-    
+
     G : Generator
     D : Discriminator
     z : A sample from the noise prior
 
     The nonsaturating heuristic is also supported:
         L(G) = -log(D(G(z)))
-    
+
    Args:
-        reduction(string, optional): Specifies the reduction to apply 
+        reduction(string, optional): Specifies the reduction to apply
         to the output: 'none' | 'elementwise_mean' | 'sum'.
          'none' : no reduction will be applied,
         'elementwise_mean' : the sum of the elements will be divided
@@ -30,8 +30,8 @@ class MinimaxGeneratorLoss(GeneratorLoss):
         Default True
 
         nonsaturating(bool, optional): Specifies whether to use the
-         nonsaturating heuristic loss for the generator : 
-        L(G) = -log(D(G(z))). 
+         nonsaturating heuristic loss for the generator :
+        L(G) = -log(D(G(z))).
         Default True
 
     Shape:
@@ -62,14 +62,14 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
 
     The loss can be described as:
         L(G) = -[log(D(x)) + log(1 - D(G(z)))]
-    
+
     G : Generator
     D : Discriminator
     x : A sample from the data distribution
     z : A sample from the noise prior
 
    Args:
-        reduction(string, optional): Specifies the reduction to apply 
+        reduction(string, optional): Specifies the reduction to apply
         to the output: 'none' | 'elementwise_mean' | 'sum'.
          'none' : no reduction will be applied,
         'elementwise_mean' : the sum of the elements will be divided
@@ -78,8 +78,8 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
         Default True
 
         nonsaturating(bool, optional): Specifies whether to use the
-         nonsaturating heuristic loss for the generator : 
-        L(G) = -log(D(G(z))). 
+         nonsaturating heuristic loss for the generator :
+        L(G) = -log(D(G(z))).
         Default True
 
     Shape:
@@ -89,7 +89,7 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
           same shape as input
 
     """
- 
+
     def forward(self, dx, dgz):
         target_ones = torch.ones_like(dgz)
         target_zeros = torch.zeros_like(dx)

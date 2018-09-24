@@ -5,9 +5,9 @@ __all__ = ['GeneratorLoss', 'DiscriminatorLoss']
 
 class GeneratorLoss(nn.Module):
     r"""Base class for all generator losses
-    
+
     Args:
-        reduction(string, optional): Specifies the reduction to apply 
+        reduction(string, optional): Specifies the reduction to apply
         to the output: 'none' | 'elementwise_mean' | 'sum'.
          'none' : no reduction will be applied,
         'elementwise_mean' : the sum of the elements will be divided
@@ -22,9 +22,9 @@ class GeneratorLoss(nn.Module):
 
 class DiscriminatorLoss(nn.Module):
     r"""Base class for all discriminator losses
-    
+
     Args:
-        reduction(string, optional): Specifies the reduction to apply 
+        reduction(string, optional): Specifies the reduction to apply
         to the output: 'none' | 'elementwise_mean' | 'sum'.
          'none' : no reduction will be applied,
         'elementwise_mean' : the sum of the elements will be divided

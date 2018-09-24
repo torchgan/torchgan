@@ -7,12 +7,12 @@ __all__ = ['WassersteinGeneratorLoss', 'WassersteinDiscriminatorLoss']
 
 class WassersteinGeneratorLoss(GeneratorLoss):
     r"""Wasserstein GAN generator loss from :
-    "Wasserstein GAN 
+    "Wasserstein GAN
     by Arjovsky et. al." <https://arxiv.org/abs/1701.07875>
 
     The loss can be described as:
         L(G) = -f(G(z))
-    
+
     G : Generator
     f : Critic/Discriminator
     z : A sample from the noise prior
@@ -34,12 +34,12 @@ class WassersteinGeneratorLoss(GeneratorLoss):
 
 class WassersteinDiscriminatorLoss(DiscriminatorLoss):
     r"""Wasserstein GAN generator loss from :
-    "Wasserstein GAN 
+    "Wasserstein GAN
     by Arjovsky et. al." <https://arxiv.org/abs/1701.07875>
 
     The loss can be described as:
         L(D) = f(x) - f(G(z))
-    
+
     G : Generator
     f : Critic/Discriminator
     x : A sample from the data distribution
@@ -63,7 +63,7 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
 
 class WassersteinGradientPenalty(DiscriminatorLoss):
     r"""Gradient Penalty
-     for the Improved Wasserstein GAN discriminator from : 
+     for the Improved Wasserstein GAN discriminator from :
     "Improved Training of Wasserstein GANs
     by Gulrajani et. al." <https://arxiv.org/abs/1704.00028>
 
@@ -75,9 +75,9 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
     D : Disrciminator/Critic
     LAMBDA : Scaling hyperparameter (default 10.0)
     x : Interpolation term for the gradient penalty
-    
+
     Args:
-        reduction(string, optional): Specifies the reduction to apply 
+        reduction(string, optional): Specifies the reduction to apply
         to the output: 'none' | 'elementwise_mean' | 'sum'.
         'none' : no reduction will be applied,
         'elementwise_mean' : the sum of the elements will be divided
@@ -85,13 +85,13 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         'sum' : the output will be summed. Default 'elementwise_mean'
         Default True
 
-        lambd(float,optional) : Hyperparameter lambda 
+        lambd(float,optional) : Hyperparameter lambda
                                 for scaling the gradient penalty
 
     Shape:
-        - interpolate: (N, *) where * means any 
+        - interpolate: (N, *) where * means any
                        number of additional dimensions
-        - d_interpolate: (N, *) where * means any 
+        - d_interpolate: (N, *) where * means any
                         number of additional dimensions
         - Output: scalar if reduction is applied otherwise (N, *),
           same shape as input
@@ -110,7 +110,7 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
                                   grad_outputs=grad_outputs,
                                   create_graph=True, retain_graph=True,
                                   only_inputs=True)[0]
-        
+
         gradient_penalty = (gradients.norm(2) - 1) ** 2
         if self.reduction == 'elementwise_mean':
             return self.lambd * torch.mean(gradient_penalty)
