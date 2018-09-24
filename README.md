@@ -2,7 +2,7 @@
 
 | **Development Status** | **Build Status** | **Coverage** |
 |:----------------------:|:----------------:|:------------:|
-|[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)|[![Build Status](https://travis-ci.org/Aniket1998/TorchGAN.svg?branch=master)](https://travis-ci.org/Aniket1998/TorchGAN)|[![Coverage Status](https://coveralls.io/repos/Aniket1998/TorchGAN/badge.svg?branch=master&service=github)](https://coveralls.io/github/Aniket1998/TorchGAN?branch=master) [![codecov.io](http://codecov.io/github/Aniket1998/TorchGAN/coverage.svg?branch=master)](http://codecov.io/github/Aniket1998/TorchGAN?branch=master)|
+|[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)|[![Build Status](https://travis-ci.com/Aniket1998/TorchGAN.svg?token=xxgQKWvvVHy2q3GrDsMR&branch=master)](https://travis-ci.com/Aniket1998/TorchGAN)|[![Coverage Status](https://coveralls.io/repos/Aniket1998/TorchGAN/badge.svg?branch=master&service=github)](https://coveralls.io/github/Aniket1998/TorchGAN?branch=master) [![codecov.io](http://codecov.io/github/Aniket1998/TorchGAN/coverage.svg?branch=master)](http://codecov.io/github/Aniket1998/TorchGAN?branch=master)|
 
 | **Documentation** | **License** | **Slack** |
 |:-----------------:|:-----------:|:---------:|
