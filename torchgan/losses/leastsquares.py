@@ -62,15 +62,15 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
 
     def forward(self, dx, dgz):
         if self.reduction == 'elementwise_mean':
-            loss = 0.5 * torch.mean((dx-self.b)**2)
-            loss += 0.5 * torch.mean((dgz-self.a)**2)
+            loss = 0.5 * torch.mean((dx - self.b) ** 2)
+            loss += 0.5 * torch.mean((dgz - self.a) ** 2)
             return loss
         elif self.reduction == 'sum':
-            loss = 0.5 * torch.mean((dx-self.b)**2)
-            loss += 0.5 * torch.mean((dgz-self.a)**2)
+            loss = 0.5 * torch.mean((dx - self.b) ** 2)
+            loss += 0.5 * torch.mean((dgz - self.a) ** 2)
             return loss
             return 0.5 * torch.sum((dgz - self.c) ** 2)
         else:
-            loss = 0.5 * torch.mean((dx-self.b)**2)
-            loss += 0.5 * torch.mean((dgz-self.a)**2)
+            loss = 0.5 * torch.mean((dx - self.b) ** 2)
+            loss += 0.5 * torch.mean((dgz - self.a) ** 2)
             return loss
