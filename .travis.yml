@@ -4,7 +4,7 @@ python:
   - "3.5-dev"  # 3.5 development branch
   - "3.6"
   - "3.6-dev"  # 3.6 development branch
-  - "3.7"
+  # - "3.7" Not available in travis
   - "3.7-dev"  # 3.7 development branch
 
 # command to install dependencies
@@ -22,11 +22,12 @@ install:
   - source activate test-environment
   - python setup.py install
   - pip install --upgrade pytest
+  - pip install flake8
 
 # command to run tests
 script:
   - pytest test/
-  - flake8
+  - flake8 torchgan/
 
 # command for coverage results
 after_success:
