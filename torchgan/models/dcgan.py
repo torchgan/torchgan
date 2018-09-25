@@ -29,7 +29,7 @@ class DCGANGenerator(Generator):
     """
     def __init__(self, encoding_dims=100, out_channels=3, step_channels=64,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None):
-        super(DCGANGenerator, self).__init__(self, encoding_dims)
+        super(DCGANGenerator, self).__init__(encoding_dims)
         self.ch = out_channels
         self.step_ch = step_channels
         self.batchnorm = batchnorm
@@ -50,23 +50,23 @@ class DCGANGenerator(Generator):
             self.bn3 = nn.BatchNorm2d(self.step_ch * 2)
             self.bn4 = nn.BatchNorm2d(self.step_ch)
 
-        def forward(self, x):
-            if self.batchnorm is True:
-                self.conv1_feat = self.nl(self.bn1(self.conv1(x)))
-                self.conv2_feat = self.nl(self.bn2(self.conv2(self.conv1_feat)))
-                self.conv3_feat = self.nl(self.bn3(self.conv3(self.conv2_feat)))
-                self.conv4_feat = self.nl(self.bn4(self.conv4(self.conv3_feat)))
-            else:
-                self.conv1_feat = self.nl(self.conv1(x))
-                self.conv2_feat = self.nl(self.conv2(self.conv1_feat))
-                self.conv3_feat = self.nl(self.conv3(self.conv3_feat))
-                self.conv4_feat = self.nl(self.conv4(self.conv4_feat))
+    def forward(self, x):
+        if self.batchnorm is True:
+            self.conv1_feat = self.nl(self.bn1(self.conv1(x)))
+            self.conv2_feat = self.nl(self.bn2(self.conv2(self.conv1_feat)))
+            self.conv3_feat = self.nl(self.bn3(self.conv3(self.conv2_feat)))
+            self.conv4_feat = self.nl(self.bn4(self.conv4(self.conv3_feat)))
+        else:
+            self.conv1_feat = self.nl(self.conv1(x))
+            self.conv2_feat = self.nl(self.conv2(self.conv1_feat))
+            self.conv3_feat = self.nl(self.conv3(self.conv2_feat))
+            self.conv4_feat = self.nl(self.conv4(self.conv3_feat))
 
-            self.conv5_feat = self.last_nl(self.conv5(self.conv4_feat))
-            return self.conv5_feat
+        self.conv5_feat = self.last_nl(self.conv5(self.conv4_feat))
+        return self.conv5_feat
 
 
-class DCGANDiscriminator(Generator):
+class DCGANDiscriminator(Discriminator):
     r"""Deep Convolutional GAN (DCGAN) discriminator from
     "Unsupervised Representation Learning With Deep Convolutional Generative Aversarial Networks
      by Radford et. al. " <https://arxiv.org/abs/1511.06434>
@@ -112,17 +112,17 @@ class DCGANDiscriminator(Generator):
             self.bn3 = nn.BatchNorm2d(self.step_ch * 4)
             self.bn4 = nn.BatchNorm2d(self.step_ch * 8)
 
-        def forward(self, x):
-            if self.batchnorm is True:
-                self.conv1_feat = self.nl(self.bn1(self.conv1(x)))
-                self.conv2_feat = self.nl(self.bn2(self.conv2(self.conv1_feat)))
-                self.conv3_feat = self.nl(self.bn3(self.conv3(self.conv2_feat)))
-                self.conv4_feat = self.nl(self.bn4(self.conv4(self.conv3_feat)))
-            else:
-                self.conv1_feat = self.nl(self.conv1(x))
-                self.conv2_feat = self.nl(self.conv2(self.conv1_feat))
-                self.conv3_feat = self.nl(self.conv3(self.conv3_feat))
-                self.conv4_feat = self.nl(self.conv4(self.conv4_feat))
+    def forward(self, x):
+        if self.batchnorm is True:
+            self.conv1_feat = self.nl(self.bn1(self.conv1(x)))
+            self.conv2_feat = self.nl(self.bn2(self.conv2(self.conv1_feat)))
+            self.conv3_feat = self.nl(self.bn3(self.conv3(self.conv2_feat)))
+            self.conv4_feat = self.nl(self.bn4(self.conv4(self.conv3_feat)))
+        else:
+            self.conv1_feat = self.nl(self.conv1(x))
+            self.conv2_feat = self.nl(self.conv2(self.conv1_feat))
+            self.conv3_feat = self.nl(self.conv3(self.conv2_feat))
+            self.conv4_feat = self.nl(self.conv4(self.conv3_feat))
 
-            self.conv5_feat = self.last_nl(self.conv5(self.conv4_feat))
-            return self.conv5_feat
+        self.conv5_feat = self.last_nl(self.conv5(self.conv4_feat))
+        return self.conv5_feat
