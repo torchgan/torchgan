@@ -33,24 +33,10 @@ class DCGANGenerator(Generator):
         self.ch = out_channels
         self.step_ch = step_channels
         self.batchnorm = batchnorm
+        use_bias = not batchnorm
 
-        self.nl = getattr(F, nonlinearity)
-        self.last_nl = getattr(F, last_nonlinearity)
-
-        if batchnorm is True:
-            use_bias = False
-        else:
-            use_bias = True
-
-        if nonlinearity is None:
-            self.nl = nn.LeakyReLU(0.2)
-        else:
-            self.nl = nonlinearity
-
-        if nonlinearity is None:
-            self.last_nl = nn.Tanh()
-        else:
-            self.last_nl = last_nonlinearity
+        self.nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
+        self.last_nl = nn.Tanh() if last_nonlinearity is None else last_nonlinearity
 
         self.conv1 = nn.ConvTranspose2d(self.encoding_dims, self.step_ch * 8, 4, 1, 0, bias=use_bias)
         self.conv2 = nn.ConvTranspose2d(self.step_ch * 8, self.step_ch * 4, 4, 2, 1, bias=use_bias)
@@ -109,24 +95,10 @@ class DCGANDiscriminator(Generator):
         super(DCGANDiscriminator, self).__init__(in_channels)
         self.step_ch = step_channels
         self.batchnorm = batchnorm
+        use_bias = not batchnorm
 
-        self.nl = getattr(F, nonlinearity)
-        self.last_nl = getattr(F, last_nonlinearity)
-
-        if batchnorm is True:
-            use_bias = False
-        else:
-            use_bias = True
-
-        if nonlinearity is None:
-            self.nl = nn.LeakyReLU(0.2)
-        else:
-            self.nl = nonlinearity
-
-        if nonlinearity is None:
-            self.last_nl = nn.Sigmoid()
-        else:
-            self.last_nl = last_nonlinearity
+        self.nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
+        self.last_nl = nn.Sigmoid() if last_nonlinearity is None else last_nonlinearity
 
         self.conv1 = nn.Conv2d(self.input_dims, self.step_ch, 4, 2, 1, bias=use_bias)
         self.conv2 = nn.Conv2d(self.step_ch, self.step_ch * 2, 4, 2, 1, bias=use_bias)
