@@ -49,4 +49,4 @@ class TestModels(unittest.TestCase):
             assert D.conv1_feat.shape == (10, ch, 32, 32)
             assert D.conv2_feat.shape == (10, ch * 2, 16, 16)
             assert D.conv3_feat.shape == (10, ch * 4, 8, 8)
-            assert D.conv4_feat.shape == (10, ch * 8, 4, 4) 
+            assert D.conv4_feat.shape == (10, ch * 8, 4, 4)
