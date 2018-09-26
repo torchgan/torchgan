@@ -2,7 +2,7 @@ import torch
 import torch.autograd as autograd
 from .loss import GeneratorLoss, DiscriminatorLoss
 
-__all__ = ['WassersteinGeneratorLoss', 'WassersteinDiscriminatorLoss']
+__all__ = ['WassersteinGeneratorLoss', 'WassersteinDiscriminatorLoss', 'WassersteinGradientPenalty']
 
 
 class WassersteinGeneratorLoss(GeneratorLoss):
