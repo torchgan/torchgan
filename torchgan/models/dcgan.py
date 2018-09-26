@@ -32,38 +32,34 @@ class DCGANGenerator(Generator):
         super(DCGANGenerator, self).__init__(encoding_dims)
         self.ch = out_channels
         self.step_ch = step_channels
-        self.batchnorm = batchnorm
         use_bias = not batchnorm
 
-        self.nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
-        self.last_nl = nn.Tanh() if last_nonlinearity is None else last_nonlinearity
-
-        self.conv1 = nn.ConvTranspose2d(self.encoding_dims, self.step_ch * 8, 4, 1, 0, bias=use_bias)
-        self.conv2 = nn.ConvTranspose2d(self.step_ch * 8, self.step_ch * 4, 4, 2, 1, bias=use_bias)
-        self.conv3 = nn.ConvTranspose2d(self.step_ch * 4, self.step_ch * 2, 4, 2, 1, bias=use_bias)
-        self.conv4 = nn.ConvTranspose2d(self.step_ch * 2, self.step_ch, 4, 2, 1, bias=use_bias)
-        self.conv5 = nn.ConvTranspose2d(self.step_ch, self.ch, 4, 2, 1, bias=use_bias)
+        nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
+        last_nl = nn.Tanh() if last_nonlinearity is None else last_nonlinearity
 
         if batchnorm is True:
-            self.bn1 = nn.BatchNorm2d(self.step_ch * 8)
-            self.bn2 = nn.BatchNorm2d(self.step_ch * 4)
-            self.bn3 = nn.BatchNorm2d(self.step_ch * 2)
-            self.bn4 = nn.BatchNorm2d(self.step_ch)
+            self.model = nn.Sequential(
+                nn.ConvTranspose2d(self.encoding_dims, self.step_ch * 8, 4, 1, 0, bias=use_bias),
+                nn.BatchNorm2d(self.step_ch * 8), nl,
+                nn.ConvTranspose2d(self.step_ch * 8, self.step_ch * 4, 4, 2, 1, bias=use_bias),
+                nn.BatchNorm2d(self.step_ch * 4), nl,
+                nn.ConvTranspose2d(self.step_ch * 4, self.step_ch * 2, 4, 2, 1, bias=use_bias),
+                nn.BatchNorm2d(self.step_ch * 2), nl,
+                nn.ConvTranspose2d(self.step_ch * 2, self.step_ch, 4, 2, 1, bias=use_bias),
+                nn.BatchNorm2d(self.step_ch), nl,
+                nn.ConvTranspose2d(self.step_ch, self.ch, 4, 2, 1, bias=use_bias), last_nl)
+        else:
+            self.model = nn.Sequential(
+                nn.ConvTranspose2d(self.encoding_dims, self.step_ch * 8, 4, 1, 0, bias=use_bias), nl,
+                nn.ConvTranspose2d(self.step_ch * 8, self.step_ch * 4, 4, 2, 1, bias=use_bias), nl,
+                nn.ConvTranspose2d(self.step_ch * 4, self.step_ch * 2, 4, 2, 1, bias=use_bias), nl,
+                nn.ConvTranspose2d(self.step_ch * 2, self.step_ch, 4, 2, 1, bias=use_bias), nl,
+                nn.ConvTranspose2d(self.step_ch, self.ch, 4, 2, 1, bias=use_bias), last_nl)
+
+        self._weight_initializer()
 
     def forward(self, x):
-        if self.batchnorm is True:
-            self.conv1_feat = self.nl(self.bn1(self.conv1(x)))
-            self.conv2_feat = self.nl(self.bn2(self.conv2(self.conv1_feat)))
-            self.conv3_feat = self.nl(self.bn3(self.conv3(self.conv2_feat)))
-            self.conv4_feat = self.nl(self.bn4(self.conv4(self.conv3_feat)))
-        else:
-            self.conv1_feat = self.nl(self.conv1(x))
-            self.conv2_feat = self.nl(self.conv2(self.conv1_feat))
-            self.conv3_feat = self.nl(self.conv3(self.conv2_feat))
-            self.conv4_feat = self.nl(self.conv4(self.conv3_feat))
-
-        self.conv5_feat = self.last_nl(self.conv5(self.conv4_feat))
-        return self.conv5_feat
+        return self.model(x)
 
 
 class DCGANDiscriminator(Discriminator):
@@ -97,32 +93,29 @@ class DCGANDiscriminator(Discriminator):
         self.batchnorm = batchnorm
         use_bias = not batchnorm
 
-        self.nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
-        self.last_nl = nn.Sigmoid() if last_nonlinearity is None else last_nonlinearity
-
-        self.conv1 = nn.Conv2d(self.input_dims, self.step_ch, 4, 2, 1, bias=use_bias)
-        self.conv2 = nn.Conv2d(self.step_ch, self.step_ch * 2, 4, 2, 1, bias=use_bias)
-        self.conv3 = nn.Conv2d(self.step_ch * 2, self.step_ch * 4, 4, 2, 1, bias=use_bias)
-        self.conv4 = nn.Conv2d(self.step_ch * 4, self.step_ch * 8, 4, 2, 1, bias=use_bias)
-        self.conv5 = nn.Conv2d(self.step_ch * 8, 1, 4, 1, 0, bias=use_bias)
+        nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
+        last_nl = nn.Sigmoid() if last_nonlinearity is None else last_nonlinearity
 
         if batchnorm is True:
-            self.bn1 = nn.BatchNorm2d(self.step_ch)
-            self.bn2 = nn.BatchNorm2d(self.step_ch * 2)
-            self.bn3 = nn.BatchNorm2d(self.step_ch * 4)
-            self.bn4 = nn.BatchNorm2d(self.step_ch * 8)
+            self.model = nn.Sequential(
+                nn.Conv2d(self.input_dims, self.step_ch, 4, 2, 1, bias=use_bias),
+                nn.BatchNorm2d(self.step_ch), nl,
+                nn.Conv2d(self.step_ch, self.step_ch * 2, 4, 2, 1, bias=use_bias),
+                nn.BatchNorm2d(self.step_ch * 2), nl,
+                nn.Conv2d(self.step_ch * 2, self.step_ch * 4, 4, 2, 1, bias=use_bias),
+                nn.BatchNorm2d(self.step_ch * 4), nl,
+                nn.Conv2d(self.step_ch * 4, self.step_ch * 8, 4, 2, 1, bias=use_bias),
+                nn.BatchNorm2d(self.step_ch * 8), nl,
+                nn.Conv2d(self.step_ch * 8, 1, 4, 1, 0, bias=use_bias), last_nl)
+        else:
+            self.model = nn.Sequential(
+                nn.Conv2d(self.input_dims, self.step_ch, 4, 2, 1, bias=use_bias), nl,
+                nn.Conv2d(self.step_ch, self.step_ch * 2, 4, 2, 1, bias=use_bias), nl,
+                nn.Conv2d(self.step_ch * 2, self.step_ch * 4, 4, 2, 1, bias=use_bias), nl,
+                nn.Conv2d(self.step_ch * 4, self.step_ch * 8, 4, 2, 1, bias=use_bias), nl,
+                nn.Conv2d(self.step_ch * 8, 1, 4, 1, 0, bias=use_bias), last_nl)
+
+        self._weight_initializer()
 
     def forward(self, x):
-        if self.batchnorm is True:
-            self.conv1_feat = self.nl(self.bn1(self.conv1(x)))
-            self.conv2_feat = self.nl(self.bn2(self.conv2(self.conv1_feat)))
-            self.conv3_feat = self.nl(self.bn3(self.conv3(self.conv2_feat)))
-            self.conv4_feat = self.nl(self.bn4(self.conv4(self.conv3_feat)))
-        else:
-            self.conv1_feat = self.nl(self.conv1(x))
-            self.conv2_feat = self.nl(self.conv2(self.conv1_feat))
-            self.conv3_feat = self.nl(self.conv3(self.conv2_feat))
-            self.conv4_feat = self.nl(self.conv4(self.conv3_feat))
-
-        self.conv5_feat = self.last_nl(self.conv5(self.conv4_feat))
-        return self.conv5_feat
+        return self.model(x)
