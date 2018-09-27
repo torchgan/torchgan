@@ -94,7 +94,7 @@ class DCGANDiscriminator(Discriminator):
         use_bias = not batchnorm
 
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
-        last_nl = nn.Sigmoid() if last_nonlinearity is None else last_nonlinearity
+        last_nl = nn.LeakyReLU(0.2) if last_nonlinearity is None else last_nonlinearity
 
         if batchnorm is True:
             self.model = nn.Sequential(
