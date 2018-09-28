@@ -3,7 +3,6 @@ import torch
 import torch.distributions as distributions
 from sys import path
 path.append('..')
-import torchgan.models as models
 from torchgan.models import *
 
 
