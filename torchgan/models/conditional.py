@@ -7,7 +7,7 @@ __all__ = ['ConditionalGANGenerator', 'ConditionalGANDiscriminator']
 
 class ConditionalGANGenerator(DCGANGenerator):
     r"""Condititional GAN (CGAN) generator based on a DCGAN model from
-    "Conditional Generative Adversarial Nets 
+    "Conditional Generative Adversarial Nets
      by Mirza et. al. " <https://arxiv.org/abs/1411.1784>
 
      Args:
@@ -46,7 +46,7 @@ class ConditionalGANGenerator(DCGANGenerator):
 
 class ConditionalGANDiscriminator(DCGANDiscriminator):
     r"""Condititional GAN (CGAN) discriminator based on a DCGAN model from
-    "Conditional Generative Adversarial Nets 
+    "Conditional Generative Adversarial Nets
      by Mirza et. al. " <https://arxiv.org/abs/1411.1784>
 
      Args:
@@ -82,4 +82,3 @@ class ConditionalGANDiscriminator(DCGANDiscriminator):
         # Same as in the generator
         y = y.unsqueeze(2).unsqueeze(3).expand(-1, -1, x.size(2), x.size(3))
         return super(self, ConditionalGANDiscriminator).forward(torch.cat((x, y), dim=1))
-    
