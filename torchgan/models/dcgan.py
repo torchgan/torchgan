@@ -59,6 +59,7 @@ class DCGANGenerator(Generator):
         self._weight_initializer()
 
     def forward(self, x):
+        x = x.view(-1, x.size(1), 1, 1)
         return self.model(x)
 
 
