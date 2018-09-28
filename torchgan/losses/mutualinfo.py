@@ -16,10 +16,12 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
     c drawn from the latent code prior P(c)
 
     Args:
-        c_dis(Tensor) : The discrete latent code sampled from the prior
-        c_cont(Tensor) : The continuous latent code sampled from the prior
-        dist_dis : The auxilliary distribution Q(c|x) over the discrete latent code output by the discriminator
-        dist_cont : The auxilliary distribution Q(c|x) over the continuous latent code output by the discriminator
+        c_dis(int) : The discrete latent code sampled from the prior
+        c_cont(int) : The continuous latent code sampled from the prior
+        dist_dis(torch.distributions.Distribution) : The auxilliary distribution Q(c|x)
+                                                     over the discrete latent code output by the discriminator
+        dist_cont(torch.distributions.Distribution) : The auxilliary distribution Q(c|x)
+                                                      over the continuous latent code output by the discriminator
         """
     def forward(self, c_dis, c_cont, dist_dis, dist_cont):
         log_prob_dis = dist_dis.log_prob(c_dis)
