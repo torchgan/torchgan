@@ -24,12 +24,11 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
                                                       over the continuous latent code output by the discriminator
         """
     def forward(self, c_dis, c_cont, dist_dis, dist_cont):
-        log_prob_dis = dist_dis.log_prob(c_dis)
-        log_prob_cont = dist_cont.log_prob(c_cont)
-
+        log_probs = torch.Tensor([torch.mean(dist.log_prob(c)) for dist, c in
+                                 zip((dist_dis, dist_cont), (c_dis, c_cont))])
         if self.reduction == 'elementwise_mean':
-            return -1.0 * torch.mean(log_prob_dis + log_prob_cont)
+            return -1.0 * torch.mean(log_probs)
         elif self.reduction == 'sum':
-            return -1.0 * torch.sum(log_prob_dis + log_prob_cont)
+            return -1.0 * torch.sum(log_probs)
         else:
-            return -(log_prob_dis + log_prob_cont)
+            return -1.0 * log_probs
