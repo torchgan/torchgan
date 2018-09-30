@@ -40,7 +40,6 @@ class ConditionalGANGenerator(DCGANGenerator):
         # The simplest way to do it is to concatenate the two variables and then treat it as input to a DCGAN
         # TODO(Aniket1998) : Experiment with other ways of modelling the conditional such as
         # Concatenation at an intermediate layer, or combining using Multilayer Perceptrons
-        y = y.view(-1, y.size(1), 1, 1)
         return super(ConditionalGANGenerator, self).forward(torch.cat((z, y), dim=1))
 
 
@@ -80,5 +79,5 @@ class ConditionalGANDiscriminator(DCGANDiscriminator):
         # A joint conditional over the images and the labels
         # TODO(Aniket1998) : Eperiment with other ways of modelling the conditional
         # Same as in the generator
-        y = y.unsqueeze(2).unsqueeze(3).expand(-1, -1, x.size(2), x.size(3))
-        return super(self, ConditionalGANDiscriminator).forward(torch.cat((x, y), dim=1))
+        y = y.unsqueeze(2).unsqueeze(3).expand(-1, y.size(1), x.size(2), x.size(3))
+        return super(ConditionalGANDiscriminator, self).forward(torch.cat((x, y), dim=1))
