@@ -1,5 +1,6 @@
 import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
+from ..utils import reduce
 
 __all__ = ['MutualInformationPenalty']
 
@@ -26,9 +27,4 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
     def forward(self, c_dis, c_cont, dist_dis, dist_cont):
         log_probs = torch.Tensor([torch.mean(dist.log_prob(c)) for dist, c in
                                  zip((dist_dis, dist_cont), (c_dis, c_cont))])
-        if self.reduction == 'elementwise_mean':
-            return -1.0 * torch.mean(log_probs)
-        elif self.reduction == 'sum':
-            return -1.0 * torch.sum(log_probs)
-        else:
-            return -1.0 * log_probs
+        return reduce(-1.0 * log_probs, self.reduction)
