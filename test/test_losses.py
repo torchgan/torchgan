@@ -1,5 +1,6 @@
 import unittest
 import torch
+import torch.distributions as ds
 from sys import path
 import math
 path.append('..')
@@ -96,3 +97,30 @@ class TestLosses(unittest.TestCase):
         l_d = MinimaxDiscriminatorLoss()
         self.match_losses(l_g, l_d, dx, dgz, gen_loss_mean, gen_loss_sum, gen_loss_none,
                           d_loss_mean, d_loss_sum, d_loss_none)
+
+    def test_mutual_info_penalty(self):
+        real_loss_mean = 2.600133
+        real_loss_sum = 5.200266
+        real_losses = [0.7086121, 4.491654]
+        mean = torch.Tensor([[1.3, 4.6, 7.1], [0.2, 11.4, 1.0]])
+        std = torch.Tensor([[1.0, 0.5, 3.1], [0.2, 3.5, 4.9]])
+        logits = torch.Tensor([[0.5, 0.5], [0.75, 0.25]])
+
+        c_dis = torch.Tensor([[0, 1], [1, 0]])
+        c_cont = torch.Tensor([[1.4, 4.0, 5.0], [-1.0, 7.0, 2.0]])
+
+        q_cont = ds.Normal(loc=mean, scale=std)
+        q_cat = ds.Categorical(logits=logits)
+
+        mutualinfo = MutualInformationPenalty()
+        loss_mean = mutualinfo(c_dis, c_cont, q_cat, q_cont)
+        self.assertAlmostEqual(loss_mean.item(), real_loss_mean, 5)
+
+        mutualinfo.reduction = 'sum'
+        loss_sum = mutualinfo(c_dis, c_cont, q_cat, q_cont)
+        self.assertAlmostEqual(loss_sum.item(), real_loss_sum, 5)
+
+        mutualinfo.reduction = 'none'
+        loss = mutualinfo(c_dis, c_cont, q_cat, q_cont)
+        for i in range(2):
+            self.assertAlmostEqual(loss[i].item(), real_losses[i], 5)
