@@ -24,6 +24,9 @@ class EnergyBasedGeneratorLoss(GeneratorLoss):
           same shape as input
 
     """
+    def __init__(self, reduction='elementwise_mean'):
+        super(EnergyBasedGeneratorLoss, self).__init__(reduction)
+
     def forward(self, dgz):
         return reduce(dgz, self.reduction)
 
@@ -49,7 +52,7 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
     """
 
     def __init__(self, reduction='elementwise_mean', margin=80.0):
-        super(EnergyBasedGeneratorLoss, self).__init__(reduction)
+        super(EnergyBasedDiscriminatorLoss, self).__init__(reduction)
         self.margin = margin
 
     def forward(self, dx, dgz):
