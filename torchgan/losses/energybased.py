@@ -26,7 +26,7 @@ class EnergyBasedGeneratorLoss(GeneratorLoss):
     """
     def __init__(self, reduction='elementwise_mean'):
         super(EnergyBasedGeneratorLoss, self).__init__(reduction)
-    
+
     def forward(self, dgz):
         return reduce(dgz, self.reduction)
 
