@@ -33,6 +33,7 @@ Package Reference
 
    datasets
    losses
+   metrics
    models
    trainer
 
