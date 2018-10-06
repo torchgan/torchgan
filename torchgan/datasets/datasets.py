@@ -1,5 +1,5 @@
 import torch
-import torch.data as data
+import torch.utils.data as data
 import torchvision
 import torchvision.transforms as transforms
 import torchvision.datasets as dsets
@@ -22,19 +22,19 @@ class Datasets(object):
             else:
                 pad = (output_shape[0] - input_shape[0], output_shape[1] - input_shape[1])
         self.transformation = [transforms.ToTensor()]
-        if self.pad is None:
-            if self.crop_size is not None:
+        if pad is None:
+            if crop_size is not None:
                 self.transformation.append(transforms.CenterCrop(crop_size))
         else:
             self.transformation.append(transforms.Pad(pad))
         self.transformation.append(transforms.Normalize(mean=(0.0, 0.0, 0.0), std=(1.0, 1.0, 1.0)))
 
-    def trandform_update(self, transformation, pos=-1):
-        self.trandformation.insert(trandformation, pos)        
+    def transform_update(self, transformation, pos=-1):
+        self.transformation.insert(transformation, pos)
 
 class CIFAR10(Datasets):
     def __init__(self, download=None, **kwargs):
-        super(self, CIFAR10).__init__((32, 32), **kwargs)
+        super(CIFAR10, self).__init__((32, 32), **kwargs)
         self.download = download if download is not None else True
 
     def __call__(self, train=True, shuffle=True):
@@ -46,7 +46,7 @@ class CIFAR10(Datasets):
 
 class CIFAR100(Datasets):
     def __init__(self, download=None, **kwargs):
-        super(self, CIFAR100).__init__((32, 32), **kwargs)
+        super(CIFAR100, self).__init__((32, 32), **kwargs)
         self.download = download if download is not None else True
 
     def __call__(self, train=True, shuffle=True):
@@ -58,7 +58,7 @@ class CIFAR100(Datasets):
 
 class MNIST(Datasets):
     def __init__(self, download=None, **kwargs):
-        super(self, MNIST).__init__((28, 28), **kwargs)
+        super(MNIST, self).__init__((28, 28), **kwargs)
         self.download = download if download is not None else True
 
     def __call__(self, train=True, shuffle=True):
@@ -70,7 +70,7 @@ class MNIST(Datasets):
 
 class FashionMNIST(Datasets):
     def __init__(self, download=None, **kwargs):
-        super(self, FashionMNIST).__init__((28, 28), **kwargs)
+        super(FashionMNIST, self).__init__((28, 28), **kwargs)
         self.download = download if download is not None else True
 
     def __call__(self, train=True, shuffle=True):
@@ -82,7 +82,7 @@ class FashionMNIST(Datasets):
 
 class EMNIST(Datasets):
     def __init__(self, download=None, **kwargs):
-        super(self, EMNIST).__init__((28, 28), **kwargs)
+        super(EMNIST, self).__init__((28, 28), **kwargs)
         self.download = download if download is not None else True
 
     def __call__(self, train=True, shuffle=True):
@@ -94,7 +94,7 @@ class EMNIST(Datasets):
 
 class LSUN(Datasets):
     def __init__(self, input_shape, download=None, **kwargs):
-        super(self, LSUN).__init__(input_shape, **kwargs)
+        super(LSUN, self).__init__(input_shape, **kwargs)
         if download is not None:
             raise Exception("LSUN needs to be manually downloaded")
 
