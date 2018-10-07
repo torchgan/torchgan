@@ -198,13 +198,15 @@ class SmallDCGANDiscriminator(Discriminator):
                 nn.BatchNorm2d(self.step_ch * 2), nl,
                 nn.Conv2d(self.step_ch * 2, self.step_ch * 4, 4, 2, 1, bias=use_bias),
                 nn.BatchNorm2d(self.step_ch * 4), nl,
-                nn.Conv2d(self.step_ch * 4, 1, 4, 2, 1, bias=use_bias), last_nl)
+                nn.Conv2d(self.step_ch * 4, self.step_ch * 8, 4, 2, 1, bias=use_bias), nl,
+                nn.Conv2d(self.step_ch * 8, 1, 2, 2, 1, bias=use_bias), last_nl)
         else:
             self.model = nn.Sequential(
                 nn.Conv2d(self.input_dims, self.step_ch, 4, 2, 1, bias=use_bias), nl,
                 nn.Conv2d(self.step_ch, self.step_ch * 2, 4, 2, 1, bias=use_bias), nl,
                 nn.Conv2d(self.step_ch * 2, self.step_ch * 4, 4, 2, 1, bias=use_bias), nl,
-                nn.Conv2d(self.step_ch * 4, 1, 4, 2, 1, bias=use_bias), last_nl)
+                nn.Conv2d(self.step_ch * 4, self.step_ch * 8, 4, 2, 1, bias=use_bias), nl,
+                nn.Conv2d(self.step_ch * 8, 1, 2, 2, 1, bias=use_bias), last_nl)
 
         self._weight_initializer()
 
