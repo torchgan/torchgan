@@ -21,12 +21,13 @@ class Datasets(object):
                 crop_size = output_shape
             else:
                 pad = (output_shape[0] - input_shape[0], output_shape[1] - input_shape[1])
-        self.transformation = [transforms.ToTensor()]
+        self.transformation = []
         if pad is None:
             if crop_size is not None:
                 self.transformation.append(transforms.CenterCrop(crop_size))
         else:
             self.transformation.append(transforms.Pad(pad))
+        self.transformation.append(transforms.ToTensor())
         self.transformation.append(transforms.Normalize(mean=(0.0, 0.0, 0.0), std=(1.0, 1.0, 1.0)))
 
     def transform_update(self, transformation, pos=-1):
