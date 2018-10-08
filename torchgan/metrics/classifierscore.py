@@ -9,7 +9,7 @@ __all__ = ['ClassifierScore']
 
 class ClassifierScore(EvaluationMetric):
     r"""
-    Computes the Classifier Score of a Model.
+    Computes the Classifier Score of a batch of generated samples
 
     Args:
         classifier (torch.nn.Module, optional) : The model to be used as a base to compute the classifier
