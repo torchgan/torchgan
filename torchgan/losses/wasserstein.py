@@ -104,9 +104,10 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
 
         lambd(float,optional) : Hyperparameter lambda for scaling the gradient penalty.
     """
-    def __init__(self, reduction='elementwise_mean', lambd=10.0):
+    def __init__(self, reduction='elementwise_mean', lambd=10.0, override_train_ops=None):
         super(WassersteinGradientPenalty, self).__init__(reduction)
         self.lambd = lambd
+        self.override_train_ops = override_train_ops
 
     def forward(self, interpolate, d_interpolate):
         r"""
@@ -129,4 +130,20 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
                                   only_inputs=True)[0]
 
         gradient_penalty = (gradients.norm(2) - 1) ** 2
-        return reduce(self.lambd * gradient_penalty, self.reduction)
+        return reduce(gradient_penalty, self.reduction)
+
+    def train_ops(self, generator, discriminator, optimDis, real_inputs, noise, labels=False):
+        if self.override_train_ops is not None:
+            return self.override_train_ops(self, generator, discriminator, optimDis, real_inputs, noise, labels)
+        else:
+            real = real_inputs if labels is False else real_inputs[0]
+            optimDis.zero_grad()
+            fake = generator(noise)
+            eps = torch.rand(1).item()
+            interpolate = eps * real + (1 - eps) * fake
+            d_interpolate = discriminator(interpolate)
+            loss = self.forward(interpolate, d_interpolate)
+            weighted_loss = self.lambd * loss
+            weighted_loss.backward()
+            optimDis.step()
+            return loss.item()
