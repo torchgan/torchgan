@@ -2,7 +2,13 @@ import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
 from ..utils import reduce
 
-__all__ = ['MutualInformationPenalty']
+__all__ = ['mutual_information_penalty', 'MutualInformationPenalty']
+
+def mutual_information_penalty(c_dis, c_cont, dist_dis, dist_cont, reduction='elementwise_mean'):
+    log_probs = torch.Tensor([torch.mean(dist.log_prob(c)) for dist, c in
+                             zip((dist_dis, dist_cont), (c_dis, c_cont))])
+    return reduce(-1.0 * log_probs, reduction)
+
 
 class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
     r"""Mutual Information Penalty as defined in
@@ -25,7 +31,7 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, dis_sample_fn, cont_sample_fn, lambd=1.0, reduction='elementwise_mean', override_train_ops=None):
+    def __init__(self, lambd=1.0, reduction='elementwise_mean', override_train_ops=None):
         super(MutualInformationPenalty, self).__init__(reduction, override_train_ops)
         self.lambd = lambd
 
