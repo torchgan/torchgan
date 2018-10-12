@@ -28,7 +28,7 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-readme = open('README.md').read()
+# readme = open('README.md').read()
 
 VERSION = find_version('torchgan', '__init__.py')
 
@@ -45,10 +45,9 @@ setup(
     version=VERSION,
     author='Avik Pal & Aniket Das',
     author_email='avikpal@iitk.ac.in',
-    # NOTE(avik-pal): Change path when moving repository to organization
-    url='https://github.com/Aniket1998/TorchGAN',
+    url='https://github.com/torchgan/torchgan',
     description='Light Weight Library built on top of Pytorch for efficient GAN modeling',
-    long_description=readme,
+    # long_description=readme,
     license='MIT',
 
     # Package info
