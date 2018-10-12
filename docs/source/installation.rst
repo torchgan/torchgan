@@ -8,7 +8,7 @@ Pip Installation
 
 This is the simplest method and the most recommended approach as well.
 
-..code:: bash
+.. code:: bash
 
    $ pip3 install torchgan
 

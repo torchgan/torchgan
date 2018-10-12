@@ -4,7 +4,6 @@ from ..utils import reduce
 
 __all__ = ['BoundaryEquilibriumLoss']
 
-
 class BoundaryEquilibriumLoss(GeneratorLoss, DiscriminatorLoss):
     r"""Boundary Equilibrium GAN generator and discriminator loss from
     `"BEGAN : Boundary Equilibrium Generative Adversarial Networks

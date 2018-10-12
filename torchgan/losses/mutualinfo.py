@@ -9,7 +9,6 @@ def mutual_information_penalty(c_dis, c_cont, dist_dis, dist_cont, reduction='el
                              zip((dist_dis, dist_cont), (c_dis, c_cont))])
     return reduce(-1.0 * log_probs, reduction)
 
-
 class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
     r"""Mutual Information Penalty as defined in
     `"InfoGAN : Interpretable Representation Learning by Information Maximising Generative Adversarial Nets

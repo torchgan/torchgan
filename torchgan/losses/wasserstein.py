@@ -22,7 +22,6 @@ def wasserstein_gradient_penalty(interpolate, d_interpolate, reduction='elementw
     gradient_penalty = (gradients.norm(2) - 1) ** 2
     return reduce(gradient_penalty, reduction)
 
-
 class WassersteinGeneratorLoss(GeneratorLoss):
     r"""Wasserstein GAN generator loss from
     `"Wasserstein GAN by Arjovsky et. al." <https://arxiv.org/abs/1701.07875>`_ paper

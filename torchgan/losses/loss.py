@@ -2,7 +2,6 @@ import torch.nn as nn
 
 __all__ = ['GeneratorLoss', 'DiscriminatorLoss']
 
-
 class GeneratorLoss(nn.Module):
     r"""Base class for all generator losses
 
