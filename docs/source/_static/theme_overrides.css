@@ -1,0 +1,15 @@
+.wy-nav-content {
+    max-width: 100%;
+    height: 100%;
+    /* max-width: 800px; */
+    margin: auto;
+}
+
+body {
+    font-family: "Roboto", "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+}
+
+/* Default header fonts are ugly */
+h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.caption {
+    font-family: "Roboto", "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+}

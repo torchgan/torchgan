@@ -34,9 +34,7 @@ Minimax Loss
 
 Boundary Equilibrium Loss
 -------------------------
-.. autoclass:: BoundaryEquilibriumGeneratorLoss
-    :members:
-.. autoclass:: BoundaryEquilibriumDiscriminatorLoss
+.. autoclass:: BoundaryEquilibriumLoss
     :members:
 
 Energy Based Loss

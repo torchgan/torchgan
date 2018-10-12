@@ -1,0 +1,23 @@
+Installation
+============
+
+Follow the following instructions to set up `torchgan`. `Torchgan` is tested and known to work on major `linux distrubutions`. If you face any problem with other `operating systems` feel free to file an `issue`.
+
+Pip Installation
+----------------
+
+Installing via `pip` is currently unavailable. It will be available soon.
+
+Conda Installation
+------------------
+
+Installing via `conda` is currently unavailable. It will be available once we are at `v0.1`
+
+Install from Source
+-------------------
+
+.. code:: bash
+
+   $ git clone https://github.com/torchgan/torchgan
+   $ cd torchgan
+   $ python setup.py install
