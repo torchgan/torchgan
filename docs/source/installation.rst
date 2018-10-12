@@ -6,7 +6,11 @@ Follow the following instructions to set up `torchgan`. `Torchgan` is tested and
 Pip Installation
 ----------------
 
-Installing via `pip` is currently unavailable. It will be available soon.
+This is the simplest method and the most recommended approach as well.
+
+..code:: bash
+
+   $ pip3 install torchgan
 
 Conda Installation
 ------------------

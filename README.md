@@ -4,17 +4,23 @@
 
   <a href="http://www.repostatus.org/#wip"><img src="http://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public."></a>
   <a href="https://travis-ci.com/Aniket1998/TorchGAN"><img src="https://travis-ci.com/Aniket1998/TorchGAN.svg?token=xxgQKWvvVHy2q3GrDsMR&branch=master" alt="Build Status"></a>
-  <a href="https://coveralls.io/github/Aniket1998/TorchGAN?branch=master"><img src="https://coveralls.io/repos/Aniket1998/TorchGAN/badge.svg?branch=master&service=github" alt="Coverage Status"></a>
+  <a href="https://coveralls.io/github/torchgan/torchgan?branch=master"><img src="https://coveralls.io/repos/torchgan/torchgan/badge.svg?branch=master&service=github" alt="Coverage Status"></a>
   <a href="LICENSE"><img src="http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat" alt="License"></a>
   <a href="https://torchgan.slack.com/"><img src="https://img.shields.io/badge/chat-on%20slack-yellow.svg" alt="Slack"></a>
-  <a href="https://torchgan.github.io/stable/"><img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Stable Documentation"></a>
-  <a href="https://torchgan.github.io/latest/"><img src="https://img.shields.io/badge/docs-latest-blue.svg" alt="Latest Documentation"></a><br>
+  <a href="https://torchgan.readthedocs.io/en/latest/"><img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Stable Documentation"></a>
+  <a href="https://torchgan.readthedocs.io/en/latest/"><img src="https://img.shields.io/badge/docs-latest-blue.svg" alt="Latest Documentation"></a><br>
 
 </div>
 
 The torchgan package provides an easy to use and highly customizable API for training GANs.
 
 ## Installation
+
+Using pip:
+
+```bash
+  $ pip3 install torchgan
+```
 
 From source:
 
@@ -23,6 +29,8 @@ From source:
 ```
 
 ## Documentation
+
+The documentation is available [here](https://torchgan.readthedocs.io/en/latest/)
 
 The documentation for this package can be generated locally.
 
