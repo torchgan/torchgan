@@ -19,8 +19,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 import sphinx_rtd_theme
 
 
@@ -68,8 +67,8 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # General information about the project.
-project = 'torchgan'
-copyright = '2018, Avik Pal and Aniket Das'
+project = u'torchgan'
+copyright = u'2018, Avik Pal and Aniket Das'
 author = 'Avik Pal and Aniket Das'
 
 # The version info for the project you're documenting, acts as replacement for
