@@ -29,6 +29,11 @@ import sphinx_rtd_theme
 #
 # needs_sphinx = '1.0'
 
+# Mock Imports
+autodoc_mock_imports = ['torch',
+	'torchvision',
+	'tensorboardX']
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
