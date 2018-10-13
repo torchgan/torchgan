@@ -23,7 +23,6 @@ def minimax_discriminator_loss(dx, dgz, reduction='elementwise_mean'):
                                                reduction=reduction)
     return loss
 
-
 class MinimaxGeneratorLoss(GeneratorLoss):
     r"""Minimax game generator loss from the original GAN paper
     `"Generative Adversarial Networks

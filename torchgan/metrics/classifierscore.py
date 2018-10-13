@@ -6,7 +6,6 @@ from ..utils import reduce
 
 __all__ = ['ClassifierScore']
 
-
 class ClassifierScore(EvaluationMetric):
     r"""
     Computes the Classifier Score of a Model.

@@ -1,9 +1,10 @@
 import unittest
 import torch
 import torch.distributions as ds
-from sys import path
 import math
-path.append('..')
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from torchgan.losses import *
 
 class TestLosses(unittest.TestCase):

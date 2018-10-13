@@ -1,9 +1,9 @@
 import unittest
 import torch
-from sys import path
-path.append('..')
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from torchgan.metrics import *
-
 
 class TestMetrics(unittest.TestCase):
     def test_inception_score(self):

@@ -8,10 +8,8 @@ __all__ = ['least_squares_generator_loss', 'least_squares_discriminator_loss',
 def least_squares_generator_loss(dgz, c=1.0, reduction='elementwise_mean'):
     return 0.5 * reduce((dgz - c) ** 2, reduction)
 
-
 def least_squares_discriminator_loss(dx, dgz, a=0.0, b=1.0, reduction='elementwise_mean'):
     return 0.5 * (reduce((dx - b) ** 2, reduction) + reduce((dgz - a) ** 2, reduction))
-
 
 class LeastSquaresGeneratorLoss(GeneratorLoss):
     r"""Least Squares GAN generator loss from
