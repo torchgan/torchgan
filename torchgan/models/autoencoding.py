@@ -5,6 +5,25 @@ import torch.nn.functional as F
 from ..models import Generator, Discriminator
 
 class AutoEncodingGenerator(Generator):
+    r"""Autoencoding Generator for Boundary Equilibrium GAN (BEGAN) from
+   `"BEGAN : Boundary Equilibrium Generative Adversarial Networks
+    by Berthelot et. al." <https://arxiv.org/abs/1703.10717>`_ paper
+
+    Args:
+        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior. Default 100
+        out_size(int, optional)      : Height and Width of the output image to be generated. Must be a power of 2.
+                                       Default 32
+        out_channels (int, optional) : Number of channels in the output Tensor.
+        step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
+                                        the convolutional features
+                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
+                                        where d = step_channels.
+        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator.
+        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
+                                                  Defaults to LeakyReLU(0.2) when None is passed.
+        last_nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
+                                                       Defaults to tanh when None is passed.
+    """
     def __init__(self, encoding_dims=100, out_size=32, out_channels=3, step_channels=64,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None):
         super(AutoEncodingGenerator, self).__init__(encoding_dims)
@@ -61,6 +80,24 @@ class AutoEncodingGenerator(Generator):
 
 
 class AutoEncodingDiscriminator(Discriminator):
+    r"""Autoencoding Generator for Boundary Equilibrium GAN (BEGAN) from
+   `"BEGAN : Boundary Equilibrium Generative Adversarial Networks
+    by Berthelot et. al." <https://arxiv.org/abs/1703.10717>`_ paper
+
+    Args:
+        in_size (int, optional)     : Height and Width of the input image. Must be a power of 2. Default 32
+        in_channels (int, optional) : Number of channels in the input Tensor.
+        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior.
+        step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
+                                        the convolutional features
+                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
+                                        where d = step_channels.
+        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator.
+        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
+                                                  Defaults to LeakyReLU(0.2) when None is passed.
+        last_nonlinearity (toch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
+                                                      Defaults to sigmoid when None is passed.
+    """
     def __init__(self, in_size=32, in_channels=3, encoding_dims=100, step_channels=64,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None):
         super(AutoEncodingDiscriminator, self).__init__(in_channels)
