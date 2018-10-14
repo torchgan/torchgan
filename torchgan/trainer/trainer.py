@@ -264,7 +264,7 @@ class Trainer(object):
             self.generator.train()
             self.discriminator.train()
             for data in data_loader:
-                if type(data) is tuple:
+                if type(data) is tuple or type(data) is list:
                     if not data[0].size()[0] == self.batch_size:
                         continue
                     self.real_inputs = data[0].to(self.device)
