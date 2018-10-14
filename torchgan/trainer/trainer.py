@@ -270,7 +270,7 @@ class Trainer(object):
                     self.real_inputs = data[0].to(self.device)
                     self.labels = data[1].to(self.device)
                 else:
-                    if not data.size()[0] == self.batch_size:
+                    if not data[0].size()[0] == self.batch_size:
                         continue
                     self.real_inputs = data[0].to(self.device)
 
