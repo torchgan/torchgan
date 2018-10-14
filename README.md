@@ -2,17 +2,15 @@
 
   <h1>TorchGAN</h1>
 
-  <a href="http://www.repostatus.org/#wip"><img src="http://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public."></a>
-  <a href="https://travis-ci.com/Aniket1998/TorchGAN"><img src="https://travis-ci.com/Aniket1998/TorchGAN.svg?token=xxgQKWvvVHy2q3GrDsMR&branch=master" alt="Build Status"></a>
-  <a href="https://coveralls.io/github/torchgan/torchgan?branch=master"><img src="https://coveralls.io/repos/torchgan/torchgan/badge.svg?branch=master&service=github" alt="Coverage Status"></a>
+  <a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a>
+  <a href="https://travis-ci.org/torchgan/torchgan"><img src="https://travis-ci.org/torchgan/torchgan.svg?branch=master" alt="Build Status"></a>
+  <a href="https://codecov.io/gh/torchgan/torchgan"><img src="https://codecov.io/gh/torchgan/torchgan/branch/master/graph/badge.svg" alt="Coverage Status"></a>
   <a href="LICENSE"><img src="http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat" alt="License"></a>
   <a href="https://torchgan.slack.com/"><img src="https://img.shields.io/badge/chat-on%20slack-yellow.svg" alt="Slack"></a>
-  <a href="https://torchgan.readthedocs.io/en/latest/"><img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Stable Documentation"></a>
+  <a href="https://torchgan.readthedocs.io/en/stable/"><img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Stable Documentation"></a>
   <a href="https://torchgan.readthedocs.io/en/latest/"><img src="https://img.shields.io/badge/docs-latest-blue.svg" alt="Latest Documentation"></a><br>
 
 </div>
-
-The torchgan package provides an easy to use and highly customizable API for training GANs.
 
 ## Installation
 
