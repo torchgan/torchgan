@@ -27,7 +27,7 @@ class AutoEncodingGenerator(Generator):
     def __init__(self, encoding_dims=100, out_size=32, out_channels=3, step_channels=64,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None):
         super(AutoEncodingGenerator, self).__init__(encoding_dims)
-        if out_size < 16 and ceil(log2(out_size)) != log2(out_size):
+        if out_size < 16 or ceil(log2(out_size)) != log2(out_size):
             raise Exception('Target image size must be at least 16*16 and a perfect power of 2')
         # Fast way of computing log2(out_size) - 3
         num_repeats = out_size.bit_length() - 4
@@ -101,7 +101,7 @@ class AutoEncodingDiscriminator(Discriminator):
     def __init__(self, in_size=32, in_channels=3, encoding_dims=100, step_channels=64,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None):
         super(AutoEncodingDiscriminator, self).__init__(in_channels)
-        if in_size < 16 and ceil(log2(in_size)) != log2(in_size):
+        if in_size < 16 or ceil(log2(in_size)) != log2(in_size):
             raise Exception('Input Image Size must be at least 16*16 and a perfect power of 2')
         num_repeats = in_size.bit_length() - 4
         self.n = step_channels
