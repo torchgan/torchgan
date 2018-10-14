@@ -44,9 +44,9 @@ setup(
     name='torchgan',
     version=VERSION,
     author='Avik Pal & Aniket Das',
-    author_email='avikpal@iitk.ac.in',
+    author_email='torchgan@gmail.com',
     url='https://github.com/torchgan/torchgan',
-    description='Light Weight Library built on top of Pytorch for efficient GAN modeling',
+    description='PyTorch based framework for easy and efficient training of GANs',
     # long_description=readme,
     license='MIT',
 
