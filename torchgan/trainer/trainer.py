@@ -10,8 +10,8 @@ __all__ = ['Trainer']
 
 class Trainer(object):
     def __init__(self, generator, discriminator, optimizer_generator, optimizer_discriminator,
-                 losses_list, metrics_list=None, device=torch.device("cuda:0"), ndiscriminator=-1, batch_size=128,
-                 sample_size=8, epochs=5, checkpoints="./model/gan", retain_checkpoints=5,
+                 losses_list, metrics_list=None, device=torch.device("cuda:0"), ndiscriminator=-1,
+                 batch_size=128, sample_size=8, epochs=5, checkpoints="./model/gan", retain_checkpoints=5,
                  recon="./images", test_noise=None, log_tensorboard=True, **kwargs):
         self.device = device
         self.generator = generator.to(self.device)
@@ -265,17 +265,12 @@ class Trainer(object):
             self.discriminator.train()
             for data in data_loader:
                 if type(data) is tuple or type(data) is list:
-                    if not data[0].size()[0] == self.batch_size:
-                        continue
                     self.real_inputs = data[0].to(self.device)
                     self.labels = data[1].to(self.device)
+                    self.noise = torch.randn(data[0].size(0), self.generator.encoding_dims,
+                                             device=self.device)
                 else:
-                    if not data[0].size()[0] == self.batch_size:
-                        continue
-                    self.real_inputs = data[0].to(self.device)
-
-                self.noise = torch.randn(self.batch_size, self.generator.encoding_dims,
-                                         device=self.device)
+                    self.real_inputs = data
 
                 lgen, ldis, gen_iter, dis_iter = self.train_iter()
                 self.loss_information['generator_losses'] += lgen
