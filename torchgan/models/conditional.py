@@ -25,10 +25,10 @@ class ConditionalGANGenerator(DCGANGenerator):
                                                        Defaults to tanh when None is passed.
 
     """
-    def __init__(self, num_classes, encoding_dims=100, out_channels=3,
+    def __init__(self, num_classes, encoding_dims=100, out_size=32, out_channels=3,
                  step_channels=64, batchnorm=True, nonlinearity=None, last_nonlinearity=None):
-        super(ConditionalGANGenerator, self).__init__(encoding_dims + num_classes, out_channels, step_channels,
-                                                      batchnorm, nonlinearity, last_nonlinearity)
+        super(ConditionalGANGenerator, self).__init__(encoding_dims + num_classes, out_size, out_channels,
+                                                      step_channels, batchnorm, nonlinearity, last_nonlinearity)
         self.encoding_dims = encoding_dims
         self.num_classes = num_classes
 
@@ -60,9 +60,9 @@ class ConditionalGANDiscriminator(DCGANDiscriminator):
                                                        Defaults to tanh when None is passed.
 
     """
-    def __init__(self, num_classes, in_channels=3, step_channels=64, batchnorm=True,
+    def __init__(self, num_classes, in_size=32, in_channels=3, step_channels=64, batchnorm=True,
                  nonlinearity=None, last_nonlinearity=None):
-        super(ConditionalGANDiscriminator, self).__init__(in_channels + num_classes, step_channels, batchnorm,
+        super(ConditionalGANDiscriminator, self).__init__(in_size, in_channels + num_classes, step_channels, batchnorm,
                                                           nonlinearity, last_nonlinearity)
         self.input_dims = in_channels
         self.num_classes = num_classes
