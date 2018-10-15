@@ -128,3 +128,33 @@ class TestModels(unittest.TestCase):
             assert isinstance(dist_cont, distributions.Normal)
             assert dist_dis.sample().shape == (10, dim_dis[i])
             assert dist_cont.sample().shape == (10, dim_cont[i])
+
+    def test_autoencoding_generator(self):
+        encodings = [50, 100]
+        channels = [3, 4]
+        out_size = [32, 64]
+        step = [64, 128]
+        batchnorm = [True, False]
+        nonlinearities = [None, torch.nn.ReLU()]
+        last_nonlinearity = [None, torch.nn.LeakyReLU()]
+        for i in range(2):
+            gen = AutoEncodingGenerator(encodings[i], out_size[i], channels[i], step[i],
+                                        batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            z = torch.rand(10, encodings[i])
+            x = gen(z)
+            assert x.shape == (10, channels[i], out_size[i], out_size[i])
+
+    def test_autoencoding_discriminator(self):
+        channels = [3, 4]
+        encodings = [50, 100]
+        in_size = [32, 64]
+        step = [64, 128]
+        batchnorm = [True, False]
+        nonlinearities = [None, torch.nn.ReLU()]
+        last_nonlinearity = [None, torch.nn.LeakyReLU()]
+        for i in range(2):
+            dis = AutoEncodingDiscriminator(in_size[i], channels[i], encodings[i], step[i],
+                                            batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            x = torch.rand(10, channels[i], in_size[i], in_size[i])
+            loss = dis(x)
+            assert loss.shape == (10,)
