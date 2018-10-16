@@ -15,6 +15,8 @@ class InfoGANGenerator(DCGANGenerator):
         dim_dis (int) : Dimension of the discrete latent code sampled from the prior.
         dim_cont (int) : Dimension of the continuous latent code sampled from the prior.
         encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior.
+        out_size      (int, optional) : Height and width of the input image to be generated. Must be at least 16
+                                        and should be an exact power of 2. Defaults to 32
         out_channels (int, optional) : Number of channels in the output Tensor.
         step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
                                         the convolutional features
@@ -34,9 +36,9 @@ class InfoGANGenerator(DCGANGenerator):
         >>> c_dis = ...
         >>> x = G(z, c_cont, c_dis)
     """
-    def __init__(self, dim_dis, dim_cont, encoding_dims=100, out_channels=3,
+    def __init__(self, dim_dis, dim_cont, encoding_dims=100, out_size=32, out_channels=3,
                  step_channels=64, batchnorm=True, nonlinearity=None, last_nonlinearity=None):
-        super(InfoGANGenerator, self).__init__(encoding_dims + dim_dis + dim_cont, out_channels,
+        super(InfoGANGenerator, self).__init__(encoding_dims + dim_dis + dim_cont, out_size, out_channels,
                                                step_channels, batchnorm, nonlinearity, last_nonlinearity)
         self.encoding_dims = encoding_dims
         self.dim_cont = dim_cont
@@ -60,7 +62,9 @@ class InfoGANDiscriminator(DCGANDiscriminator):
         dim_dis (int) : Dimension of the discrete latent code sampled from the prior
         dim_cont (int) : Dimension of the continuous latent code sampled from the prior
         encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior. Default 100
-        out_channels (int, optional) : Number of channels in the output Tensor. Default 3
+        in_size      (int, optional) : Height and width of the input image. Must be at least 16
+                                        and should be an exact power of 2. Defaults to 32
+        in_channels (int, optional) : Number of channels in the output Tensor. Default 3
         step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
                                         the convolutional features
                                         The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
@@ -80,30 +84,30 @@ class InfoGANDiscriminator(DCGANDiscriminator):
         >>> x = ...
         >>> score, q_categorical, q_gaussian = D(x)
     """
-    def __init__(self, dim_dis, dim_cont, in_channels=3, step_channels=64,
+    def __init__(self, dim_dis, dim_cont, in_size=32, in_channels=3, step_channels=64,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None, latent_nonlinearity=None):
         self.dim_cont = dim_cont
         self.dim_dis = dim_dis
-        super(InfoGANDiscriminator, self).__init__(in_channels, step_channels, batchnorm,
+        super(InfoGANDiscriminator, self).__init__(in_size, in_channels, step_channels, batchnorm,
                                                    nonlinearity, last_nonlinearity)
 
         self.latent_nl = nn.LeakyReLU(0.2) if latent_nonlinearity is None else latent_nonlinearity
-        self.critic = self.model[len(self.model) - 2:len(self.model)]
+        self.critic = self.model[len(self.model) - 1]
+        d = self.n * 2 ** (in_size.bit_length() - 4)
         if batchnorm is True:
-            self.dist_conv = nn.Sequential(nn.Conv2d(self.step_ch * 8, self.step_ch * 8, 4, 1, 0, bias=not batchnorm),
-                                           nn.BatchNorm2d(self.step_ch * 8),
+            self.dist_conv = nn.Sequential(nn.Conv2d(d, d, 4, 1, 0, bias=not batchnorm),
+                                           nn.BatchNorm2d(d),
                                            self.latent_nl)
         else:
-            self.dist_conv = nn.Sequential(nn.Conv2d(self.step_ch * 8, self.step_ch * 8, 4, 1, 0, bias=not batchnorm),
-                                           nn.BatchNorm2d(self.step_ch * 8),
+            self.dist_conv = nn.Sequential(nn.Conv2d(d, d, 4, 1, 0, bias=not batchnorm),
                                            self.latent_nl)
 
-        self.dis_categorical = nn.Linear(self.step_ch * 8, self.dim_dis)
+        self.dis_categorical = nn.Linear(d, self.dim_dis)
 
-        self.cont_mean = nn.Linear(self.step_ch * 8, self.dim_cont)
-        self.cont_logvar = nn.Linear(self.step_ch * 8, self.dim_cont)
+        self.cont_mean = nn.Linear(d, self.dim_cont)
+        self.cont_logvar = nn.Linear(d, self.dim_cont)
 
-        del self.model[len(self.model) - 2:len(self.model)]
+        del self.model[len(self.model) - 1]
 
     def forward(self, x, return_latents=False):
         x = self.model(x)
