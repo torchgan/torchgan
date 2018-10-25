@@ -30,15 +30,13 @@ GAN
     .. automethod:: _weight_initializer
 .. autoclass:: Discriminator
     :members:
-
+    
     .. automethod:: _weight_initializer
 
 DCGAN
 -----
 .. autoclass:: DCGANGenerator
 .. autoclass:: DCGANDiscriminator
-.. autoclass:: SmallDCGANGenerator
-.. autoclass:: SmallDCGANDiscriminator
 
 Conditional GAN
 ---------------
@@ -49,3 +47,8 @@ InfoGAN
 -------
 .. autoclass:: InfoGANGenerator
 .. autoclass:: InfoGANDiscriminator
+
+AutoEncoders
+------------
+.. autoclass:: AutoEncodingGenerator
+.. autoclass:: AutoEncodingDiscriminator

@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 __all__ = ['GeneratorLoss', 'DiscriminatorLoss']
@@ -16,10 +17,11 @@ class GeneratorLoss(nn.Module):
         self.reduction = reduction
         self.override_train_ops = override_train_ops
 
-    def train_ops(self, generator, discriminator, optimizer_generator, noise):
+    def train_ops(self, generator, discriminator, optimizer_generator, device, batch_size):
         if self.override_train_ops is not None:
-            return self.override_train_ops(generator, discriminator, optimizer_generator, noise)
+            return self.override_train_ops(generator, discriminator, optimizer_generator, device, batch_size)
         else:
+            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
             optimizer_generator.zero_grad()
             dgz = discriminator(generator(noise))
             loss = self.forward(dgz)
@@ -41,13 +43,14 @@ class DiscriminatorLoss(nn.Module):
         self.reduction = reduction
         self.override_train_ops = override_train_ops
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, noise,
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device,
                   labels_provided=False):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
-                   real_inputs, noise, labels_provided)
+                   real_inputs, labels_provided)
         else:
             real = real_inputs if labels_provided is False else real_inputs[0]
+            noise = torch.randn(real.size(0), generator.encoding_dims, device=device)
             optimizer_discriminator.zero_grad()
             dx = discriminator(real)
             fake = generator(noise)

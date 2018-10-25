@@ -36,12 +36,12 @@ Now lets us create the `Trainer` object and pass the `data loader` to it.
 
 .. code:: python
 
-    trainer = Trainer(SmallDCGANGenerator(out_channels=3, step_channels=16),
-                      SmallDCGANDiscriminator(in_channels=3, step_channels=16),
-                      Adam, Adam, [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
-                      sample_size=64, epochs=50,
-                      optimizer_generator_options={"lr": 0.0002, "betas": (0.5, 0.999)},
-                      optimizer_discriminator_options={"lr": 0.0002, "betas": (0.5, 0.999)})
+    trainer = Trainer({"generator": {"name": DCGANGenerator, "args": {"out_channels": 3, "step_channels": 16}},
+                       "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 3, "step_channels": 16}}},
+                      {"optimizer_generator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}},
+                       "optimizer_discriminator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
+                      [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
+                      sample_size=64, epochs=20)
 
     trainer(cifar10_dataloader())
 

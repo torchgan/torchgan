@@ -4,7 +4,7 @@ torchgan.losses
 .. currentmodule:: torchgan.losses
 
 This losses subpackage is a collection of popular loss functions used
-in the training of GANS. Currently the following losses are supported:
+in the training of GANs. Currently the following losses are supported:
 
 .. contents::
     :local:
@@ -34,7 +34,9 @@ Minimax Loss
 
 Boundary Equilibrium Loss
 -------------------------
-.. autoclass:: BoundaryEquilibriumLoss
+.. autoclass:: BoundaryEquilibriumGeneratorLoss
+    :members:
+.. autoclass:: BoundaryEquilibriumDiscriminatorLoss
     :members:
 
 Energy Based Loss

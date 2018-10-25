@@ -4,9 +4,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 from ..models import Generator, Discriminator
 
+__all__ = ['AutoEncodingGenerator', 'AutoEncodingDiscriminator']
+
 class AutoEncodingGenerator(Generator):
     r"""Autoencoding Generator for Boundary Equilibrium GAN (BEGAN) from
-   `"BEGAN : Boundary Equilibrium Generative Adversarial Networks
+    `"BEGAN : Boundary Equilibrium Generative Adversarial Networks
     by Berthelot et. al." <https://arxiv.org/abs/1703.10717>`_ paper
 
     Args:
@@ -81,7 +83,7 @@ class AutoEncodingGenerator(Generator):
 
 class AutoEncodingDiscriminator(Discriminator):
     r"""Autoencoding Generator for Boundary Equilibrium GAN (BEGAN) from
-   `"BEGAN : Boundary Equilibrium Generative Adversarial Networks
+    `"BEGAN : Boundary Equilibrium Generative Adversarial Networks
     by Berthelot et. al." <https://arxiv.org/abs/1703.10717>`_ paper
 
     Args:
