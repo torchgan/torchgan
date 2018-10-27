@@ -533,9 +533,9 @@ class Trainer(object):
                 self.save_model(epoch)
 
             self.train_logger(epoch,
-                              {'Generator Loss': self.loss_information['generator_losses'] /
+                              {'Generator Loss': self.loss_information['generator_losses'] /\
                               self.loss_information['generator_iters'],
-                              'Discriminator Loss': self.loss_information['discriminator_losses'] /
+                              'Discriminator Loss': self.loss_information['discriminator_losses'] /\
                               self.loss_information['discriminator_iters']})
 
             for model in self.model_names:
