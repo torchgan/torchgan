@@ -511,6 +511,8 @@ class Trainer(object):
                 if type(data) is tuple or type(data) is list:
                     self.real_inputs = data[0].to(self.device)
                     self.labels = data[1].to(self.device)
+                elif type(data) is torch.Tensor:
+                    self.real_inputs = data.to(self.device)
                 else:
                     self.real_inputs = data
 
