@@ -511,6 +511,8 @@ class Trainer(object):
                 if type(data) is tuple or type(data) is list:
                     self.real_inputs = data[0].to(self.device)
                     self.labels = data[1].to(self.device)
+                elif type(data) is torch.Tensor:
+                    self.real_inputs = data.to(self.device)
                 else:
                     self.real_inputs = data
 
@@ -531,9 +533,9 @@ class Trainer(object):
                 self.save_model(epoch)
 
             self.train_logger(epoch,
-                              {'Generator Loss': self.loss_information['generator_losses'] /
+                              {'Generator Loss': self.loss_information['generator_losses'] /\
                               self.loss_information['generator_iters'],
-                              'Discriminator Loss': self.loss_information['discriminator_losses'] /
+                              'Discriminator Loss': self.loss_information['discriminator_losses'] /\
                               self.loss_information['discriminator_iters']})
 
             for model in self.model_names:
