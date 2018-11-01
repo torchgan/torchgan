@@ -49,5 +49,10 @@ class ClassifierScore(EvaluationMetric):
         kl = torch.sum(p * (F.log_softmax(x, dim=1) - torch.log(q)), dim=1)
         return torch.exp(reduce(kl, 'elementwise_mean'))
 
-    def metric_ops(self, generator, discriminator, **kwargs):
-        return self.__call__(kwargs['ClassifierScore_inputs'])
+    def metric_ops(self, generator, discriminator, device, **kwargs):
+        # NOTE(avik-pal): We make the shift from cpu to device everytime. This is not efficient
+        #                 but avoids wasting a lot of GPU memory usage.
+        self.classifier.to(device)
+        score = self.__call__(kwargs['ClassifierScore_inputs'])
+        self.classifier.cpu()
+        return score
