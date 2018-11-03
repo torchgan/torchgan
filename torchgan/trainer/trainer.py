@@ -151,7 +151,7 @@ class Trainer(object):
             }
         self.nrow = 8
         for key, val in kwargs.items():
-            if key in self.__dict__():
+            if key in self.__dict__:
                 warn("Overiding the default value of {} from {} to {}".format(key, getattr(self, key), val))
             setattr(self, key, val)
 
@@ -405,18 +405,6 @@ class Trainer(object):
         """
         return dict(zip(arg_map, itemgetter(*arg_map)(self.__dict__)))
 
-    def train_stopper(self):
-        r"""Helper function to allow interrupting the train process. This comes handy when the
-        discriminator needs to be trained more than the generator.
-
-        Returns:
-            Bool value which is used to stop the particular training iteration
-        """
-        if self.ncritic is None:
-            return False
-        else:
-            return self.loss_information["discriminator_iters"] % self.ncritic != 0
-
     def train_iter_custom(self):
         r"""Function that needs to be extended if `train_iter` is to be modified. Use this function
         to perform any sort of initialization that need to be done at the beginning of any train
@@ -523,9 +511,6 @@ class Trainer(object):
                 self.loss_information['discriminator_iters'] += dis_iter
 
                 self.tensorboard_log_losses()
-
-                if self.train_stopper():
-                    break
 
             if "save_items" in kwargs:
                 self.save_model(epoch, kwargs["save_items"])
