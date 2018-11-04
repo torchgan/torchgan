@@ -292,6 +292,18 @@ class Trainer(object):
         for name, val in running_losses.items():
             print('Mean {} : {}'.format(name, val))
 
+    def tensorboard_log_gradients(self):
+        r"""Function for gradient logging in tensorboard. Currently logs the sum of the L2 norm of the gradients
+        of all the parameters of a model. Requires `log_tensorboard` to be set to `True`
+        """
+        if self.log_tensorboard:
+            for name in self.model_names:
+                model = getattr(self, name)
+                gradsum = 0.0
+                for p in model.parameters():
+                    gradsum += p.norm(2).item()
+                self.writer.add_scalar('Gradients/{}'.format(name), gradsum, self._get_step())
+
     def tensorboard_log_losses(self):
         r"""This function handles all form of logging with tensorboard for losses. It logs 4 major things.
         2 of them are simply the net running discriminator loss and generator loss. Next it plots both of
@@ -511,6 +523,7 @@ class Trainer(object):
                 self.loss_information['discriminator_iters'] += dis_iter
 
                 self.tensorboard_log_losses()
+                self.tensorboard_log_gradients()
 
             if "save_items" in kwargs:
                 self.save_model(epoch, kwargs["save_items"])
