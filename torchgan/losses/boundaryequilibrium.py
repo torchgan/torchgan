@@ -53,6 +53,7 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
             `sum` the output will be summed.
     """
     def __init__(self, reduction='elementwise_mean', override_train_ops=None, init_k=0.0, lambd=0.001, gamma=0.75):
+        super(BoundaryEquilibriumDiscriminatorLoss, self).__init__(reduction, override_train_ops)
         self.reduction = reduction
         self.override_train_ops = override_train_ops
         self.k = init_k

@@ -54,7 +54,7 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
     def train_ops(self, generator, discriminator, optimizer_generator, optimizer_discriminator,
                   dis_code, cont_code, device, batch_size):
         if self.override_train_ops is not None:
-            self.override_train_ops(self, generator, discriminator, optimizer_generator, optimizer_discriminator,
+            self.override_train_ops(generator, discriminator, optimizer_generator, optimizer_discriminator,
                                     dis_code, cont_code, device, batch_size)
         else:
             noise = torch.randn(batch_size, generator.encoding_dims, device=device)
