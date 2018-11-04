@@ -33,8 +33,8 @@ class EnergyBasedGeneratorLoss(GeneratorLoss):
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, reduction='elementwise_mean'):
-        super(EnergyBasedGeneratorLoss, self).__init__(reduction)
+    def __init__(self, reduction='elementwise_mean', override_train_ops=None):
+        super(EnergyBasedGeneratorLoss, self).__init__(reduction, override_train_ops)
 
     def forward(self, dgz):
         r"""
@@ -71,8 +71,8 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
             `sum` the output will be summed.
     """
 
-    def __init__(self, reduction='elementwise_mean', margin=80.0):
-        super(EnergyBasedDiscriminatorLoss, self).__init__(reduction)
+    def __init__(self, reduction='elementwise_mean', margin=80.0, override_train_ops=None):
+        super(EnergyBasedDiscriminatorLoss, self).__init__(reduction, override_train_ops)
         self.margin = margin
 
     def forward(self, dx, dgz):

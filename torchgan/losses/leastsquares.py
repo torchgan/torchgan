@@ -33,8 +33,8 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, reduction='elementwise_mean', c=1.0):
-        super(LeastSquaresGeneratorLoss, self).__init__(reduction)
+    def __init__(self, reduction='elementwise_mean', c=1.0, override_train_ops=None):
+        super(LeastSquaresGeneratorLoss, self).__init__(reduction, override_train_ops)
         self.c = c
 
     def forward(self, dgz):
@@ -71,8 +71,8 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, reduction='elementwise_mean', a=0.0, b=1.0):
-        super(LeastSquaresDiscriminatorLoss, self).__init__(reduction)
+    def __init__(self, reduction='elementwise_mean', a=0.0, b=1.0, override_train_ops=None):
+        super(LeastSquaresDiscriminatorLoss, self).__init__(reduction, override_train_ops)
         self.a = a
         self.b = b
 

@@ -74,7 +74,17 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
             If `none` no reduction will be applied. If `elementwise_mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
+        clamp (tuple, optional): Tuple that specifies the maximum and minimum parameter
+            clamping to be applied, as per the original version of the Wasserstein loss
+            without Gradient Penalty. Defaults to None.
     """
+    def __init__(self, reduction='elementwise_mean', clip=None, override_train_ops=None):
+        super(WassersteinDiscriminatorLoss, self).__init__(reduction, override_train_ops)
+        if (isinstance(clip, tuple) or isinstance(clip, list)) and len(clip) > 1:
+            self.clip = clip
+        else:
+            self.clip = None
+
     def forward(self, fx, fgz):
         r"""
         Args:
@@ -87,6 +97,18 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
         return wasserstein_discriminator_loss(fx, fgz, self.reduction)
+
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
+            device, labels_provided=False):
+        if self.override_train_ops is not None:
+            return self.override_train_ops(generator, discriminator,
+                    optimizer_discriminator, real_inputs, labels_provided)
+        else:
+            if self.clip is not None:
+                for p in discriminator.parameters():
+                    p.data.clamp_(self.clip[0], self.clip[1])
+            return super(WassersteinDiscriminatorLoss, self).train_ops(generator, discriminator,
+                    optimizer_discriminator, real_inputs, device, labels_provided)
 
 
 class WassersteinGradientPenalty(DiscriminatorLoss):
@@ -116,7 +138,7 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         lambd(float,optional) : Hyperparameter lambda for scaling the gradient penalty.
     """
     def __init__(self, reduction='elementwise_mean', lambd=10.0, override_train_ops=None):
-        super(WassersteinGradientPenalty, self).__init__(reduction)
+        super(WassersteinGradientPenalty, self).__init__(reduction, override_train_ops)
         self.lambd = lambd
         self.override_train_ops = override_train_ops
 
@@ -138,7 +160,7 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device, labels_provided=False):
         if self.override_train_ops is not None:
-            return self.override_train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device,
+            return self.override_train_ops(generator, discriminator, optimizer_discriminator, real_inputs, device,
                                            labels_provided)
         else:
             real = real_inputs if labels_provided is False else real_inputs[0]
