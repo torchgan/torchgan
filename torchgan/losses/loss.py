@@ -63,7 +63,7 @@ class DiscriminatorLoss(nn.Module):
                   labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
-                   real_inputs, labels)
+                   real_inputs, batch_size, device, labels)
         else:
             if labels is None and (generator.label_type == 'required' or discriminator.label_type == 'required'):
                 raise Exception('GAN model requires labels for training')

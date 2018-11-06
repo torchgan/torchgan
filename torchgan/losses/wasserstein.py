@@ -99,16 +99,16 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
         return wasserstein_discriminator_loss(fx, fgz, self.reduction)
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
-            device, labels_provided=False):
+            device, batch_size, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(generator, discriminator,
-                    optimizer_discriminator, real_inputs, labels_provided)
+                    optimizer_discriminator, real_inputs, device, batch_size, labels)
         else:
             if self.clip is not None:
                 for p in discriminator.parameters():
                     p.data.clamp_(self.clip[0], self.clip[1])
             return super(WassersteinDiscriminatorLoss, self).train_ops(generator, discriminator,
-                    optimizer_discriminator, real_inputs, device, labels_provided)
+                    optimizer_discriminator, real_inputs, device, batch_size, labels)
 
 
 class WassersteinGradientPenalty(DiscriminatorLoss):
