@@ -126,7 +126,13 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
                 fake = generator(noise, labels)
             else:
                 fake = generator(noise, label_gen)
-            dgz = discriminator(fake.detach())
+            if discriminator.label_type == 'none':
+                dgz = discriminator(fake.detach())
+            else:
+                if generator.label_type == 'generated':
+                    dgz = discriminator(fake.detach(), label_gen)
+                else:
+                    dgz = discriminator(fake.detach(), labels)
             loss_total, loss_real, loss_fake = self.forward(dx, dgz)
             loss_total.backward()
             optimizer_discriminator.step()

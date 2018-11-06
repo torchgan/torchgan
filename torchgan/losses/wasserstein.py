@@ -178,7 +178,13 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
                 fake = generator(noise, label_gen)
             eps = torch.rand(1).item()
             interpolate = eps * real_inputs + (1 - eps) * fake
-            d_interpolate = discriminator(interpolate)
+            if discriminator.label_type == 'none':
+                d_interpolate = discriminator(interpolate)
+            else:
+                if generator.label_type == 'generated':
+                    d_interpolate = discriminator(interpolate, label_gen)
+                else:
+                    d_interpolate = discriminator(interpolate, labels)
             loss = self.forward(interpolate, d_interpolate)
             weighted_loss = self.lambd * loss
             weighted_loss.backward()
