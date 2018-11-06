@@ -64,7 +64,6 @@ class ConditionalGANDiscriminator(DCGANDiscriminator):
                 batchnorm, nonlinearity, last_nonlinearity, label_type='required')
         self.input_dims = in_channels
         self.num_classes = num_classes
-        print(num_classes)
         self.label_embeddings = nn.Embedding(self.num_classes, self.num_classes)
 
     def forward(self, x, y):
