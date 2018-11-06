@@ -278,7 +278,14 @@ class Trainer(object):
                 print("Generating and Saving Images to {}".format(save_path))
                 generator = getattr(self, model)
                 with torch.no_grad():
-                    images = generator(self.test_noise[pos].to(self.device))
+                    # TODO(Aniket1998): This is a terrible temporary fix
+                    # Sampling images varies from generator to generator and
+                    # a more robust sample_images method is required
+                    if generator.label_type == 'none':
+                        images = generator(self.test_noise[pos].to(self.device))
+                    else:
+                        label_gen = torch.randint(0, generator.num_classes, (self.sample_size,))
+                        images = generator(self.test_noise[pos].to(self.device), label_gen)
                     pos = pos + 1
                     img = torchvision.utils.make_grid(images)
                     torchvision.utils.save_image(img, save_path, nrow=self.nrow)
