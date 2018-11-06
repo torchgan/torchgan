@@ -342,7 +342,7 @@ class Trainer(object):
         Args:
             epoch (int): Current epoch at which the sampler is being called.
         """
-        if self.tensorboard_log:
+        if self.log_tensorboard:
             if self.metric_logs:
                 for name, value in self.metric_logs.items():
                     self.writer.add_scalar("Metrics/{}".format(name), value[-1], epoch)
