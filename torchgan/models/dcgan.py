@@ -26,8 +26,8 @@ class DCGANGenerator(Generator):
                                                        Defaults to tanh when None is passed.
     """
     def __init__(self, encoding_dims=100, out_size=32, out_channels=3, step_channels=64,
-                 batchnorm=True, nonlinearity=None, last_nonlinearity=None):
-        super(DCGANGenerator, self).__init__(encoding_dims)
+                 batchnorm=True, nonlinearity=None, last_nonlinearity=None, label_type='none'):
+        super(DCGANGenerator, self).__init__(encoding_dims, label_type)
         if out_size < 16 or ceil(log2(out_size)) != log2(out_size):
             raise Exception('Target Image Size must be at least 16*16 and an exact power of 2')
         num_repeats = out_size.bit_length() - 4
@@ -86,8 +86,8 @@ class DCGANDiscriminator(Discriminator):
     """
 
     def __init__(self, in_size=32, in_channels=3, step_channels=64, batchnorm=True,
-                 nonlinearity=None, last_nonlinearity=None):
-        super(DCGANDiscriminator, self).__init__(in_channels)
+                 nonlinearity=None, last_nonlinearity=None, label_type='none'):
+        super(DCGANDiscriminator, self).__init__(in_channels, label_type)
         if in_size < 16 or ceil(log2(in_size)) != log2(in_size):
             raise Exception('Input Image Size must be at least 16*16 and an exact power of 2')
         num_repeats = in_size.bit_length() - 4

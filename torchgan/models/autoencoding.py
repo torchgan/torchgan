@@ -27,8 +27,8 @@ class AutoEncodingGenerator(Generator):
                                                        Defaults to tanh when None is passed.
     """
     def __init__(self, encoding_dims=100, out_size=32, out_channels=3, step_channels=64, scale_factor=2,
-                 batchnorm=True, nonlinearity=None, last_nonlinearity=None):
-        super(AutoEncodingGenerator, self).__init__(encoding_dims)
+                 batchnorm=True, nonlinearity=None, last_nonlinearity=None, label_type='none'):
+        super(AutoEncodingGenerator, self).__init__(encoding_dims, label_type)
         if out_size < (scale_factor ** 4) or ceil(log(out_size, scale_factor)) != log(out_size, scale_factor):
             raise Exception('Target image size must be at least {} and a perfect power of {}'.format(scale_factor ** 4,
                 scale_factor))
@@ -115,8 +115,8 @@ class AutoEncodingDiscriminator(Discriminator):
                                                       Defaults to sigmoid when None is passed.
     """
     def __init__(self, in_size=32, in_channels=3, encoding_dims=100, step_channels=64, scale_factor=2,
-                 batchnorm=True, nonlinearity=None, last_nonlinearity=None):
-        super(AutoEncodingDiscriminator, self).__init__(in_channels)
+                 batchnorm=True, nonlinearity=None, last_nonlinearity=None, label_type='none'):
+        super(AutoEncodingDiscriminator, self).__init__(in_channels, label_type)
         if in_size < (scale_factor ** 4) or ceil(log(in_size, scale_factor)) != log(in_size, scale_factor):
             raise Exception('Input image size must be at least {} and a perfect power of {}'.format(scale_factor ** 4,
                 scale_factor))
