@@ -166,9 +166,9 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         else:
             if labels is None and (generator.label_type == 'required' or discriminator.label_type == 'required'):
                 raise Exception('GAN model requires labels for training')
-            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
+            noise = torch.randn(real_inputs.size(0), generator.encoding_dims, device=device)
             if generator.label_type == 'generated':
-                label_gen = torch.randint(0, generator.num_classes, (batch_size,))
+                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),))
             optimizer_discriminator.zero_grad()
             if generator.label_type == 'none':
                 fake = generator(noise)
