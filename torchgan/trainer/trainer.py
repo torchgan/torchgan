@@ -1,3 +1,4 @@
+import os
 import torch
 import torchvision
 from warnings import warn
@@ -154,6 +155,9 @@ class Trainer(object):
             if key in self.__dict__:
                 warn("Overiding the default value of {} from {} to {}".format(key, getattr(self, key), val))
             setattr(self, key, val)
+
+        os.makedirs(self.checkpoints, exist_ok=True)
+        os.makedirs(self.recon, exist_ok=True)
 
     def save_model(self, epoch, save_items=None):
         r"""Function saves the model and some necessary information along with it. List of items
