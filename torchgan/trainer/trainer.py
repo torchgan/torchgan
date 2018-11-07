@@ -353,10 +353,10 @@ class Trainer(object):
         Args:
             epoch (int): Current epoch at which the sampler is being called.
         """
-        if self.tensorboard_log:
+        if self.log_tensorboard:
             if self.metric_logs:
                 for name, value in self.metric_logs.items():
-                    self.writer.add_scalar("Metrics/{}".format(name), value, epoch)
+                    self.writer.add_scalar("Metrics/{}".format(name), value[-1], epoch)
 
     def set_arg_maps(self, mappings):
         r"""Helper function to allow custom parameter names in Loss and Metric Functions.
@@ -390,7 +390,8 @@ class Trainer(object):
             arguments are not present an error is thrown.
         """
         sig = signature(func)
-        args = [p.name for p in sig.parameters.values() if p.default is _empty]
+        args = [p.name for p in sig.parameters.values() if p.default is _empty\
+                    and p.name != 'kwargs' and p.name != 'args']
         for arg in args:
             if arg not in self.__dict__:
                 raise Exception("Argument : {} not present. If the value is stored with some other\
@@ -476,8 +477,8 @@ class Trainer(object):
         if self.metric_logs is None:
             warn('No evaluation metric logs present')
         else:
-            for name, val in self.metric_logs.item():
-                print('{} : {}'.format(name, val))
+            for name, val in self.metric_logs.items():
+                print('{} : {}'.format(name, val[-1]))
             self.tensorboard_log_metrics(epoch)
 
     def eval_ops(self, epoch, **kwargs):
@@ -490,12 +491,9 @@ class Trainer(object):
         self.sample_images(epoch)
         if self.metrics is not None:
             for name, metric in self.metrics.items():
-                if name + '_inputs' not in kwargs:
-                    raise Exception("Inputs not provided for metric {}".format(name))
-                else:
-                    self.metric_logs[name].append(metric.metric_ops(**self._get_arguments(self.metric_arg_maps[name]),
-                                                                    **kwargs[name + '_inputs']))
-                    self.log_metrics(self, epoch)
+                self.metric_logs[name].append(metric.metric_ops(\
+                    **self._get_arguments(self.metric_arg_maps[name])))
+                self.log_metrics(epoch)
 
     def optim_ops(self):
         r"""Runs all the schedulers at the end of every epoch.
@@ -559,5 +557,6 @@ class Trainer(object):
         self.writer = SummaryWriter()
         self._store_loss_maps()
         self._store_metric_maps()
+        self.batch_size = data_loader.batch_size
         self.train(data_loader, **kwargs)
         self.writer.close()
