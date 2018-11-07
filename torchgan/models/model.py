@@ -11,9 +11,10 @@ class Generator(nn.Module):
     """
     # FIXME(Aniket1998): If a user is overriding the default initializer, he must also override the constructor
     # Find an efficient workaround by fixing the initialization mechanism
-    def __init__(self, encoding_dims):
+    def __init__(self, encoding_dims, label_type='none'):
         super(Generator, self).__init__()
         self.encoding_dims = encoding_dims
+        self.label_type = label_type
 
     # TODO(Aniket1998): Think of better dictionary lookup based approaches to initialization
     # That allows easy and customizable weight initialization without overriding
@@ -34,9 +35,10 @@ class Discriminator(nn.Module):
         input_dims (int) : Dimensions of the input
 
     """
-    def __init__(self, input_dims):
+    def __init__(self, input_dims, label_type='none'):
         super(Discriminator, self).__init__()
         self.input_dims = input_dims
+        self.label_type = label_type
 
     # TODO(Aniket1998): Think of better dictionary lookup based approaches to initialization
     # That allows easy and customizable weight initialization without overriding

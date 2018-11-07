@@ -50,7 +50,8 @@ class TestModels(unittest.TestCase):
             x = torch.randn(10, encodings[i])
             gen = ConditionalGANGenerator(classes[i], encodings[i], out_size[i], channels[i], ch,
                                           batchnorm[i], nonlinearities[i], last_nonlinearity[i])
-            y = gen(x, torch.rand(10, classes[i]))
+            labels = torch.randint(0, classes[i], (10,))
+            y = gen(x, labels)
             assert y.shape == (10, channels[i], out_size[i], out_size[i])
 
     def test_conditional_gan_discriminator(self):
@@ -66,7 +67,8 @@ class TestModels(unittest.TestCase):
             x = torch.randn(10, channels[i], in_size[i], in_size[i])
             gen = ConditionalGANDiscriminator(classes[i], in_size[i], channels[i], ch,
                                               batchnorm[i], nonlinearities[i], last_nonlinearity[i])
-            y = gen(x, torch.rand(10, classes[i]))
+            labels = torch.randint(0, classes[i], (10,))
+            y = gen(x, labels)
             assert y.shape == (10,)
 
     def test_infogan_generator(self):

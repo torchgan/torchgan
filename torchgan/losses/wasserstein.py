@@ -99,16 +99,16 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
         return wasserstein_discriminator_loss(fx, fgz, self.reduction)
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
-            device, labels_provided=False):
+            device, batch_size, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(generator, discriminator,
-                    optimizer_discriminator, real_inputs, labels_provided)
+                    optimizer_discriminator, real_inputs, device, batch_size, labels)
         else:
             if self.clip is not None:
                 for p in discriminator.parameters():
                     p.data.clamp_(self.clip[0], self.clip[1])
             return super(WassersteinDiscriminatorLoss, self).train_ops(generator, discriminator,
-                    optimizer_discriminator, real_inputs, device, labels_provided)
+                    optimizer_discriminator, real_inputs, device, batch_size, labels)
 
 
 class WassersteinGradientPenalty(DiscriminatorLoss):
@@ -158,18 +158,33 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         # relying on autograd
         return wasserstein_gradient_penalty(interpolate, d_interpolate, self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device, labels_provided=False):
+    def train_ops(self, generator, discriminator, optimizer_discriminator,
+            real_inputs, batch_size, device, labels=None):
         if self.override_train_ops is not None:
-            return self.override_train_ops(generator, discriminator, optimizer_discriminator, real_inputs, device,
-                                           labels_provided)
+            return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
+                   real_inputs, labels)
         else:
-            real = real_inputs if labels_provided is False else real_inputs[0]
-            noise = torch.randn(real.size(0), generator.encoding_dims, device=device)
+            if labels is None and (generator.label_type == 'required' or discriminator.label_type == 'required'):
+                raise Exception('GAN model requires labels for training')
+            noise = torch.randn(real_inputs.size(0), generator.encoding_dims, device=device)
+            if generator.label_type == 'generated':
+                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),))
             optimizer_discriminator.zero_grad()
-            fake = generator(noise)
+            if generator.label_type == 'none':
+                fake = generator(noise)
+            elif generator.label_type == 'required':
+                fake = generator(noise, labels)
+            else:
+                fake = generator(noise, label_gen)
             eps = torch.rand(1).item()
-            interpolate = eps * real + (1 - eps) * fake
-            d_interpolate = discriminator(interpolate)
+            interpolate = eps * real_inputs + (1 - eps) * fake
+            if discriminator.label_type == 'none':
+                d_interpolate = discriminator(interpolate)
+            else:
+                if generator.label_type == 'generated':
+                    d_interpolate = discriminator(interpolate, label_gen)
+                else:
+                    d_interpolate = discriminator(interpolate, labels)
             loss = self.forward(interpolate, d_interpolate)
             weighted_loss = self.lambd * loss
             weighted_loss.backward()
