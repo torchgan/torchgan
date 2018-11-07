@@ -32,7 +32,9 @@ class ClassifierScore(EvaluationMetric):
         Returns:
             The output from the classifier.
         """
-        return self.classifier(x) if self.transform is None else self.classifier(self.transform(x))
+        x = x if self.transform is None else self.transform(x)
+        x = x.unsqueeze(0)
+        return self.classifier(x)
 
     def calculate_score(self, x):
         r"""
@@ -47,12 +49,10 @@ class ClassifierScore(EvaluationMetric):
         p = F.softmax(x, dim=1)
         q = torch.mean(p, dim=0)
         kl = torch.sum(p * (F.log_softmax(x, dim=1) - torch.log(q)), dim=1)
-        return torch.exp(reduce(kl, 'elementwise_mean'))
+        return torch.exp(reduce(kl, 'elementwise_mean')).data
 
-    def metric_ops(self, generator, discriminator, device, **kwargs):
-        # NOTE(avik-pal): We make the shift from cpu to device everytime. This is not efficient
-        #                 but avoids wasting a lot of GPU memory usage.
-        self.classifier.to(device)
-        score = self.__call__(kwargs['ClassifierScore_inputs'])
-        self.classifier.cpu()
+    def metric_ops(self, generator, device):
+        noise = torch.randn(1, generator.encoding_dims, device=device)
+        img = generator(noise).detach().cpu()
+        score = self.__call__(img.squeeze(0))
         return score
