@@ -6,6 +6,25 @@ from .dcgan import DCGANGenerator, DCGANDiscriminator
 __all__ = ['ACGANGenerator', 'ACGANDiscriminator']
 
 class ACGANGenerator(DCGANGenerator):
+    r"""Auxiliary Classifier GAN (ACGAN) generator based on a DCGAN model from
+    `"Conditional Image Synthesis With Auxiliary Classifier GANs
+    by Odena et. al. " <https://arxiv.org/abs/1610.09585>`_ paper
+
+    Args:
+        num_classes (int) : Total classes present in the dataset.
+        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior. Default 100
+        out_channels (int, optional) : Number of channels in the output Tensor.
+        step_channels (int, optional) : Number of channels in multiples of which the CGAN steps up
+                                        the convolutional features
+                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
+                                        where d = step_channels.
+        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator
+        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
+                                                  Defaults to LeakyReLU(0.2) when None is passed.
+        last_nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
+                                                       Defaults to tanh when None is passed.
+
+    """
     def __init__(self, num_classes, encoding_dims=100, out_size=32, out_channels=3,
                  step_channels=64, batchnorm=True, nonlinearity=None, last_nonlinearity=None):
         super(ACGANGenerator, self).__init__(encoding_dims, out_size,
@@ -19,6 +38,25 @@ class ACGANGenerator(DCGANGenerator):
         return super(ACGANGenerator, self).forward(torch.mul(y_emb, z))
 
 class ACGANDiscriminator(DCGANDiscriminator):
+    r"""Auxiliary Classifier GAN (ACGAN) discriminator based on a DCGAN model from
+    `"Conditional Image Synthesis With Auxiliary Classifier GANs
+    by Odena et. al. " <https://arxiv.org/abs/1610.09585>`_ paper
+
+    Args:
+        num_classes (int) : Total classes present in the dataset.
+        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior. Default 100
+        out_channels (int, optional) : Number of channels in the output Tensor.
+        step_channels (int, optional) : Number of channels in multiples of which the CGAN steps up
+                                        the convolutional features
+                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
+                                        where d = step_channels.
+        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator
+        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
+                                                  Defaults to LeakyReLU(0.2) when None is passed.
+        last_nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
+                                                       Defaults to tanh when None is passed.
+
+    """
     def __init__(self, num_classes, in_size=32, in_channels=3, step_channels=64, batchnorm=True,
             nonlinearity=None, last_nonlinearity=None):
         super(ACGANDiscriminator, self).__init__(in_size, in_channels, step_channels,

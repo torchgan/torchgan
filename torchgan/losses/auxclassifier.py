@@ -7,6 +7,16 @@ from ..utils import reduce
 __all__ = ['AuxiliaryClassifierGeneratorLoss', 'AuxiliaryClassifierDiscriminatorLoss']
 
 class AuxiliaryClassifierGeneratorLoss(GeneratorLoss):
+    r"""Auxiliary Classifier GAN (ACGAN) loss based on a from
+    `"Conditional Image Synthesis With Auxiliary Classifier GANs
+    by Odena et. al. " <https://arxiv.org/abs/1610.09585>`_ paper
+
+    Args:
+        reduction (string, optional): Specifies the reduction to apply to the output.
+            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            the elements will be divided by the number of elements in the output. If
+            `sum` the output will be summed.
+    """
     def forward(self, logits, labels):
         return F.cross_entropy(logits, labels, reduction=self.reduction)
 
@@ -36,6 +46,16 @@ class AuxiliaryClassifierGeneratorLoss(GeneratorLoss):
         return loss.item()
 
 class AuxiliaryClassifierDiscriminatorLoss(DiscriminatorLoss):
+    r"""Auxiliary Classifier GAN (ACGAN) loss based on a from
+    `"Conditional Image Synthesis With Auxiliary Classifier GANs
+    by Odena et. al. " <https://arxiv.org/abs/1610.09585>`_ paper
+
+    Args:
+        reduction (string, optional): Specifies the reduction to apply to the output.
+            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            the elements will be divided by the number of elements in the output. If
+            `sum` the output will be summed.
+    """
     def forward(self, logits, labels):
         return F.cross_entropy(logits, labels, reduction=self.reduction)
 
