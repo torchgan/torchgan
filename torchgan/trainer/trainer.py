@@ -284,7 +284,7 @@ class Trainer(object):
                     if generator.label_type == 'none':
                         images = generator(self.test_noise[pos].to(self.device))
                     else:
-                        label_gen = torch.randint(0, generator.num_classes, (self.sample_size,))
+                        label_gen = torch.randint(0, generator.num_classes, (self.sample_size,), device=self.device)
                         images = generator(self.test_noise[pos].to(self.device), label_gen)
                     pos = pos + 1
                     img = torchvision.utils.make_grid(images)
