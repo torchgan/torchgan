@@ -23,7 +23,7 @@ def mnist_dataloader():
     train_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True)
     return train_loader
 
-class TestMetrics(unittest.TestCase):
+class TestTrainer(unittest.TestCase):
     def test_trainer_dcgan(self):
         network_params = {
             "generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels": 4}},
@@ -40,9 +40,9 @@ class TestMetrics(unittest.TestCase):
 
     def test_trainer_cgan(self):
         network_params = {
-            "generator": {"name": ConditionalGANGenerator, "args": {"num_classes": 1,
+            "generator": {"name": ConditionalGANGenerator, "args": {"num_classes": 10,
                     "out_channels": 1, "step_channels": 4}},
-            "discriminator": {"name": ConditionalGANDiscriminator, "args": {"num_classes": 1,
+            "discriminator": {"name": ConditionalGANDiscriminator, "args": {"num_classes": 10,
                     "in_channels": 1, "step_channels": 4}}
         }
         optim_params = {

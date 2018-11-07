@@ -6,7 +6,7 @@ from .dcgan import DCGANGenerator, DCGANDiscriminator
 __all__ = ['ConditionalGANGenerator', 'ConditionalGANDiscriminator']
 
 class ConditionalGANGenerator(DCGANGenerator):
-    r"""Condititional GAN (CGAN) generator based on a DCGAN model from
+    r"""Conditional GAN (CGAN) generator based on a DCGAN model from
     `"Conditional Generative Adversarial Nets
     by Mirza et. al. " <https://arxiv.org/abs/1411.1784>`_ paper
 
@@ -27,17 +27,15 @@ class ConditionalGANGenerator(DCGANGenerator):
     """
     def __init__(self, num_classes, encoding_dims=100, out_size=32, out_channels=3,
                  step_channels=64, batchnorm=True, nonlinearity=None, last_nonlinearity=None):
-        super(ConditionalGANGenerator, self).__init__(encoding_dims + num_classes, out_size, out_channels,
-                                                      step_channels, batchnorm, nonlinearity, last_nonlinearity)
+        super(ConditionalGANGenerator, self).__init__(encoding_dims + num_classes, out_size,
+                out_channels, step_channels, batchnorm, nonlinearity, last_nonlinearity, label_type='generated')
         self.encoding_dims = encoding_dims
         self.num_classes = num_classes
+        self.label_embeddings = nn.Embedding(self.num_classes, self.num_classes)
 
     def forward(self, z, y):
-        # The generator models a joint conditional over the noise sample z and the labels y
-        # The simplest way to do it is to concatenate the two variables and then treat it as input to a DCGAN
-        # TODO(Aniket1998) : Experiment with other ways of modelling the conditional such as
-        # Concatenation at an intermediate layer, or combining using Multilayer Perceptrons
-        return super(ConditionalGANGenerator, self).forward(torch.cat((z, y), dim=1))
+        y_emb = self.label_embeddings(y.type(torch.LongTensor).to(y.device))
+        return super(ConditionalGANGenerator, self).forward(torch.cat((z, y_emb), dim=1))
 
 
 class ConditionalGANDiscriminator(DCGANDiscriminator):
@@ -62,16 +60,15 @@ class ConditionalGANDiscriminator(DCGANDiscriminator):
     """
     def __init__(self, num_classes, in_size=32, in_channels=3, step_channels=64, batchnorm=True,
                  nonlinearity=None, last_nonlinearity=None):
-        super(ConditionalGANDiscriminator, self).__init__(in_size, in_channels + num_classes, step_channels, batchnorm,
-                                                          nonlinearity, last_nonlinearity)
+        super(ConditionalGANDiscriminator, self).__init__(in_size, in_channels + num_classes, step_channels,
+                batchnorm, nonlinearity, last_nonlinearity, label_type='required')
         self.input_dims = in_channels
         self.num_classes = num_classes
+        self.label_embeddings = nn.Embedding(self.num_classes, self.num_classes)
 
     def forward(self, x, y):
-        # Change dimensions of the label from (N, n_classes) to (N, n_classes, width, height)
-        # This is followed by concatenating with the image, as a simple way to model
-        # A joint conditional over the images and the labels
-        # TODO(Aniket1998) : Eperiment with other ways of modelling the conditional
-        # Same as in the generator
-        y = y.unsqueeze(2).unsqueeze(3).expand(-1, y.size(1), x.size(2), x.size(3))
-        return super(ConditionalGANDiscriminator, self).forward(torch.cat((x, y), dim=1))
+        # TODO(Aniket1998): If directly expanding the embeddings gives poor results,
+        # try layers of transposed convolution over the embeddings
+        y_emb = self.label_embeddings(y.type(torch.LongTensor).to(y.device))
+        y_emb = y_emb.unsqueeze(2).unsqueeze(3).expand(-1, y_emb.size(1), x.size(2), x.size(3))
+        return super(ConditionalGANDiscriminator, self).forward(torch.cat((x, y_emb), dim=1))

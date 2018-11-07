@@ -102,17 +102,37 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
         elif self.k > 1.0:
             self.k = 1.0
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device, labels_provided=False):
+    def train_ops(self, generator, discriminator, optimizer_discriminator,
+            real_inputs, batch_size, device, labels=None):
         if self.override_train_ops is not None:
-            return self.override_train_ops(generator, discriminator, optimizer_discriminator,
-                                           real_inputs, device, labels_provided)
+            return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
+                   real_inputs, batch_size, device, labels)
         else:
-            real = real_inputs if labels_provided is False else real_inputs[0]
-            noise = torch.randn(real.size(0), generator.encoding_dims, device=device)
+            if labels is None and (generator.label_type == 'required' or discriminator.label_type == 'required'):
+                raise Exception('GAN model requires labels for training')
+            noise = torch.randn(real_inputs.size(0), generator.encoding_dims, device=device)
+            if generator.label_type == 'generated':
+                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),))
             optimizer_discriminator.zero_grad()
-            dx = discriminator(real)
-            fake = generator(noise)
-            dgz = discriminator(fake.detach())
+            if discriminator.label_type == 'none':
+                dx = discriminator(real_inputs)
+            elif discriminator.label_type == 'required':
+                dx = discriminator(real_inputs, labels)
+            else:
+                dx = discriminator(real_inputs, label_gen)
+            if generator.label_type == 'none':
+                fake = generator(noise)
+            elif generator.label_type == 'required':
+                fake = generator(noise, labels)
+            else:
+                fake = generator(noise, label_gen)
+            if discriminator.label_type == 'none':
+                dgz = discriminator(fake.detach())
+            else:
+                if generator.label_type == 'generated':
+                    dgz = discriminator(fake.detach(), label_gen)
+                else:
+                    dgz = discriminator(fake.detach(), labels)
             loss_total, loss_real, loss_fake = self.forward(dx, dgz)
             loss_total.backward()
             optimizer_discriminator.step()

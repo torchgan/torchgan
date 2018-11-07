@@ -8,7 +8,7 @@ class GeneratorLoss(nn.Module):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+        If `none` no reduction will be applied. If `elementwise_mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
@@ -17,13 +17,29 @@ class GeneratorLoss(nn.Module):
         self.reduction = reduction
         self.override_train_ops = override_train_ops
 
-    def train_ops(self, generator, discriminator, optimizer_generator, device, batch_size):
+    def train_ops(self, generator, discriminator, optimizer_generator, device, batch_size, labels=None):
         if self.override_train_ops is not None:
-            return self.override_train_ops(generator, discriminator, optimizer_generator, device, batch_size)
+            return self.override_train_ops(generator, discriminator, optimizer_generator, device, batch_size, labels)
         else:
+            if labels is None and generator.label_type == 'required':
+                raise Exception('GAN model requires labels for training')
             noise = torch.randn(batch_size, generator.encoding_dims, device=device)
             optimizer_generator.zero_grad()
-            dgz = discriminator(generator(noise))
+            if generator.label_type == 'generated':
+                label_gen = torch.randint(0, generator.num_classes, (batch_size,))
+            if generator.label_type == 'none':
+                fake = generator(noise)
+            elif generator.label_type == 'required':
+                fake = generator(noise, labels)
+            elif generator.label_type == 'generated':
+                fake = generator(noise, label_gen)
+            if discriminator.label_type == 'none':
+                dgz = discriminator(fake)
+            else:
+                if generator.label_type == 'generated':
+                    dgz = discriminator(fake, label_gen)
+                else:
+                    dgz = discriminator(fake, labels)
             loss = self.forward(dgz)
             loss.backward()
             optimizer_generator.step()
@@ -43,18 +59,37 @@ class DiscriminatorLoss(nn.Module):
         self.reduction = reduction
         self.override_train_ops = override_train_ops
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device,
-                  labels_provided=False):
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, batch_size, device,
+                  labels=None):
         if self.override_train_ops is not None:
-            return self.override_train_ops(generator, discriminator, optimizer_discriminator,
-                   real_inputs, labels_provided)
+            return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
+                   real_inputs, batch_size, device, labels)
         else:
-            real = real_inputs if labels_provided is False else real_inputs[0]
-            noise = torch.randn(real.size(0), generator.encoding_dims, device=device)
+            if labels is None and (generator.label_type == 'required' or discriminator.label_type == 'required'):
+                raise Exception('GAN model requires labels for training')
+            noise = torch.randn(real_inputs.size(0), generator.encoding_dims, device=device)
+            if generator.label_type == 'generated':
+                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),))
             optimizer_discriminator.zero_grad()
-            dx = discriminator(real)
-            fake = generator(noise)
-            dgz = discriminator(fake.detach())
+            if discriminator.label_type == 'none':
+                dx = discriminator(real_inputs)
+            elif discriminator.label_type == 'required':
+                dx = discriminator(real_inputs, labels)
+            else:
+                dx = discriminator(real_inputs, label_gen)
+            if generator.label_type == 'none':
+                fake = generator(noise)
+            elif generator.label_type == 'required':
+                fake = generator(noise, labels)
+            else:
+                fake = generator(noise, label_gen)
+            if discriminator.label_type == 'none':
+                dgz = discriminator(fake.detach())
+            else:
+                if generator.label_type == 'generated':
+                    dgz = discriminator(fake.detach(), label_gen)
+                else:
+                    dgz = discriminator(fake.detach(), labels)
             loss = self.forward(dx, dgz)
             loss.backward()
             optimizer_discriminator.step()
