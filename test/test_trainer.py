@@ -53,3 +53,20 @@ class TestTrainer(unittest.TestCase):
         trainer = Trainer(network_params, optim_params, losses_list,
                 batch_size=128, sample_size=1, epochs=1, device=torch.device('cpu'))
         trainer(mnist_dataloader())
+
+    def test_trainer_acgan(self):
+        network_params = {
+            "generator": {"name": ACGANGenerator, "args": {"num_classes": 10,
+                    "out_channels": 1, "step_channels": 4}},
+            "discriminator": {"name": ACGANDiscriminator, "args": {"num_classes": 10,
+                    "in_channels": 1, "step_channels": 4}}
+        }
+        optim_params = {
+            "optimizer_generator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}},
+            "optimizer_discriminator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}},
+        }
+        losses_list = [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss(),
+                AuxiliaryClassifierGeneratorLoss(), AuxiliaryClassifierDiscriminatorLoss()]
+        trainer = Trainer(network_params, optim_params, losses_list,
+                batch_size=128, sample_size=1, epochs=1, device=torch.device('cpu'))
+        trainer(mnist_dataloader())
