@@ -59,7 +59,9 @@ class DiscriminatorLoss(nn.Module):
         self.reduction = reduction
         self.override_train_ops = override_train_ops
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, batch_size, device,
+    # NOTE(avik-pal): batch_size and device gets flipped if the order is not given as below. Investigate this
+    #                 error as might affect our support for custom loss functions.
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device, batch_size,
                   labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
