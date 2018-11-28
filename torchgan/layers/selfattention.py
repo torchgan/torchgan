@@ -13,7 +13,7 @@ class SelfAttention(nn.Module):
     def forward(self, x):
         dims = (x.size(0), -1, x.size(2) * x.size(3))
         out_query = self.query(x).view(dims)
-        out_key = self.key(x).vew(dims).permute(0, 2, 1)
+        out_key = self.key(x).view(dims).permute(0, 2, 1)
         attn = F.softmax(torch.bmm(out_key, out_query), dim=-1)
         out_value = self.value(x).view(dims)
 
