@@ -45,12 +45,16 @@ class Logger(object):
     def run_end_epoch(self, trainer, epoch, *args):
         if not self.no_print:
             print("Epoch {} Summary".format(epoch))
-        for logger in self.logger_end_epoch:
+        for logger in self.logger_mid_epoch:
             if type(logger).__name__ is "LossVisualize" or\
-               type(logger).__name__ is "GradientVisualize" or\
-               type(logger).__name__ is "ImageVisualize":
+               type(logger).__name__ is "GradientVisualize":
+                logger(trainer, lock_items=self.no_print)
+            else:
+                logger(*args, lock_items=self.no_print)
+        for logger in self.logger_end_epoch:
+            if type(logger).__name__ is "ImageVisualize":
                 logger(trainer, lock_items=self.no_print)
             elif type(logger).__name__ is "MetricVisualize":
                 logger(lock_items=self.no_print)
             else:
-                logger(*args, lock_items=True)
+                logger(*args, lock_items=self.no_print)
