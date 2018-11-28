@@ -7,6 +7,16 @@ __all__ = ['Visualize', 'LossVisualize', 'MetricVisualize',
            'GradientVisualize', 'ImageVisualize']
 
 class Visualize(object):
+    r"""Base class for all Visualizations. Supports printing to Tensorboard and
+    Console.
+
+    Args:
+        visualize_list (list, optional): List of the functions needed for visualization
+        tensorboard (bool, optional): Set it to `True` for using TensorboardX.
+        log_dir (str, optional): Directory where TensorboardX should store the logs.
+        writer (tensorboardX.SummaryWriter, optonal): Send a `SummaryWriter` if you
+                                                      don't want to start a new SummaryWriter.
+    """
     def __init__(self, visualize_list, tensorboard=True, log_dir=None, writer=None):
         self.writer = SummaryWriter(log_dir) if writer is None else writer
         self.logs = {}
@@ -17,13 +27,18 @@ class Visualize(object):
         self.tensorboard_step = 1
 
     def tensorboard_step_update(self):
+        r"""Helper function which updates the tensorboard step at the end of
+        one print iteration.
+        """
         self.tensorboard_step += 1
 
     def log_tensorboard(self):
-        pass
+        r"""Tensorboard logging function. Needs to be defined in the subclass"""
+        raise NotImplementedError
 
     def log_items(self):
-        pass
+        r"""Console logging function. Needs to be defined in the subclass"""
+        raise NotImplementedError
 
     def __call__(self, *args, lock_items=False, lock_tensorboard=False, **kwargs):
         if not lock_items:
