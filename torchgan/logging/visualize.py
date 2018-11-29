@@ -42,8 +42,10 @@ class Visualize(object):
     def build_matplotlib(self, plot_title, plot_xlabel, plot_ylabel):
         self.plots = {}
         self.lines = {}
+        self.figs = {}
         for i, title in enumerate(plot_title):
             plot = plt.figure()
+            self.figs[title] = plot
             self.plots[title] = plot.gca()
             self.plots[title].set_title(title)
             self.plots[title].set_xlabel(plot_xlabel[i])
@@ -51,6 +53,7 @@ class Visualize(object):
             self.lines[title] = self.plots[title].plot([], [])[0]
         for title in self.logs.keys():
             plot = plt.figure()
+            self.figs[title] = plot
             self.plots[title] = plot.gca()
             self.plots[title].set_title(title)
             self.plots[title].set_xlabel("Time Step")
@@ -131,7 +134,7 @@ class LossVisualize(Visualize):
             val = value[-1]
             # NOTE(avik-pal): Tuple case not handled
             self.lines[name].set_data(self.step, val)
-        for name, plot in self.plots.items():
+        for name, plot in self.figs.items():
             plot.show(block=False)
 
     def log_seaborn(self, running_losses):
@@ -161,7 +164,7 @@ class MetricVisualize(Visualize):
     def log_matplotlib(self):
         for name, value in self.logs.items():
             self.lines[name].set_data(self.step, value[-1])
-        for name, plot in self.plots.items():
+        for name, plot in self.figs.items():
             plot.show(block=False)
 
     def log_seaborn(self):
@@ -174,10 +177,12 @@ class GradientVisualize(Visualize):
             self.build_matplotlib_custom(model_names)
 
     def build_matplotlib_custom(self, model_names):
+        self.figs = {}
         self.plots = {}
         self.lines = {}
         for name in model_names:
             plot = plt.figure()
+            self.figs[name] = plot
             self.plots[name] = plot.gca()
             self.plots[name].set_title(name)
             self.plots[name].set_xlabel("Time Step")
@@ -192,7 +197,7 @@ class GradientVisualize(Visualize):
 
     def log_matplotlib(self, name, gradsum):
         self.lines[name].set_data(self.step, gradsum)
-        plt.show(self.plots[name], block=False)
+        self.figs[name].show(block=False)
 
     def log_seaborn(self, name, gradsum):
         pass
