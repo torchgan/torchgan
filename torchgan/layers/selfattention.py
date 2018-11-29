@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+__all__ = ['SelfAttention']
+
 class SelfAttention(nn.Module):
     def __init__(self, input_dims, output_dims=None):
         output_dims = input_dims // 8 if output_dims is None else output_dims
@@ -17,6 +19,6 @@ class SelfAttention(nn.Module):
         out_key = self.key(x).view(dims).permute(0, 2, 1)
         attn = F.softmax(torch.bmm(out_key, out_query), dim=-1)
         out_value = self.value(x).view(dims)
-
-        out = self.gamma * torch.bmm(out_value, attn) + x
+        out_value = torch.bmm(out_value, attn).view(x.size())
+        out = self.gamma * out_value + x
         return out, attn
