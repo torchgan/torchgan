@@ -5,7 +5,7 @@ __all__ = ['Logger']
 
 class Logger(object):
     def __init__(self, trainer, losses_list, metrics_list=None, tensorboard=True,
-                 log_dir=None, writer=None, nrow=8, test_noise=None, no_print=False):
+                 log_dir=None, writer=None, nrow=8, test_noise=None):
         self.writer = SummaryWriter(log_dir) if writer is None else writer
         self.logger_end_epoch = []
         self.logger_mid_epoch = []
@@ -17,7 +17,6 @@ class Logger(object):
             self.logger_end_epoch.append(MetricVisualize(metrics_list, tensorboard=tensorboard,
                                                          writer=self.writer))
         self.logger_mid_epoch.append(LossVisualize(losses_list, tensorboard=tensorboard, writer=self.writer))
-        self.no_print = no_print
 
     def get_loss_viz(self):
         return self.logger_mid_epoch[1]
@@ -43,18 +42,17 @@ class Logger(object):
                 logger(*args, lock_items=True)
 
     def run_end_epoch(self, trainer, epoch, *args):
-        if not self.no_print:
-            print("Epoch {} Summary".format(epoch))
+        print("Epoch {} Summary".format(epoch))
         for logger in self.logger_mid_epoch:
             if type(logger).__name__ is "LossVisualize" or\
                type(logger).__name__ is "GradientVisualize":
-                logger(trainer, lock_items=self.no_print)
+                logger(trainer)
             else:
-                logger(*args, lock_items=self.no_print)
+                logger(*args)
         for logger in self.logger_end_epoch:
             if type(logger).__name__ is "ImageVisualize":
-                logger(trainer, lock_items=self.no_print)
+                logger(trainer)
             elif type(logger).__name__ is "MetricVisualize":
-                logger(lock_items=self.no_print)
+                logger()
             else:
-                logger(*args, lock_items=self.no_print)
+                logger(*args)
