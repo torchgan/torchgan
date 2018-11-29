@@ -1,8 +1,7 @@
 language: python
 python:
-  - "3.5"
-  - "3.6"
-  # - "3.7" Not available in travis
+  - "3.6" # Enough to test on 1 version. We are anyways installing version 3.7 on travis before
+          # testing
 
 # command to install dependencies
 install:
@@ -18,12 +17,12 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy -c pytorch
   - source activate test-environment
   - python setup.py install
-  - pip install --upgrade pytest
+  - pip install --upgrade pytest pytest-cov
   - pip install flake8
 
 # command to run tests
 script:
-  - pytest test/
+  - pytest --cov=./
   - flake8 torchgan/
 
 # command for coverage results
