@@ -57,3 +57,11 @@ Mutual Information Penalty
 --------------------------
 .. autoclass:: MutualInformationPenalty
     :members:
+
+Auxillary Classifier Loss
+-------------------------
+.. autoclass:: AuxiliaryClassifierGeneratorLoss
+    :members:
+
+.. autoclass:: AuxiliaryClassifierDiscriminatorLoss
+    :members:

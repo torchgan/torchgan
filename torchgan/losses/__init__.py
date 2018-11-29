@@ -5,3 +5,4 @@ from .leastsquares import *
 from .boundaryequilibrium import *
 from .mutualinfo import *
 from .energybased import *
+from .auxclassifier import *

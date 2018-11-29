@@ -52,3 +52,8 @@ AutoEncoders
 ------------
 .. autoclass:: AutoEncodingGenerator
 .. autoclass:: AutoEncodingDiscriminator
+
+ACGAN
+-----
+.. autoclass:: ACGANGenerator
+.. autoclass:: ACGANDiscriminator
