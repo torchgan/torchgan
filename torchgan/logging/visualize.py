@@ -5,6 +5,8 @@ from .backends import *
 if TENSORBOARD_LOGGING == 1:
     from tensorboardX import SummaryWriter
 if MATPLOTLIB_LOGGING == 1:
+    import matplotlib
+    matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
 if SEABORN_LOGGING == 1:
     import seaborn as sns
