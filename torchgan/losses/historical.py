@@ -25,9 +25,9 @@ class HistoricalAverageGeneratorLoss(GeneratorLoss):
                 loss = None
                 for i, p in enumerate(generator.parameters()):
                     if loss is None:
-                        loss = (p - self.sum_parameters[i]).norm(2)
+                        loss = torch.sum((p - self.sum_parameters[i]) ** 2)
                     else:
-                        loss += (p - self.sum_parameters[i]).norm(2)
+                        loss += torch.sum((p - self.sum_parameters[i]) ** 2)
                     self.sum_parameters[i] += p
                 loss /= self.timesteps
                 self.timesteps += 1
