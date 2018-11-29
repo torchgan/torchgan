@@ -15,8 +15,8 @@ class SpectralNorm(nn.Module):
         width = w.view(height, -1).data.shape[1]
         self.u = Parameter(w.data.new(height).normal_(0, 1), requires_grad=False)
         self.v = Parameter(w.data.new(width).normal_(0, 1), requires_grad=False)
-        self.u = self.l2normalize(self.u)
-        self.v = self.l2normalize(self.v)
+        self.u.data = self.l2normalize(self.u.data)
+        self.v.data = self.l2normalize(self.v.data)
         self.w_bar = Parameter(w.data)
         del self.module._parameters[self.name]
 
@@ -26,8 +26,8 @@ class SpectralNorm(nn.Module):
     def forward(self, *args):
         height = self.w_bar.data.shape[0]
         for _ in range(self.power_iterations):
-            self.v = self.l2normalize(torch.mv(torch.t(self.w_bar.view(height, -1)), self.u))
-            self.u = self.l2normalize(torch.mv(self.w_bar.view(height, -1), self.v))
+            self.v.data = self.l2normalize(torch.mv(torch.t(self.w_bar.view(height, -1)), self.u))
+            self.u.data = self.l2normalize(torch.mv(self.w_bar.view(height, -1), self.v))
         sigma = self.u.dot(self.w_bar.view(height, -1).mv(self.v))
-        setattr(self.module, self.name, self.w_bar / sigma.expand_as(self.w))
+        setattr(self.module, self.name, self.w_bar / sigma.expand_as(self.w_bar))
         return self.module.forward(*args)
