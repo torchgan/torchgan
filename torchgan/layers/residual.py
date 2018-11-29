@@ -3,11 +3,13 @@ import torch.nn as nn
 __all__ = ['ResidualBlock']
 
 class ResidualBlock(nn.Module):
-    def __init__(self, filters, kernels, strides, paddings=None, activation=nn.ReLU,
+    def __init__(self, filters, kernels, strides=None, paddings=None, activation=nn.ReLU,
                  batchnorm=True, shortcut=None):
         super(ResidualBlock, self).__init__()
+        if strides is None:
+            strides = [1 for _ in range(len(kernels))]
         if paddings is None:
-            paddings = [0 for _ in range(len(strides))]
+            paddings = [0 for _ in range(len(kernels))]
         assert len(filters) == len(kernels) + 1 and len(filters) == len(strides) + 1 \
             and len(filters) == len(paddings) + 1
         layers = []
