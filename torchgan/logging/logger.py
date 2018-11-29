@@ -11,8 +11,7 @@ class Logger(object):
         self.logger_mid_epoch = []
         self.logger_end_epoch.append(ImageVisualize(trainer, writer=self.writer, test_noise=test_noise,
                                                     nrow=nrow))
-        self.logger_mid_epoch.append(GradientVisualize([], model_names=trainer.model_names,
-                                                       writer=self.writer))
+        self.logger_mid_epoch.append(GradientVisualize([], writer=self.writer))
         if metrics_list is not None:
             self.logger_end_epoch.append(MetricVisualize(metrics_list, writer=self.writer))
         self.logger_mid_epoch.append(LossVisualize(losses_list, writer=self.writer))
