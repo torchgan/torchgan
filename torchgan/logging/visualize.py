@@ -1,6 +1,7 @@
 import torch
 import torchvision
 from ..models.model import Generator, Discriminator
+from .backends import *
 if TENSORBOARD_LOGGING == 1:
     from tensorboardX import SummaryWriter
 if MATPLOTLIB_LOGGING == 1:
@@ -43,18 +44,18 @@ class Visualize(object):
         self.lines = {}
         for i, title in enumerate(plot_title):
             plot = plt.figure()
-            self.plot[title] = plot.gca()
+            self.plots[title] = plot.gca()
             self.plots[title].set_title(title)
             self.plots[title].set_xlabel(plot_xlabel[i])
             self.plots[title].set_ylabel(plot_ylabel[i])
-            self.lines[title] = self.plots[title].plot([], [])
+            self.lines[title] = self.plots[title].plot([], [])[0]
         for title in self.logs.keys():
             plot = plt.figure()
-            self.plot[title] = plot.gca()
+            self.plots[title] = plot.gca()
             self.plots[title].set_title(title)
             self.plots[title].set_xlabel("Time Step")
             self.plots[title].set_ylabel(title)
-            self.lines[title] = self.plots[title].plot([], [])
+            self.lines[title] = self.plots[title].plot([], [])[0]
 
     def build_seaborn(self):
         pass
@@ -96,7 +97,7 @@ class Visualize(object):
 class LossVisualize(Visualize):
     def __init__(self, *args, **kwargs):
         super(LossVisualize, self).__init__(*args, ["Running Discriminator Loss", "Running Generator Loss"],
-                                            ["Time Step", "Time Step"], ["Losses", "Losses"], **kwargs)
+                                            ["Time Step", "Time Step"], ["Loss Value", "Loss Value"], **kwargs)
 
     def log_tensorboard(self, running_losses):
         self.writer.add_scalar("Running Discriminator Loss",
@@ -167,8 +168,21 @@ class MetricVisualize(Visualize):
         pass
 
 class GradientVisualize(Visualize):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, model_names=None, **kwargs):
         super(GradientVisualize, self).__init__(*args, [], [], [], **kwargs)
+        if MATPLOTLIB_LOGGING == 1:
+            self.build_matplotlib_custom(model_names)
+
+    def build_matplotlib_custom(self, model_names):
+        self.plots = {}
+        self.lines = {}
+        for name in model_names:
+            plot = plt.figure()
+            self.plots[name] = plot.gca()
+            self.plots[name].set_title(name)
+            self.plots[name].set_xlabel("Time Step")
+            self.plots[name].set_ylabel("Gradient")
+            self.lines[name] = self.plots[name].plot([], [])[0]
 
     def log_tensorboard(self, name, gradsum):
         self.writer.add_scalar('Gradients/{}'.format(name), gradsum, self.step)

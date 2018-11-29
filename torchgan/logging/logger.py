@@ -4,19 +4,18 @@ from tensorboardX import SummaryWriter
 __all__ = ['Logger']
 
 class Logger(object):
-    def __init__(self, trainer, losses_list, metrics_list=None, tensorboard=True,
+    def __init__(self, trainer, losses_list, metrics_list=None,
                  log_dir=None, writer=None, nrow=8, test_noise=None):
         self.writer = SummaryWriter(log_dir) if writer is None else writer
         self.logger_end_epoch = []
         self.logger_mid_epoch = []
-        self.logger_end_epoch.append(ImageVisualize(trainer, tensorboard=tensorboard,
-                                                    writer=self.writer, test_noise=test_noise,
+        self.logger_end_epoch.append(ImageVisualize(trainer, writer=self.writer, test_noise=test_noise,
                                                     nrow=nrow))
-        self.logger_mid_epoch.append(GradientVisualize([], tensorboard=tensorboard, writer=self.writer))
+        self.logger_mid_epoch.append(GradientVisualize([], model_names=trainer.model_names,
+                                                       writer=self.writer))
         if metrics_list is not None:
-            self.logger_end_epoch.append(MetricVisualize(metrics_list, tensorboard=tensorboard,
-                                                         writer=self.writer))
-        self.logger_mid_epoch.append(LossVisualize(losses_list, tensorboard=tensorboard, writer=self.writer))
+            self.logger_end_epoch.append(MetricVisualize(metrics_list, writer=self.writer))
+        self.logger_mid_epoch.append(LossVisualize(losses_list, writer=self.writer))
 
     def get_loss_viz(self):
         return self.logger_mid_epoch[1]
@@ -37,9 +36,9 @@ class Logger(object):
         for logger in self.logger_mid_epoch:
             if type(logger).__name__ is "LossVisualize" or\
                type(logger).__name__ is "GradientVisualize":
-                logger(trainer, lock_items=True)
+                logger(trainer, lock_console=True)
             else:
-                logger(*args, lock_items=True)
+                logger(*args, lock_console=True)
 
     def run_end_epoch(self, trainer, epoch, *args):
         print("Epoch {} Summary".format(epoch))

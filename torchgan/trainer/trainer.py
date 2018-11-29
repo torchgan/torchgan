@@ -60,7 +60,6 @@ class Trainer(object):
                        if the value is set to 3, we save at most 3 models and start rewriting the models after that.
         recon (str, optional): Directory where the sampled images are saved. Make sure the directory exists from
                        beforehand.
-        tensorboard (bool, optional): If `True`, tensorboard logs will be generated in the `runs` directory.
         log_dir (str, optional): The directory for logging tensorboard.
         test_noise (torch.Tensor, optional): If provided then it will be used as the noise for image sampling.
         nrow (int, optional): Number of rows in which the image is to be stored.
@@ -79,7 +78,7 @@ class Trainer(object):
     def __init__(self, models, optimizers, losses_list, metrics_list=None, schedulers=None,
                  device=torch.device("cuda:0"), ncritic=None, batch_size=128, epochs=5,
                  sample_size=8, checkpoints="./model/gan", retain_checkpoints=5, recon="./images",
-                 tensorboard=True, log_dir=None, test_noise=None, nrow=8, **kwargs):
+                 log_dir=None, test_noise=None, nrow=8, **kwargs):
         self.device = device
         self.model_names = []
         for key, val in models.items():
@@ -138,8 +137,8 @@ class Trainer(object):
                 warn("Overiding the default value of {} from {} to {}".format(key, getattr(self, key), val))
             setattr(self, key, val)
 
-        self.logger = Logger(self, losses_list, metrics_list, tensorboard=tensorboard,
-                             log_dir=log_dir, nrow=nrow, test_noise=test_noise)
+        self.logger = Logger(self, losses_list, metrics_list, log_dir=log_dir,
+                             nrow=nrow, test_noise=test_noise)
 
         os.makedirs(self.checkpoints.rsplit("/", 1)[0], exist_ok=True)
         os.makedirs(self.recon, exist_ok=True)
