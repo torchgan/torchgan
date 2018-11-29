@@ -71,6 +71,41 @@ class TestModels(unittest.TestCase):
             y = gen(x, labels)
             assert y.shape == (10,)
 
+    def test_acgan_generator(self):
+        encodings = [50, 100]
+        channels = [3, 4]
+        out_size = [32, 64]
+        classes = [5, 10]
+        step = [64, 128]
+        batchnorm = [True, False]
+        nonlinearities = [None, torch.nn.ELU(0.5)]
+        last_nonlinearity = [None, torch.nn.RReLU(0.25)]
+        for i in range(2):
+            ch = step[i]
+            x = torch.randn(10, encodings[i])
+            gen = ACGANGenerator(classes[i], encodings[i], out_size[i], channels[i], ch,
+                                          batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            labels = torch.randint(0, classes[i], (10,))
+            y = gen(x, labels)
+            assert y.shape == (10, channels[i], out_size[i], out_size[i])
+
+    def test_acgan_discriminator(self):
+        channels = [3, 4]
+        in_size = [32, 64]
+        classes = [5, 10]
+        step = [64, 128]
+        batchnorm = [True, False]
+        nonlinearities = [None, torch.nn.ELU(0.5)]
+        last_nonlinearity = [None, torch.nn.RReLU(0.25)]
+        for i in range(2):
+            ch = step[i]
+            x = torch.randn(10, channels[i], in_size[i], in_size[i])
+            gen = ACGANDiscriminator(classes[i], in_size[i], channels[i], ch,
+                                              batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            dx, cx = gen(x, mode='combine')
+            assert dx.shape == (10,)
+            assert cx.shape == (10, classes[i])
+
     def test_infogan_generator(self):
         encodings = [50, 100]
         channels = [3, 4]
