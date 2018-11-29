@@ -1,5 +1,6 @@
 from ..utils import getenv_defaults
 import os
+import subprocess
 
 # Backends available for Visualization
 
@@ -16,3 +17,4 @@ VISDOM_LOGGING = os.getenv("VISDOM_LOGGING", getenv_defaults("visdom"))
 if VISDOM_LOGGING == 1:
     if getenv_defaults("visdom") == 0:
         raise Exception("Visdom is not installed. Install it or set VISDOM_LOGGING to 0")
+    subprocess.Popen(["python3", "-m", "visdom.server"])
