@@ -131,8 +131,8 @@ class LossVisualize(Visualize):
             val = value[-1]
             # NOTE(avik-pal): Tuple case not handled
             self.lines[name].set_data(self.step, val)
-        for plot in self.plots:
-            plt.show(plot, block=False)
+        for name, plot in self.plots.items():
+            plot.show(block=False)
 
     def log_seaborn(self, running_losses):
         pass
@@ -161,8 +161,8 @@ class MetricVisualize(Visualize):
     def log_matplotlib(self):
         for name, value in self.logs.items():
             self.lines[name].set_data(self.step, value[-1])
-        for plot in self.plots:
-            plt.show(plot, block=False)
+        for name, plot in self.plots.items():
+            plot.show(block=False)
 
     def log_seaborn(self):
         pass
@@ -206,17 +206,16 @@ class GradientVisualize(Visualize):
             super(GradientVisualize, self).__call__(name, gradsum, **kwargs)
 
 class ImageVisualize(Visualize):
-    def __init__(self, trainer, tensorboard=True, log_dir=None, writer=None,
-                 test_noise=None, nrow=8):
-        self.writer = SummaryWriter(log_dir) if writer is None else writer
+    def __init__(self, trainer, log_dir=None, writer=None, test_noise=None, nrow=8):
         self.test_noise = []
         for model in trainer.model_names:
             if isinstance(getattr(trainer, model), Generator):
                 self.test_noise.append(getattr(trainer, model).sampler(trainer.sample_size, trainer.device)
                                        if test_noise is None else test_noise)
-        self.tensorboard = tensorboard
         self.step = 1
         self.nrow = nrow
+        if TENSORBOARD_LOGGING == 1:
+            self.build_tensorboard(log_dir, writer)
 
     def log_tensorboard(self, trainer, image, model):
         self.writer.add_image("Generated Samples/{}".format(model), image, self.step)
