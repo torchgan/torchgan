@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from torch.nn import Parameter
 
+__all__ = ['SpectralNorm']
+
 # NOTE(avik-pal): This code has been adapted from
 #                 https://github.com/heykeetae/Self-Attention-GAN/blob/master/spectral.py
 class SpectralNorm(nn.Module):
