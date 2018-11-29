@@ -11,7 +11,7 @@ class ResidualBlock(nn.Module):
             layers.append(nn.Conv2d(filters[i - 1], filters[i], kernels[i], strides[i], paddings[i]))
             if batchnorm:
                 layers.append(nn.BatchNorm2d(filters[i]))
-            if i != len(filters): # Last layer does not get an activation
+            if i != len(filters):  # Last layer does not get an activation
                 layers.append(activation())
         self.layers = nn.Sequential(*layers)
         self.shortcut = shortcut

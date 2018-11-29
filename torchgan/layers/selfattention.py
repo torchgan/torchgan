@@ -5,8 +5,8 @@ import torch.nn.functional as F
 class SelfAttention(nn.Module):
     def __init__(self, input_dims):
         super(SelfAttention, self).__init__()
-        self.query = nn.Conv2d(input_dims, input_dims//8, 1)
-        self.key = nn.Conv2d(input_dims, input_dims//8, 1)
+        self.query = nn.Conv2d(input_dims, input_dims // 8, 1)
+        self.key = nn.Conv2d(input_dims, input_dims // 8, 1)
         self.value = nn.Conv2d(input_dims, input_dims, 1)
         self.gamma = nn.Parameter(torch.zeros(1))
 
