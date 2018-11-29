@@ -135,7 +135,7 @@ class LossVisualize(Visualize):
             # NOTE(avik-pal): Tuple case not handled
             self.lines[name].set_data(self.step, val)
         for name, plot in self.figs.items():
-            plot.show(block=False)
+            plot.show()
 
     def log_seaborn(self, running_losses):
         pass
@@ -165,7 +165,7 @@ class MetricVisualize(Visualize):
         for name, value in self.logs.items():
             self.lines[name].set_data(self.step, value[-1])
         for name, plot in self.figs.items():
-            plot.show(block=False)
+            plot.show()
 
     def log_seaborn(self):
         pass
@@ -197,7 +197,7 @@ class GradientVisualize(Visualize):
 
     def log_matplotlib(self, name, gradsum):
         self.lines[name].set_data(self.step, gradsum)
-        self.figs[name].show(block=False)
+        self.figs[name].show()
 
     def log_seaborn(self, name, gradsum):
         pass

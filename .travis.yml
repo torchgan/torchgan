@@ -22,7 +22,7 @@ install:
 
 # command to run tests
 script:
-  - pytest --cov=./torchgan ./test/*
+  - pytest --cov=./ ./test/*
   - flake8 torchgan/
 
 # command for coverage results
