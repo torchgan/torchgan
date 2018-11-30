@@ -51,8 +51,8 @@ class MinimaxGeneratorLoss(GeneratorLoss):
         nonsaturating(bool, optional): Specifies whether to use the
             nonsaturating heuristic loss for the generator
     """
-    def __init__(self, reduction='elementwise_mean', nonsaturating=True):
-        super(MinimaxGeneratorLoss, self).__init__(reduction)
+    def __init__(self, reduction='elementwise_mean', nonsaturating=True, override_train_ops=None):
+        super(MinimaxGeneratorLoss, self).__init__(reduction, override_train_ops)
         self.nonsaturating = nonsaturating
 
     def forward(self, dgz):

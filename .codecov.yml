@@ -3,15 +3,22 @@ codecov:
   notify:
     require_ci_to_pass: yes
 
+fixes:
+  - "test/::"
+  - "torchgan/::"
+
 coverage:
   precision: 2
   round: down
-  range: "70...100"
+  range: "50...75"
 
   status:
     project: yes
     patch: yes
     changes: no
+
+ignore:
+  - "setup.py"
 
 comment:
   layout: "reach, diff, flags, files, footer"
