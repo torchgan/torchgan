@@ -184,15 +184,15 @@ class AutoEncodingDiscriminator(Discriminator):
         x2 = x1.view(-1, (self.init_dim ** 2) * x1.size(1))
         x2 = self.fc(x2)
         x2 = self.decoder(x2)
-        if energy:
+        if self.energy:
             x = x.view(-1, x.size(1) * x.size(2) * x.size(3))
             x2 = x2.view(-1, x2.size(1) * x2.size(2) * x2.size(3))
-            if embeddings:
+            if self.embeddings:
                 return x1, torch.mean((x - x2) ** 2, 1)
             else:
                 return torch.mean((x - x1) ** 2, 1)
         else:
-            if embeddings:
+            if self.embeddings:
                 return x1, x2
             else:
                 return x2
