@@ -65,9 +65,8 @@ class DraganGradientPenalty(DiscriminatorLoss):
                                            labels_provided)
         else:
             real = real_inputs if labels_provided is False else real_inputs[0]
-            alpha = Tensor(np.random.random(size=real.shape))
+            alpha = torch.rand(size=real.shape)
             optimizer_discriminator.zero_grad()
-            eps = torch.rand(1).item()
             interpolate = alpha * real + ((1 - alpha) * (real + 0.5 * real.std() * torch.rand(real.size())))
             d_interpolate = discriminator(interpolate)
             loss = self.forward(interpolate, d_interpolate)
