@@ -190,7 +190,7 @@ class AutoEncodingDiscriminator(Discriminator):
             if self.embeddings:
                 return x1, torch.mean((x - x2) ** 2, 1)
             else:
-                return torch.mean((x - x1) ** 2, 1)
+                return torch.mean((x - x2) ** 2, 1)
         else:
             if self.embeddings:
                 return x1, x2
