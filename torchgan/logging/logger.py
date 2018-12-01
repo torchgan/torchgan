@@ -1,12 +1,19 @@
 from .visualize import *
-from tensorboardX import SummaryWriter
+from .backends import *
+if TENSORBOARD_LOGGING == 1:
+    from tensorboardX import SummaryWriter
+if VISDOM_LOGGING == 1:
+    import visdom
 
 __all__ = ['Logger']
 
 class Logger(object):
-    def __init__(self, trainer, losses_list, metrics_list=None,
+    def __init__(self, trainer, losses_list, metrics_list=None, visdom_port=8097,
                  log_dir=None, writer=None, nrow=8, test_noise=None):
-        self.writer = SummaryWriter(log_dir) if writer is None else writer
+        if TENSORBOARD_LOGGING == 1:
+            self.writer = SummaryWriter(log_dir) if writer is None else writer
+        else:
+            self.writer = None
         self.logger_end_epoch = []
         self.logger_mid_epoch = []
         self.logger_end_epoch.append(ImageVisualize(trainer, writer=self.writer, test_noise=test_noise,
