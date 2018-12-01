@@ -4,7 +4,7 @@ __all__ = ['ResidualBlock']
 
 class ResidualBlock(nn.Module):
     def __init__(self, filters, kernels, strides=None, paddings=None, activation=nn.ReLU,
-                 batchnorm=True, shortcut=None):
+                 batchnorm=True, shortcut=None, last_activation=None):
         super(ResidualBlock, self).__init__()
         if strides is None:
             strides = [1 for _ in range(len(kernels))]
@@ -21,12 +21,13 @@ class ResidualBlock(nn.Module):
                 layers.append(activation())
         self.layers = nn.Sequential(*layers)
         self.shortcut = shortcut
+        self.last_activation = last_activation
 
-    def forward(self, x, activation=None):
+    def forward(self, x):
         out = self.layers(x)
         if self.shortcut is not None:
             out += self.shortcut(x)
-        if activation is None:
+        if self.last_activation is None:
             return out
         else:
-            return activation(out)
+            return self.last_activation(out)

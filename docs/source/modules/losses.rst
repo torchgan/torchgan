@@ -62,6 +62,5 @@ Auxillary Classifier Loss
 -------------------------
 .. autoclass:: AuxiliaryClassifierGeneratorLoss
     :members:
-
 .. autoclass:: AuxiliaryClassifierDiscriminatorLoss
     :members:

@@ -1,0 +1,38 @@
+torchgan.layers
+===============
+
+.. currentmodule:: torchgan.layers
+
+This layers subpackage is a collection of popular building blocks
+for GAN architectures. Currently the following blocks are supported:
+
+.. contents::
+    :local:
+
+Residual Blocks
+---------------
+.. autoclass:: ResidualBlock
+    :members:
+
+Densenet Blocks
+---------------
+.. autoclass:: BasicBlock
+    :members:
+.. autoclass:: BottleneckBlock
+    :members:
+.. autoclass:: TransitionBlock
+    :members:
+.. autoclass:: TransitionBlockTranspose
+    :members:
+.. autoclass:: DenseBlock
+    :members:
+
+Self Attention
+--------------
+.. autoclass:: SelfAttention
+    :members:
+
+Spectral Normalization
+----------------------
+.. autoclass:: SpectralNorm2d
+    :members:

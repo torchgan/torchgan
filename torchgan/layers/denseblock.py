@@ -73,12 +73,12 @@ class TransitionBlockTranspose(nn.Module):
 
 
 class DenseBlock(nn.Module):
-    def __init__(self, n, in_channels, growth_rate, block, kernel_size,
+    def __init__(self, depth, in_channels, growth_rate, block, kernel_size,
             stride, padding, batchnorm=True, nonlinearity=None):
         super(DenseBlock, self).__init__()
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         model = []
-        for i in range(n):
+        for i in range(depth):
             # FIXME(Aniket1998): There is no way to pass an option for bottleneck channels
             model.append(block(in_channels + i * growth_rate, growth_rate, kernel_size,
                 stride, padding, batchnorm=batchnorm, nonlinearity=nl))
