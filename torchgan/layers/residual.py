@@ -3,6 +3,38 @@ import torch.nn as nn
 __all__ = ['ResidualBlock']
 
 class ResidualBlock(nn.Module):
+    r"""Residual Block Module as described in `"Deep Residual Learning for Image Recognition
+    by He et. al." <https://arxiv.org/abs/1512.03385>`_
+
+    The output of the residual block is computed in the following manner:
+
+    .. math:: output = activation(layers(x) + shortcut(x))
+
+    where
+
+    - ``x``: Input to the Module
+    - ``layers``: The feed forward network
+    - ``shortcut``: The function to be applied along the skip connection
+    - ``activation``: The activation function applied at the end of the residual block
+
+    Args:
+        filters (list): A list of the filter sizes. For ex, if the input has a channel
+            dimension of 16, and you want 3 convolution layers and the final output to have a
+            channel dimension of 16, then the list would be [16, 32, 64, 16].
+        kernels (list): A list of the kernel sizes. Each kernel size can be an integer or a
+            tuple, similar to Pytorch convention. The length of the ``kernels`` list must be
+            1 less than the ``filters`` list.
+        strides (list, optional): A list of the strides for each convolution layer.
+        paddings (list, optional): A list of the padding in each convolution layer.
+        activation (torch.nn.Module, optional): The activation to be used after every convolution
+            layer.
+        batchnorm (bool, optional): If set to ``False``, batch normalization is not used after
+            every convolution layer.
+        shortcut (torch.nn.Module, optional): The function to be applied on the input along the
+            skip connection.
+        last_activation (torch.nn.Module, optional): The activation to be applied at the end of
+            the residual block.
+    """
     def __init__(self, filters, kernels, strides=None, paddings=None, activation=nn.ReLU,
                  batchnorm=True, shortcut=None, last_activation=None):
         super(ResidualBlock, self).__init__()
@@ -24,6 +56,15 @@ class ResidualBlock(nn.Module):
         self.last_activation = last_activation
 
     def forward(self, x):
+        r"""Computes the output of the residual network
+
+        Args:
+            x (torch.Tensor, optional): A 4D Torch Tensor which is the input to the Residual Block.
+
+        Returns:
+            A 4D Torch Tensor after applying the desired functions as specified while creating the
+            object.
+        """
         out = self.layers(x)
         if self.shortcut is not None:
             out += self.shortcut(x)
