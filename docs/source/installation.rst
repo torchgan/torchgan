@@ -1,12 +1,16 @@
 Installation
 ============
 
-Follow the following instructions to set up `torchgan`. `Torchgan` is tested and known to work on major `linux distrubutions`. If you face any problem with other `operating systems` feel free to file an `issue`.
+Follow the following instructions to set up `torchgan`.
+`Torchgan` is tested and known to work on major `linux distrubutions`.
+If you face any problem with other `operating systems` feel free to file an `issue`.
+Since `torchgan` is under active development we would recommend users to install directly
+from source.
 
 Pip Installation
 ----------------
 
-This is the simplest method and the most recommended approach as well.
+This is the simplest method.
 
 .. code:: bash
 

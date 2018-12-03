@@ -37,6 +37,20 @@ class ACGANGenerator(DCGANGenerator):
         y_emb = self.label_embeddings(y.type(torch.LongTensor).to(y.device))
         return super(ACGANGenerator, self).forward(torch.mul(y_emb, z))
 
+    def sampler(self, sample_size, device):
+        r"""Function to allow sampling data at inference time.
+
+        Args:
+            sample_size (int): The number of images to be generated
+            device (torch.device): The device on which the data must be generated
+
+        Returns:
+            A list of the items required as input
+        """
+        return [torch.randn(sample_size, self.encoding_dims, device=device),
+                torch.randint(0, self.num_classes, (sample_size,), device=device)]
+
+
 class ACGANDiscriminator(DCGANDiscriminator):
     r"""Auxiliary Classifier GAN (ACGAN) discriminator based on a DCGAN model from
     `"Conditional Image Synthesis With Auxiliary Classifier GANs

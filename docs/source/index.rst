@@ -19,6 +19,7 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
     losses
     metrics
     models
+    logging
     trainer
 
 .. toctree::

@@ -36,7 +36,6 @@ requirements = [
     'numpy',
     'torch',
     'torchvision',
-    'tensorboardX',
 ]
 
 setup(
