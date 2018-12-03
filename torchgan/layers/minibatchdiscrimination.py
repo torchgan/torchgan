@@ -5,6 +5,10 @@ __all__ = ['MinibatchDiscrimination1D']
 
 # The original paper by Salimans et. al. discusses only 1D minibatch discrimination
 class MinibatchDiscrimination1D(nn.Module):
+    r"""
+    Minibatch Discrimination Layer as defined in Improved Training for GANs by Salimans et. al.
+    The inputs should be 1 Dimensional Tensors
+    """
     def __init__(self, in_features, out_features, intermediate_features=16):
         super(MinibatchDiscrimination1D, self).__init__()
         self.in_features = in_features
