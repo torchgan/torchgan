@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
 
-__all__ = ['MinibatchDiscrimination1D']
+__all__ = ['MinibatchDiscrimination1d']
 
 # The original paper by Salimans et. al. discusses only 1D minibatch discrimination
-class MinibatchDiscrimination1D(nn.Module):
+class MinibatchDiscrimination1d(nn.Module):
     r"""
     Minibatch Discrimination Layer as defined in Improved Training for GANs by Salimans et. al.
     The inputs should be 1 Dimensional Tensors
