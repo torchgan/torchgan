@@ -17,19 +17,16 @@ class HistoricalAverageGeneratorLoss(GeneratorLoss):
         else:
             if self.timesteps == 0:
                 for p in generator.parameters():
-                    self.sum_parameters.append(torch.Tensor(p))
+                    param = p.data.clone()
+                    self.sum_parameters.append(param)
                 self.timesteps += 1
                 return 0.0
             else:
                 optimizer_generator.zero_grad()
-                loss = None
+                loss = 0.0
                 for i, p in enumerate(generator.parameters()):
-                    if loss is None:
-                        loss = torch.sum((p - self.sum_parameters[i]) ** 2)
-                    else:
-                        loss += torch.sum((p - self.sum_parameters[i]) ** 2)
-                    self.sum_parameters[i] += p
-                loss /= self.timesteps
+                    loss += torch.sum((p - (self.sum_parameters[i].data / self.timesteps)) ** 2)
+                    self.sum_parameters[i] += p.data.clone()
                 self.timesteps += 1
                 loss.backward()
                 optimizer_generator.step()
@@ -48,19 +45,16 @@ class HistoricalAverageDiscriminatorLoss(DiscriminatorLoss):
         else:
             if self.timesteps == 0:
                 for p in discriminator.parameters():
-                    self.sum_parameters.append(torch.Tensor(p))
+                    param = p.data.clone()
+                    self.sum_parameters.append(param)
                 self.timesteps += 1
                 return 0.0
             else:
                 optimizer_discriminator.zero_grad()
-                loss = None
+                loss = 0.0
                 for i, p in enumerate(discriminator.parameters()):
-                    if loss is None:
-                        loss = (p - self.sum_parameters[i]).norm(2)
-                    else:
-                        loss += (p - self.sum_parameters[i]).norm(2)
-                    self.sum_parameters[i] += p
-                loss /= self.timesteps
+                    loss += torch.sum((p - (self.sum_parameters[i].data / self.timesteps)) ** 2)
+                    self.sum_parameters[i] += p.data.clone()
                 self.timesteps += 1
                 loss.backward()
                 optimizer_discriminator.step()
