@@ -10,7 +10,7 @@ class MinibatchDiscrimination1d(nn.Module):
     The inputs should be 1 Dimensional Tensors
     """
     def __init__(self, in_features, out_features, intermediate_features=16):
-        super(MinibatchDiscrimination1D, self).__init__()
+        super(MinibatchDiscrimination1d, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.intermediate_features = intermediate_features
