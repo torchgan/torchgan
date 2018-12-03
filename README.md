@@ -14,15 +14,23 @@
 
 ## Installation
 
-Using pip:
+Using pip (for stable release):
 
 ```bash
   $ pip3 install torchgan
 ```
 
+Using pip (for latest master):
+
+```bash
+  $ pip3 install git+https://github.com/torchgan/torchgan.git
+```
+
 From source:
 
 ```bash
+  $ git clone https://github.com/torchgan/torchgan.git
+  $ cd torchgan
   $ python setup.py install
 ```
 
@@ -33,16 +41,24 @@ The documentation is available [here](https://torchgan.readthedocs.io/en/latest/
 The documentation for this package can be generated locally.
 
 ```bash
-  $ cd docs
+  $ git clone https://github.com/torchgan/torchgan.git
+  $ cd torchgan/docs
   $ pip install -r requirements.txt
   $ make html
 ```
+
 Now open the corresponding file from `build` directory.
 
 ## Contributing
 
-We appreciate all contributions. If you are planning to contribute back bug-fixes, please do so without any further discussion. If you plan to contribute new features, utility functions or extensions, please first open an issue and discuss the feature with us.
+We appreciate all contributions. If you are planning to contribute bug-fixes, please do so without any further discussion. If you plan to contribute new features, utility functions or extensions, please first open an issue and discuss the feature with us. For more detailed guidelines head over to the official documentation.
 
 ## Disclamer
 
 This package is under active development. So things that are currently working might break in a future release. However, feel free to open issue if you get stuck anywhere.
+
+## Authors
+
+This package is currently maintained by
+* Avik Pal (@avik-pal)
+* Aniket Das (@Aniket1998)
