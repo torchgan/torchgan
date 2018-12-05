@@ -275,7 +275,7 @@ class Trainer(object):
             A dictionary mapping the argument name to the value of the argument.
         """
         args = {}
-        for key, val in arg_map:
+        for key, val in arg_map.items():
             args[key] = self.__dict__[val]
         return args
 

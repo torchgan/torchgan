@@ -27,7 +27,7 @@ class TestTrainer(unittest.TestCase):
     def test_trainer_dcgan(self):
         network_params = {
             "generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels": 4},
-                          "optipmizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
+                          "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
             "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 1, "step_channels": 4},
                           "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}
         }
