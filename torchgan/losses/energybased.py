@@ -61,8 +61,7 @@ class EnergyBasedPullingAwayTerm(GeneratorLoss):
         self.pt_ratio = pt_ratio
 
     def forward(self, dgz, d_hid):
-        return energy_based_generator_loss(dgz, self.reduction) +\
-            self.pt_ratio * energy_based_pulling_away_term(d_hid)
+        return self.pt_ratio * energy_based_pulling_away_term(d_hid)
 
     def train_ops(self, generator, discriminator, optimizer_generator, device, batch_size, labels=None):
         if self.override_train_ops is not None:
