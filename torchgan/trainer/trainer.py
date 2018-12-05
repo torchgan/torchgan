@@ -60,9 +60,9 @@ class Trainer(object):
     Example:
         >>> dcgan = Trainer(
                     {"generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels": 16},
-                                   "opt": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
+                                   "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
                      "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 1, "step_channels": 16},
-                                       "opt": {"var": "opt_discriminator", "name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
+                                       "optimizer": {"var": "opt_discriminator", "name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
                     [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
                     sample_size=64, epochs=20)
     """
@@ -75,11 +75,11 @@ class Trainer(object):
         self.schedulers = []
         for key, model in models.items():
             self.model_names.append(key)
-            if args in model:
+            if "args" in model:
                 setattr(self, key, (model["name"](**model["args"])).to(self.device))
             else:
                 setattr(self, key, (model["name"]()).to(self.device))
-            opt = model["opt"]
+            opt = model["optimizer"]
             opt_name = "optimizer_{}".format(key)
             if "var" in opt:
                 opt_name = opt["var"]
