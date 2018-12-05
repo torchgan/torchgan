@@ -7,3 +7,4 @@ from .mutualinfo import *
 from .energybased import *
 from .draganpenalty import *
 from .auxclassifier import *
+from .featurematching import *

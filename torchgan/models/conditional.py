@@ -37,6 +37,18 @@ class ConditionalGANGenerator(DCGANGenerator):
         y_emb = self.label_embeddings(y.type(torch.LongTensor).to(y.device))
         return super(ConditionalGANGenerator, self).forward(torch.cat((z, y_emb), dim=1))
 
+    def sampler(self, sample_size, device):
+        r"""Function to allow sampling data at inference time.
+
+        Args:
+            sample_size (int): The number of images to be generated
+            device (torch.device): The device on which the data must be generated
+
+        Returns:
+            A list of the items required as input
+        """
+        return [torch.randn(sample_size, self.encoding_dims, device=device),
+                torch.randint(0, self.num_classes, (sample_size,), device=device)]
 
 class ConditionalGANDiscriminator(DCGANDiscriminator):
     r"""Condititional GAN (CGAN) discriminator based on a DCGAN model from
@@ -66,9 +78,9 @@ class ConditionalGANDiscriminator(DCGANDiscriminator):
         self.num_classes = num_classes
         self.label_embeddings = nn.Embedding(self.num_classes, self.num_classes)
 
-    def forward(self, x, y):
+    def forward(self, x, y, feature_matching=False):
         # TODO(Aniket1998): If directly expanding the embeddings gives poor results,
         # try layers of transposed convolution over the embeddings
         y_emb = self.label_embeddings(y.type(torch.LongTensor).to(y.device))
         y_emb = y_emb.unsqueeze(2).unsqueeze(3).expand(-1, y_emb.size(1), x.size(2), x.size(3))
-        return super(ConditionalGANDiscriminator, self).forward(torch.cat((x, y_emb), dim=1))
+        return super(ConditionalGANDiscriminator, self).forward(torch.cat((x, y_emb), dim=1), feature_matching=False)
