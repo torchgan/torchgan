@@ -54,14 +54,18 @@ class DCGANGenerator(Generator):
                 model.append(nn.Sequential(
                     nn.ConvTranspose2d(d, d // 2, 4, 2, 1, bias=use_bias), nl))
                 d = d // 2
-        model.append(nn.Sequential(
-            nn.ConvTranspose2d(d, self.ch, 4, 2, 1, bias=True), last_nl))
+
+        self.discriminator = nn.Sequential(nn.ConvTranspose2d(d, self.ch, 4, 2, 1, bias=True), last_nl)
         self.model = nn.Sequential(*model)
         self._weight_initializer()
 
-    def forward(self, x):
+    def forward(self, x, feature_matching=False):
         x = x.view(-1, x.size(1), 1, 1)
-        return self.model(x)
+        x = self.model(x)
+        if feature_matching is True:
+            return self.discriminator(x), x
+        else:
+            return x
 
 
 class DCGANDiscriminator(Discriminator):
