@@ -27,17 +27,17 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
                 fake = generator(noise, label_gen)
 
             if discriminator.label_type == 'none':
-                _, fx = discriminator(real_inputs, feature_matching=True)
-                _, fgz = discriminator(fake, feature_matching=True)
+                fx = discriminator(real_inputs, feature_matching=True)
+                fgz = discriminator(fake, feature_matching=True)
             else:
                 if discriminator.label_type == 'generated':
-                    _, fx = discriminator(real_inputs, label_gen, feature_matching=True)
+                    fx = discriminator(real_inputs, label_gen, feature_matching=True)
                 else:
-                    _, fx = discriminator(real_inputs, labels, feature_matching=True)
+                    fx = discriminator(real_inputs, labels, feature_matching=True)
                 if generator.label_type == 'generated':
-                    _, fgz = discriminator(fake, label_gen, feature_matching=True)
+                    fgz = discriminator(fake, label_gen, feature_matching=True)
                 else:
-                    _, fgz = discriminator(fake, labels, feature_matching=True)
+                    fgz = discriminator(fake, labels, feature_matching=True)
             loss = self.forward(fx, fgz)
             loss.backward()
             optimizer_generator.step()
