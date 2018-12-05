@@ -6,6 +6,25 @@ from ..utils import reduce
 __all__ = ['FeatureMatchingGeneratorLoss']
 
 class FeatureMatchingGeneratorLoss(GeneratorLoss):
+    r"""Feature Matching Generator loss from
+    `"Improved Training of GANs by Salimans et. al." <https://arxiv.org/abs/1701.07875>`_ paper
+
+    The loss can be described as:
+
+    .. math:: L(G) = ||f(x)-f(G(z))||
+
+    where
+
+    - G : Generator
+    - f : An intermediate activation from the discriminator
+    - z : A sample from the noise prior
+
+    Args:
+        reduction (string, optional): Specifies the reduction to apply to the output.
+            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            the elements will be divided by the number of elements in the output. If
+            `sum` the output will be summed.
+    """
     def forward(self, fx, fgz):
         return F.mse_loss(fgz, fx, reduction=self.reduction)
 
