@@ -17,12 +17,12 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy -c pytorch
   - source activate test-environment
   - python setup.py install
-  - pip install --upgrade pytest pytest-cov
+  - pip install --upgrade pytest pytest-cov coverage
   - pip install flake8
 
 # command to run tests
 script:
-  - pytest --cov=./
+  - pytest --cov=./ ./test/*
   - flake8 torchgan/
 
 # command for coverage results

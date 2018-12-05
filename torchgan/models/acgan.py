@@ -37,6 +37,20 @@ class ACGANGenerator(DCGANGenerator):
         y_emb = self.label_embeddings(y.type(torch.LongTensor).to(y.device))
         return super(ACGANGenerator, self).forward(torch.mul(y_emb, z))
 
+    def sampler(self, sample_size, device):
+        r"""Function to allow sampling data at inference time.
+
+        Args:
+            sample_size (int): The number of images to be generated
+            device (torch.device): The device on which the data must be generated
+
+        Returns:
+            A list of the items required as input
+        """
+        return [torch.randn(sample_size, self.encoding_dims, device=device),
+                torch.randint(0, self.num_classes, (sample_size,), device=device)]
+
+
 class ACGANDiscriminator(DCGANDiscriminator):
     r"""Auxiliary Classifier GAN (ACGAN) discriminator based on a DCGAN model from
     `"Conditional Image Synthesis With Auxiliary Classifier GANs
@@ -64,14 +78,14 @@ class ACGANDiscriminator(DCGANDiscriminator):
         last_nl = nn.LeakyReLU(0.2) if last_nonlinearity is None else last_nonlinearity
         self.input_dims = in_channels
         self.num_classes = num_classes
-        self.conv = self.model[:len(self.model) - 1]
-        self.disc = self.model[len(self.model) - 1]
         d = self.n * 2 ** (in_size.bit_length() - 4)
         self.aux = nn.Sequential(
             nn.Conv2d(d, self.num_classes, 4, 1, 0, bias=False), last_nl)
 
-    def forward(self, x, mode='discriminator'):
-        x = self.conv(x)
+    def forward(self, x, mode='discriminator', feature_matching=False):
+        x = self.model(x)
+        if feature_matching is True:
+            return x
         if mode == 'discriminator':
             dx = self.disc(x)
             return dx.view(dx.size(0),)
