@@ -174,10 +174,12 @@ class AutoEncodingDiscriminator(Discriminator):
                                              batchnorm, nonlinearity, last_nonlinearity)
         self._weight_initializer()
 
-    def forward(self, x):
+    def forward(self, x, feature_matching=False):
         x1 = self.encoder(x)
         x1 = x1.view(-1, (self.init_dim ** 2) * x1.size(1))
         x1 = self.fc(x1)
+        if feature_matching is True:
+            return x1
         x1 = self.decoder(x1)
         x = x.view(-1, x.size(1) * x.size(2) * x.size(3))
         x1 = x1.view(-1, x1.size(1) * x1.size(2) * x1.size(3))

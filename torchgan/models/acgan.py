@@ -78,14 +78,14 @@ class ACGANDiscriminator(DCGANDiscriminator):
         last_nl = nn.LeakyReLU(0.2) if last_nonlinearity is None else last_nonlinearity
         self.input_dims = in_channels
         self.num_classes = num_classes
-        self.conv = self.model[:len(self.model) - 1]
-        self.disc = self.model[len(self.model) - 1]
         d = self.n * 2 ** (in_size.bit_length() - 4)
         self.aux = nn.Sequential(
             nn.Conv2d(d, self.num_classes, 4, 1, 0, bias=False), last_nl)
 
-    def forward(self, x, mode='discriminator'):
-        x = self.conv(x)
+    def forward(self, x, mode='discriminator', feature_matching=False):
+        x = self.model(x)
+        if feature_matching is True:
+            return x
         if mode == 'discriminator':
             dx = self.disc(x)
             return dx.view(dx.size(0),)
