@@ -69,7 +69,7 @@ class ACGANDiscriminator(DCGANDiscriminator):
             nn.Conv2d(d, self.num_classes, 4, 1, 0, bias=False), last_nl)
 
     def forward(self, x, mode='discriminator', feature_matching=False):
-        x = self.conv(x)
+        x = self.model(x)
         if feature_matching is True:
             return x
         if mode == 'discriminator':
