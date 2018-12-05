@@ -97,14 +97,17 @@ class Trainer(object):
                     self.schedulers.append(sched["name"](getattr(self, opt_name), **sched["args"]))
                 else:
                     self.schedulers.append(sched["name"](getattr(self, opt_name)))
+
         self.losses = {}
         for loss in losses_list:
             self.losses[type(loss).__name__] = loss
+
         if metrics_list is None:
             self.metrics = None
         else:
             for metric in metrics_list:
                 self.metrics[type(metric).__name__] = metric
+
         self.batch_size = batch_size
         self.sample_size = sample_size
         self.epochs = epochs
@@ -133,6 +136,9 @@ class Trainer(object):
 
         self.logger = Logger(self, losses_list, metrics_list, log_dir=log_dir,
                              nrow=nrow, test_noise=test_noise)
+
+        self._store_loss_maps()
+        self._store_metric_maps()
 
         os.makedirs(self.checkpoints.rsplit("/", 1)[0], exist_ok=True)
         os.makedirs(self.recon, exist_ok=True)
@@ -242,8 +248,8 @@ class Trainer(object):
                 if arg_name in self.__dict__:
                     arg_map.update({arg: arg_name})
             else:
-                if arg_name not in self.__dict__ and arg_name != 'kwargs' and arg_name != 'args':
-                    raise Exception("Argument : {} not present.".format(arg))
+                if arg_name not in self.__dict__ and arg != 'kwargs' and arg != 'args':
+                    raise Exception("Argument : {} not present.".format(arg_name))
                 else:
                     arg_map.update({arg: arg_name})
         return arg_map
@@ -394,7 +400,5 @@ class Trainer(object):
         self.logger.close()
 
     def __call__(self, data_loader, **kwargs):
-        self._store_loss_maps()
-        self._store_metric_maps()
         self.batch_size = data_loader.batch_size
         self.train(data_loader, **kwargs)
