@@ -59,7 +59,7 @@ class AuxiliaryClassifierDiscriminatorLoss(DiscriminatorLoss):
         return F.cross_entropy(logits, labels, reduction=self.reduction)
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, batch_size,
-        device, labels=None):
+                  device, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(generator, discriminator, optimizer_discriminator,
                     real_inputs, batch_size, device, labels)

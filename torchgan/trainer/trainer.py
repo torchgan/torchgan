@@ -59,10 +59,12 @@ class Trainer(object):
 
     Example:
         >>> dcgan = Trainer(
-                    {"generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels": 16},
-                                   "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
-                     "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 1, "step_channels": 16},
-                                       "optimizer": {"var": "opt_discriminator", "name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
+                    {"generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels":
+                                   16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002,
+                                   "betas": (0.5, 0.999)}}},
+                     "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 1,
+                                       "step_channels": 16}, "optimizer": {"var": "opt_discriminator",
+                                       "name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
                     [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
                     sample_size=64, epochs=20)
     """
@@ -91,7 +93,7 @@ class Trainer(object):
                 setattr(self, opt_name, (opt["name"](model_params)))
             if "scheduler" in opt:
                 sched = opt["scheduler"]
-                if args in sched:
+                if "args" in sched:
                     self.schedulers.append(sched["name"](getattr(self, opt_name), **sched["args"]))
                 else:
                     self.schedulers.append(sched["name"](getattr(self, opt_name)))

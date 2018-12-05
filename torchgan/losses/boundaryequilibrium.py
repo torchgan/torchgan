@@ -103,7 +103,7 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
             self.k = 1.0
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, batch_size,
-        device, labels=None):
+                  device, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
                    real_inputs, batch_size, device, labels)
