@@ -183,7 +183,7 @@ class AutoEncodingDiscriminator(Discriminator):
         x1 = self.encoder(x)
         x2 = x1.view(-1, (self.init_dim ** 2) * x1.size(1))
         x2 = self.fc(x2)
-        if self.feature_matching is True:
+        if feature_matching is True:
             return x2
         x2 = self.decoder(x2)
         if self.energy:
