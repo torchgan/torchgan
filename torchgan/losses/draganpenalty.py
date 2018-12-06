@@ -5,14 +5,14 @@ from ..utils import reduce
 
 __all__ = ['dragan_gradient_penalty', 'DraganGradientPenalty']
 
-def dragan_gradient_penalty(interpolate, d_interpolate, reduction='elementwise_mean'):
+def dragan_gradient_penalty(interpolate, d_interpolate, k=1.0, reduction='elementwise_mean'):
     grad_outputs = torch.ones_like(d_interpolate)
     gradients = autograd.grad(outputs=d_interpolate, inputs=interpolate,
                               grad_outputs=grad_outputs,
                               create_graph=True, retain_graph=True,
-                              only_inputs=True)[0]
+                              only_inputs=True, allow_unused=True)[0]
 
-    gradient_penalty = (gradients.norm(2) - 1) ** 2
+    gradient_penalty = (gradients.norm(2) - k) ** 2
     return reduce(gradient_penalty, reduction)
 
 class DraganGradientPenalty(DiscriminatorLoss):
@@ -41,10 +41,11 @@ class DraganGradientPenalty(DiscriminatorLoss):
 
         lambd(float,optional) : Hyperparameter lambda for scaling the gradient penalty.
     """
-    def __init__(self, reduction='elementwise_mean', lambd=10.0, override_train_ops=None):
+    def __init__(self, reduction='elementwise_mean', lambd=10.0, k=1.0, override_train_ops=None):
         super(DraganGradientPenalty, self).__init__(reduction)
         self.lambd = lambd
         self.override_train_ops = override_train_ops
+        self.k = k
 
     def forward(self, interpolate, d_interpolate):
         r"""
@@ -57,18 +58,29 @@ class DraganGradientPenalty(DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return dragan_gradient_penalty(interpolate, d_interpolate, self.reduction)
+        return dragan_gradient_penalty(interpolate, d_interpolate, self.k, self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, noise, labels_provided=False):
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, noise,
+                  device, labels=None):
         if self.override_train_ops is not None:
-            return self.override_train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, noise,
-                                           labels_provided)
+            return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
+                                           real_inputs, noise, labels)
         else:
-            real = real_inputs if labels_provided is False else real_inputs[0]
-            alpha = torch.rand(size=real.shape)
+            # NOTE(avik-pal): We don't need the gradients for alpha and beta. Its there
+            #                 to prevent an error while calling autograd.grad
+            alpha = torch.rand(size=real_inputs.shape, device=device, requires_grad=True)
+            beta = torch.rand(size=real_inputs.shape, device=device, requires_grad=True)
             optimizer_discriminator.zero_grad()
-            interpolate = alpha * real + ((1 - alpha) * (real + 0.5 * real.std() * torch.rand(real.size())))
-            d_interpolate = discriminator(interpolate)
+            interpolate = real_inputs + (1 - alpha) * 0.5 * real_inputs.std() * beta
+            if generator.label_type == 'generated':
+                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),), device=device)
+            if discriminator.label_type == 'none':
+                d_interpolate = discriminator(interpolate)
+            else:
+                if generator.label_type == 'generated':
+                    d_interpolate = discriminator(interpolate, label_gen)
+                else:
+                    d_interpolate = discriminator(interpolate, labels)
             loss = self.forward(interpolate, d_interpolate)
             weighted_loss = self.lambd * loss
             weighted_loss.backward()
