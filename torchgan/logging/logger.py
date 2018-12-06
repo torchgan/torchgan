@@ -47,7 +47,7 @@ class Logger(object):
                 logger(*args, lock_console=True)
 
     def run_end_epoch(self, trainer, epoch, *args):
-        print("Epoch {} Summary".format(epoch))
+        print("Epoch {} Summary".format(epoch + 1))
         for logger in self.logger_mid_epoch:
             if type(logger).__name__ is "LossVisualize" or\
                type(logger).__name__ is "GradientVisualize":
@@ -61,3 +61,4 @@ class Logger(object):
                 logger()
             else:
                 logger(*args)
+        print()

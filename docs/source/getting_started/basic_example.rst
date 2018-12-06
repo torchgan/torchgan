@@ -15,7 +15,7 @@ First we import the necessary files
     import torch.utils.data as data
     import torchvision.datasets as dsets
     import torchvision.transforms as transforms
-    from torchgan import *
+    import torchgan
     from torchgan.models import DCGANGenerator, DCGANDiscriminator
     from torchgan.losses import MinimaxGeneratorLoss, MinimaxDiscriminatorLoss,
     from torchgan.trainer import Trainer
@@ -36,10 +36,8 @@ Now lets us create the ``Trainer`` object and pass the ``data loader`` to it.
 
 .. code:: python
 
-    trainer = Trainer({"generator": {"name": DCGANGenerator, "args": {"out_channels": 3, "step_channels": 16}},
-                       "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 3, "step_channels": 16}}},
-                      {"optimizer_generator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}},
-                       "optimizer_discriminator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
+    trainer = Trainer({"generator": {"name": DCGANGenerator, "args": {"out_channels": 3, "step_channels": 16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
+                       "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 3, "step_channels": 16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
                       [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
                       sample_size=64, epochs=20)
 

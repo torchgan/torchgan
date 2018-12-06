@@ -8,13 +8,13 @@ Pip Installation
 
 To install the last released version make a pip install.
 
-.. code:: bash
+.. code:: console
 
    $ pip3 install torchgan
 
 For the latest version.
 
-.. code:: bash
+.. code:: console
 
    $ pip3 install git+https://github.com/torchgan/torchgan.git
 
@@ -26,7 +26,7 @@ Installing via ``conda`` is currently unavailable. It will be available once we 
 Install from Source
 -------------------
 
-.. code:: bash
+.. code:: console
 
    $ git clone https://github.com/torchgan/torchgan
    $ cd torchgan

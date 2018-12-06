@@ -7,7 +7,7 @@ Nowadays there are a lot of repositories for training Generative Adversarial Net
 - Majority of them are not maintained
 - They are built without considering the ease of usage in mind
 - These are not properly tested and often are not supported by the newer releases of Pytorch
-- There is no proper unified API among these repositories.
+- There is no proper unified API among these repositories
 
 The idea of this framework is to provide an elegant design to solve issues regarding training and visualizing GANs. The design principles of this framework are the following:
 

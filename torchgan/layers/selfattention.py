@@ -24,7 +24,7 @@ class SelfAttention(nn.Module):
             channel value is computed as ``input_dims // 8``. So if the ``input_dims`` is **less
             than 8** then the layer will give an error.
     """
-    def __init__(self, input_dims, output_dims=None):
+    def __init__(self, input_dims, output_dims=None, return_attn=False):
         output_dims = input_dims // 8 if output_dims is None else output_dims
         if output_dims == 0:
             raise Exception("The output dims corresponding to the input dims is 0. Increase the input\
@@ -34,6 +34,7 @@ class SelfAttention(nn.Module):
         self.key = nn.Conv2d(input_dims, output_dims, 1)
         self.value = nn.Conv2d(input_dims, input_dims, 1)
         self.gamma = nn.Parameter(torch.zeros(1))
+        self.return_attn = return_attn
 
     def forward(self, x):
         r"""Computes the output of the Self Attention Layer
@@ -51,4 +52,6 @@ class SelfAttention(nn.Module):
         out_value = self.value(x).view(dims)
         out_value = torch.bmm(out_value, attn).view(x.size())
         out = self.gamma * out_value + x
-        return out, attn
+        if self.return_attn:
+            return out, attn
+        return out
