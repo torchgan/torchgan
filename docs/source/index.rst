@@ -22,6 +22,7 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
     modules/metrics
     modules/models
     modules/layers
+    modules/logging
     modules/trainer
 
 .. toctree::
