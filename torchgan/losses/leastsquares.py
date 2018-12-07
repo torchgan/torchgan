@@ -12,8 +12,7 @@ def least_squares_discriminator_loss(dx, dgz, a=0.0, b=1.0, reduction='mean'):
     return 0.5 * (reduce((dx - b) ** 2, reduction) + reduce((dgz - a) ** 2, reduction))
 
 class LeastSquaresGeneratorLoss(GeneratorLoss):
-    r"""Least Squares GAN generator loss from
-    `"Least Squares Generative Adversarial Networks
+    r"""Least Squares GAN generator loss from `"Least Squares Generative Adversarial Networks
     by Mao et. al." <https://arxiv.org/abs/1611.04076>`_ paper
 
     The loss can be described as
@@ -22,26 +21,31 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
 
     where
 
-    - G : Generator
-    - D : Disrciminator
-    - c : target generator label (default 1)
-    - z : A sample from the noise prior
+    - :math:`G` : Generator
+    - :math:`D` : Disrciminator
+    - :math:`c` : target generator label
+    - :math:`z` : A sample from the noise prior
 
     Args:
-        reduction (string, optional): Specifies the reduction to apply to the output.
+        reduction (str, optional): Specifies the reduction to apply to the output.
             If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
+        c (float, optional): Target generator label.
+        override_train_ops (function, optional): A function is passed to this argument,
+            if the default ``train_ops`` is not to be used.
     """
     def __init__(self, reduction='mean', c=1.0, override_train_ops=None):
         super(LeastSquaresGeneratorLoss, self).__init__(reduction, override_train_ops)
         self.c = c
 
     def forward(self, dgz):
-        r"""
+        r"""Computes the loss for the given input.
+
         Args:
-            dgz (torch.Tensor) : Output of the Generator. It must have the dimensions
-                                 (N, \*) where \* means any number of additional dimensions.
+            dgz (torch.Tensor) : Output of the Discriminator with generated data. It must have the
+                                 dimensions (N, \*) where \* means any number of additional
+                                 dimensions.
 
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
@@ -50,26 +54,29 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
 
 
 class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
-    r"""Least Squares GAN discriminator loss from
-    `"Least Squares Generative Adversarial Networks
+    r"""Least Squares GAN discriminator loss from `"Least Squares Generative Adversarial Networks
     by Mao et. al." <https://arxiv.org/abs/1611.04076>`_ paper.
 
     The loss can be described as:
 
-    .. math:: L(G) = \frac{(D(x) - b)^2 + (D(G(z)) - a)^2}{2}
+    .. math:: L(D) = \frac{(D(x) - b)^2 + (D(G(z)) - a)^2}{2}
 
     where
 
-    - G : Generator
-    - D : Disrciminator
-    - a : Target discriminator label for generated image (default 0)
-    - b : Target discriminator label for real image (default 1)
+    - :math:`G` : Generator
+    - :math:`D` : Disrciminator
+    - :math:`a` : Target discriminator label for generated image
+    - :math:`b` : Target discriminator label for real image
 
     Args:
-        reduction (string, optional): Specifies the reduction to apply to the output.
+        reduction (str, optional): Specifies the reduction to apply to the output.
             If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
+        a (float, optional): Target discriminator label for generated image.
+        b (float, optional): Target discriminator label for real image.
+        override_train_ops (function, optional): A function is passed to this argument,
+            if the default ``train_ops`` is not to be used.
     """
     def __init__(self, reduction='mean', a=0.0, b=1.0, override_train_ops=None):
         super(LeastSquaresDiscriminatorLoss, self).__init__(reduction, override_train_ops)
@@ -77,12 +84,15 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
         self.b = b
 
     def forward(self, dx, dgz):
-        r"""
+        r"""Computes the loss for the given input.
+
         Args:
-            dx (torch.Tensor) : Output of the Discriminator. It must have the dimensions
-                                (N, \*) where \* means any number of additional dimensions.
-            dgz (torch.Tensor) : Output of the Generator. It must have the dimensions
-                                 (N, \*) where \* means any number of additional dimensions.
+            dx (torch.Tensor) : Output of the Discriminator with real data. It must have the
+                                dimensions (N, \*) where \* means any number of additional
+                                dimensions.
+            dgz (torch.Tensor) : Output of the Discriminator with generated data. It must have the
+                                 dimensions (N, \*) where \* means any number of additional
+                                 dimensions.
 
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).

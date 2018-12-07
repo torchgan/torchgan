@@ -20,7 +20,7 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
     - z : A sample from the noise prior
 
     Args:
-        reduction (string, optional): Specifies the reduction to apply to the output.
+        reduction (str, optional): Specifies the reduction to apply to the output.
             If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.

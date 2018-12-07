@@ -94,6 +94,7 @@ class GeneratorLoss(nn.Module):
             loss = self.forward(dgz)
             loss.backward()
             optimizer_generator.step()
+            # NOTE(avik-pal): This will error if reduction is is 'none'
             return loss.item()
 
 class DiscriminatorLoss(nn.Module):
@@ -198,4 +199,5 @@ class DiscriminatorLoss(nn.Module):
             loss = self.forward(dx, dgz)
             loss.backward()
             optimizer_discriminator.step()
+            # NOTE(avik-pal): This will error if reduction is is 'none'
             return loss.item()

@@ -198,7 +198,7 @@ class Trainer(object):
         - Metric Logs
 
         Args:
-            load_path (string, optional): Path from which the model is to be loaded.
+            load_path (str, optional): Path from which the model is to be loaded.
             load_items (str, list, optional): Pass the variable name of any other item you want to load.
                                               If the item cannot be found then a warning will be thrown
                                               and model will start to train from scratch. So make sure
