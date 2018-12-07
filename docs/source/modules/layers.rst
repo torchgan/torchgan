@@ -1,3 +1,4 @@
+===============
 torchgan.layers
 ===============
 
@@ -9,13 +10,13 @@ for GAN architectures. Currently the following blocks are supported:
 .. contents::
     :local:
 
-Residual Blocks
----------------
+ResidualBlock
+==============
 .. autoclass:: ResidualBlock
     :members:
 
-Densenet Blocks
----------------
+DensenetBlocks
+==============
 .. autoclass:: BasicBlock
     :members:
 .. autoclass:: BottleneckBlock
@@ -27,12 +28,12 @@ Densenet Blocks
 .. autoclass:: DenseBlock
     :members:
 
-Self Attention
---------------
+SelfAttention
+=============
 .. autoclass:: SelfAttention
     :members:
 
-Spectral Normalization
-----------------------
+SpectralNorm2d
+==============
 .. autoclass:: SpectralNorm2d
     :members:

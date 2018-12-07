@@ -23,6 +23,8 @@ class SelfAttention(nn.Module):
         output_dims (int, optional): The output channel dimension. If ``None`` the output
             channel value is computed as ``input_dims // 8``. So if the ``input_dims`` is **less
             than 8** then the layer will give an error.
+        return_attn (bool, optional): Set it to ``True`` if you want the attention values to be
+            returned.
     """
     def __init__(self, input_dims, output_dims=None, return_attn=False):
         output_dims = input_dims // 8 if output_dims is None else output_dims
@@ -43,7 +45,8 @@ class SelfAttention(nn.Module):
             x (torch.Tensor): A 4D Tensor with the channel dimension same as ``input_dims``.
 
         Returns:
-            A tuple of the ``output`` and the ``attention``.
+            A tuple of the ``output`` and the ``attention`` if ``return_attn`` is set to ``True``
+            else just the ``output Tensor``.
         """
         dims = (x.size(0), -1, x.size(2) * x.size(3))
         out_query = self.query(x).view(dims)

@@ -25,13 +25,12 @@ class SpectralNorm2d(nn.Module):
         name (str, optional): The attribute of the ``module`` on which normalization needs to
             be performed.
         power_iterations (int, optional): Total number of iterations for the norm to converge.
-            Higher the better, but might significantly affect performance if set to a very
-            high number
+            ``1`` is usually enough given the weights vary quite gradually.
 
     Example:
         .. code:: python
 
-            >>> layer = SpectralNorm2d(Conv(3, 16, 1), power_iterations=10)
+            >>> layer = SpectralNorm2d(Conv(3, 16, 1))
             >>> x = torch.rand(1, 3, 10, 10)
             >>> layer(x)
     """

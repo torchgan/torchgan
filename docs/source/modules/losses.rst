@@ -16,7 +16,9 @@ that you subclass the :class:`GeneratorLoss` and :class:`DiscriminatorLoss`
 Loss
 ----
 .. autoclass:: GeneratorLoss
+    :members:
 .. autoclass:: DiscriminatorLoss
+    :members:
 
 Least Squares Loss
 ------------------

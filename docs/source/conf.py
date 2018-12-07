@@ -20,8 +20,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-import sphinx_bootstrap_theme
-import sphinx_gallery
+import sphinx_rtd_theme
 
 # -- General configuration ------------------------------------------------
 
@@ -47,38 +46,8 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
-	'sphinx_gallery.gen_gallery'
+	# 'sphinx_gallery.gen_gallery'
 ]
-
-# Sphinx Gallery configuration
-sphinx_gallery_conf = {
-    # path to your examples scripts
-    'examples_dirs': 'tutorial',
-    # path where to save gallery generated examples
-    'gallery_dirs': 'tutorials',
-	# which examples to execute
-	'filename_pattern': '/tutorial_',
-	# intersphinx
-	'reference_url': {
-         # The module you locally document uses None
-        'torchgan': None,
-    },
-	# binder
-	'binder': {
-	    # Required keys
-	    'org': 'torchgan',
-	    'repo': 'torchgan',
-	    'url': 'https://mybinder.org',  # Any URL of a binder server. Must be full URL (e.g. https://mybinder.org).
-	    'branch': 'master',  # Can be any branch, tag, or commit hash. Use a branch that hosts your docs.
-	    'dependencies': 'requirements.txt',
-	    'use_jupyter_lab': True # Whether Binder links should start Jupyter Lab instead of the Jupyter Notebook interface.
-	},
-	'show_memory': True,
-	'thumbnail_size': (300, 300),
-}
-
-# generate autosummary even if no references
-autosummary_generate = True
 
 # Napoleon settings
 napoleon_google_docstring = True
@@ -92,6 +61,36 @@ napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = True
 napoleon_use_rtype = True
+
+# # Sphinx Gallery configuration
+# sphinx_gallery_conf = {
+#     # path to your examples scripts
+#     'examples_dirs': 'tutorial',
+#     # path where to save gallery generated examples
+#     'gallery_dirs': 'tutorials',
+# 	# which examples to execute
+# 	'filename_pattern': '/tutorial_',
+# 	# intersphinx
+# 	'reference_url': {
+#          # The module you locally document uses None
+#         'torchgan': None,
+#     },
+# 	# binder
+# 	'binder': {
+# 	    # Required keys
+# 	    'org': 'torchgan',
+# 	    'repo': 'torchgan',
+# 	    'url': 'https://mybinder.org',  # Any URL of a binder server. Must be full URL (e.g. https://mybinder.org).
+# 	    'branch': 'master',  # Can be any branch, tag, or commit hash. Use a branch that hosts your docs.
+# 	    'dependencies': 'requirements.txt',
+# 	    'use_jupyter_lab': True # Whether Binder links should start Jupyter Lab instead of the Jupyter Notebook interface.
+# 	},
+# 	'show_memory': True,
+# 	'thumbnail_size': (300, 300),
+# }
+#
+# # generate autosummary even if no references
+# autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -138,108 +137,48 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
-todo_include_notes = False
+
 
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'bootstrap'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# Theme options are theme-specific and customize the look and feel of a
-# theme further.
 html_theme_options = {
-    # Navigation bar title. (Default: ``project`` value)
-    'navbar_title': "TorchGAN",
-
-    # Tab name for entire site. (Default: "Site")
-    'navbar_site_name': "Site",
-
-    # A list of tuples containing pages or urls to link to.
-    # Valid tuples should be in the following forms:
-    #    (name, page)                 # a link to a page
-    #    (name, "/aa/bb", 1)          # a link to an arbitrary relative url
-    #    (name, "http://example.com", True) # arbitrary absolute url
-    # Note the "1" or "True" value above as the third argument to indicate
-    # an arbitrary url.
-    'navbar_links': [
-        ("Github", "https://github.com/torchgan/torchgan", True),
-        ("Tutorials", "tutorials/index.html", True),
-    ],
-
-    # Render the next and previous page links in navbar. (Default: true)
-    'navbar_sidebarrel': True,
-
-    # Render the current pages TOC in the navbar. (Default: true)
-    'navbar_pagenav': True,
-
-    # Tab name for the current pages TOC. (Default: "Page")
-    'navbar_pagenav_name': "Page",
-
-    # Global TOC depth for "site" navbar tab. (Default: 1)
-    # Switching to -1 shows all levels.
-    'globaltoc_depth': -1,
-
-    # Include hidden TOCs in Site navbar?
-    #
-    # Note: If this is "false", you cannot have mixed ``:hidden:`` and
-    # non-hidden ``toctree`` directives in the same page, or else the build
-    # will break.
-    #
-    # Values: "true" (default) or "false"
-    'globaltoc_includehidden': "true",
-
-    # HTML navbar class (Default: "navbar") to attach to <div> element.
-    # For black navbar, do "navbar navbar-inverse"
-    'navbar_class': "navbar",
-
-    # Fix navigation bar to top of page?
-    # Values: "true" (default) or "false"
-    'navbar_fixed_top': "true",
-
-    # Location of link to source.
-    # Options are "nav" (default), "footer" or anything else to exclude.
-    'source_link_position': "",
-
-    # Bootswatch (http://bootswatch.com/) theme.
-    #
-    # Options are nothing (default) or the name of a valid theme
-    # such as "cosmo" or "sandstone".
-    #
-    # The set of valid themes depend on the version of Bootstrap
-    # that's used (the next config option).
-    #
-    # Currently, the supported themes are:
-    # - Bootstrap 2: https://bootswatch.com/2
-    # - Bootstrap 3: https://bootswatch.com/3
-    'bootswatch_theme': "cosmo",
-
-    # Choose Bootstrap version.
-    # Values: "3" (default) or "2" (in quotes)
-    'bootstrap_version': "3",
+    'canonical_url': '',
+    'analytics_id': '',
+    'logo_only': False,
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': True,
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': False,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-html_sidebars = {
-	"index": ['localtoc.html', 'sourcelink.html', 'searchbox.html'],
-	"getting_started/*": ['localtoc.html', 'sourcelink.html', 'searchbox.html'],
-	"modules/*": ['localtoc.html', 'sourcelink.html', 'searchbox.html'],
-	"tutorials/*": []}
+# html_sidebars = {
+#    '**': ['searchbox.html', 'globaltoc_custom.html'],
+#    'using/windows': ['searchbox.html', 'windowssidebar.html'],
+# }
 
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -248,24 +187,24 @@ html_sidebars = {
 htmlhelp_basename = 'torchgandoc'
 
 # on_rtd is whether we are on readthedocs.org
-# on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-# if not on_rtd:  # only import and set the theme if we're building docs locally
-# 	import sphinx_rtd_theme
-# 	html_theme = 'sphinx_rtd_theme'
-# 	html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-# 	def setup(app):
-# 		#app.add_javascript("custom.js")
-# 		app.add_stylesheet('theme_overrides.css')
-# else:
-#     # Override default css to get a larger width for ReadTheDoc build
-#     html_context = {
-#         'css_files': [
-#             'https://media.readthedocs.org/css/sphinx_rtd_theme.css',
-#             'https://media.readthedocs.org/css/readthedocs-doc-embed.css',
-#             '_static/theme_overrides.css',
-#         ],
-#     }
+if not on_rtd:  # only import and set the theme if we're building docs locally
+	import sphinx_rtd_theme
+	html_theme = 'sphinx_rtd_theme'
+	html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+	def setup(app):
+		#app.add_javascript("custom.js")
+		app.add_stylesheet('theme_overrides.css')
+else:
+    # Override default css to get a larger width for ReadTheDoc build
+    html_context = {
+        'css_files': [
+            'https://media.readthedocs.org/css/sphinx_rtd_theme.css',
+            'https://media.readthedocs.org/css/readthedocs-doc-embed.css',
+            '_static/theme_overrides.css',
+        ],
+    }
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -273,19 +212,19 @@ htmlhelp_basename = 'torchgandoc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
-    'papersize': 'letterpaper',
+    # 'papersize': 'letterpaper',
 
     # The font size ('10pt', '11pt' or '12pt').
     #
-    'pointsize': '20pt',
+    # 'pointsize': '10pt',
 
     # Additional stuff for the LaTeX preamble.
     #
-    'preamble': '',
+    # 'preamble': '',
 
     # Latex figure (float) alignment
     #
-    'figure_align': 'htbp',
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -345,6 +284,6 @@ epub_exclude_files = ['search.html']
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'pytorch': ('https://pytorch.org/docs/stable', None)
     }
