@@ -165,15 +165,21 @@ class GradientVisualize(Visualize):
     def update_grads(self, name, model, eps=1e-5):
         gradsum = 0.0
         for p in model.parameters():
-            gradsum += torch.sum(p.grad ** 2).item()
+            if p.grad is not None:
+                gradsum += torch.sum(p.grad ** 2).clone().item()
         if gradsum > eps:
-            model.zero_grad()
             self.logs[name][len(self.logs[name]) - 1] += gradsum
+            model.zero_grad()
+
+    def report_end_epoch(self):
+        for key, val in self.logs.items():
+            print('{} Mean Gradients : {}'.format(key, sum(val) / len(val)))
 
     def __call__(self, trainer, **kwargs):
         for name in trainer.model_names:
             super(GradientVisualize, self).__call__(name, **kwargs)
             self.logs[name].append(0.0)
+
 
 class ImageVisualize(Visualize):
     def __init__(self, trainer, visdom_port=8097, log_dir=None, writer=None, test_noise=None, nrow=8):
