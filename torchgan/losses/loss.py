@@ -4,24 +4,71 @@ import torch.nn as nn
 __all__ = ['GeneratorLoss', 'DiscriminatorLoss']
 
 class GeneratorLoss(nn.Module):
-    r"""Base class for all generator losses
+    r"""Base class for all generator losses.
+
+    .. note:: All Losses meant to optimize the Generator must subclass this.
 
     Args:
-        reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+        reduction (str, optional): Specifies the reduction to apply to the output.
+            If ``none`` no reduction will be applied. If ``mean`` the sum of
             the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
+            ``sum`` the output will be summed.
+        override_train_ops (function, optional): A function is passed to this argument,
+            if the default ``train_ops`` is not to be used.
     """
-    def __init__(self, reduction='elementwise_mean', override_train_ops=None):
+    def __init__(self, reduction='mean', override_train_ops=None):
         super(GeneratorLoss, self).__init__()
         self.reduction = reduction
         self.override_train_ops = override_train_ops
         self.arg_map = {}
 
     def set_arg_map(self, value):
+        r"""Updates the ``arg_map`` for passing a different value to the ``train_ops``.
+
+        Args:
+            value (dict): A mapping of the ``argument name`` in the method signature and the
+                variable name in the ``Trainer`` it corresponds to.
+
+        .. note::
+            If the ``train_ops`` signature is
+            ``train_ops(self, gen, disc, optimizer_generator, device, batch_size, labels=None)``
+            then we need to map ``gen`` to ``generator`` and ``disc`` to ``discriminator``.
+            In this case we make the following function call
+            ``loss.set_arg_map({"gen": "generator", "disc": "discriminator"})``.
+        """
         self.arg_map.update(value)
 
     def train_ops(self, generator, discriminator, optimizer_generator, device, batch_size, labels=None):
+        r"""Defines the standard ``train_ops`` used by most losses. Losses which have a different
+        training procedure can either ``subclass`` it **(recommended approach)** or make use of
+        ``override_train_ops`` argument.
+
+        .. warning::
+            This function is meant to be used internally by the ``Trainer``. Any external calls to
+            this function is **highly discouraged**.
+
+        The ``standard optimization algorithm`` for the ``generator`` defined in this train_ops
+        is as follows:
+
+        1. :math:`fake = generator(noise)`
+        2. :math:`value = discriminator(fake)`
+        3. :math:`loss = loss\_function(value)`
+        4. Backpropagate by computing :math:`\nabla loss`
+        5. Run a step of the optimizer for generator
+
+        Args:
+            generator (torchgan.models.Generator): The model to be optimized.
+            discriminator (torchgan.models.Discriminator): The discriminator which judges the
+                performance of the generator.
+            optimizer_generator (torch.optim.Optimizer): Optimizer which updates the ``parameters``
+                of the ``generator``.
+            device (torch.device): Device on which the ``generator`` and ``discriminator`` is present.
+            batch_size (int): Batch Size of the data infered from the ``DataLoader`` by the ``Trainer``.
+            labels (torch.Tensor, optional): Labels for the data.
+
+        Returns:
+            Scalar value of the loss. 
+        """
         if self.override_train_ops is not None:
             return self.override_train_ops(generator, discriminator, optimizer_generator, device, batch_size, labels)
         else:
@@ -53,12 +100,12 @@ class DiscriminatorLoss(nn.Module):
     r"""Base class for all discriminator losses
 
     Args:
-        reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+        reduction (str, optional): Specifies the reduction to apply to the output.
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, reduction='elementwise_mean', override_train_ops=None):
+    def __init__(self, reduction='mean', override_train_ops=None):
         super(DiscriminatorLoss, self).__init__()
         self.reduction = reduction
         self.override_train_ops = override_train_ops

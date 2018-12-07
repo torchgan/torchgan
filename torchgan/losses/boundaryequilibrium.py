@@ -20,7 +20,7 @@ class BoundaryEquilibriumGeneratorLoss(GeneratorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
@@ -48,11 +48,11 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, reduction='elementwise_mean', override_train_ops=None, init_k=0.0, lambd=0.001, gamma=0.75):
+    def __init__(self, reduction='mean', override_train_ops=None, init_k=0.0, lambd=0.001, gamma=0.75):
         super(BoundaryEquilibriumDiscriminatorLoss, self).__init__(reduction, override_train_ops)
         self.reduction = reduction
         self.override_train_ops = override_train_ops

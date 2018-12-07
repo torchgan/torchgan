@@ -9,7 +9,7 @@ __all__ = ['energy_based_generator_loss', 'energy_based_discriminator_loss',
 def energy_based_generator_loss(dgz, reduction):
     return reduce(dgz, reduction)
 
-def energy_based_discriminator_loss(dx, dgz, margin, reduction='elementwise_mean'):
+def energy_based_discriminator_loss(dx, dgz, margin, reduction='mean'):
     return reduce(dx + F.relu(-dgz + margin), reduction)
 
 class EnergyBasedGeneratorLoss(GeneratorLoss):
@@ -29,11 +29,11 @@ class EnergyBasedGeneratorLoss(GeneratorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, reduction='elementwise_mean', override_train_ops=None):
+    def __init__(self, reduction='mean', override_train_ops=None):
         super(EnergyBasedGeneratorLoss, self).__init__(reduction, override_train_ops)
 
     def forward(self, dgz):
@@ -66,12 +66,12 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
 
-    def __init__(self, reduction='elementwise_mean', margin=80.0, override_train_ops=None):
+    def __init__(self, reduction='mean', margin=80.0, override_train_ops=None):
         super(EnergyBasedDiscriminatorLoss, self).__init__(reduction, override_train_ops)
         self.margin = margin
 

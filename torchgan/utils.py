@@ -2,7 +2,7 @@ import torch
 from pkgutil import iter_modules
 
 def reduce(x, reduction=None):
-    if reduction == "elementwise_mean":
+    if reduction == "mean":
         return torch.mean(x)
     elif reduction == "sum":
         return torch.sum(x)

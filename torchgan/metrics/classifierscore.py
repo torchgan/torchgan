@@ -53,7 +53,7 @@ class ClassifierScore(EvaluationMetric):
         p = F.softmax(x, dim=1)
         q = torch.mean(p, dim=0)
         kl = torch.sum(p * (F.log_softmax(x, dim=1) - torch.log(q)), dim=1)
-        return torch.exp(reduce(kl, 'elementwise_mean')).data
+        return torch.exp(reduce(kl, 'mean')).data
 
     def metric_ops(self, generator, device):
         noise = torch.randn(1, generator.encoding_dims, device=device)

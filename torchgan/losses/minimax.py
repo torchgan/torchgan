@@ -4,7 +4,7 @@ from .loss import GeneratorLoss, DiscriminatorLoss
 
 __all__ = ['minimax_generator_loss', 'minimax_discriminator_loss', 'MinimaxGeneratorLoss', 'MinimaxDiscriminatorLoss']
 
-def minimax_generator_loss(dgz, nonsaturating=True, reduction='elementwise_mean'):
+def minimax_generator_loss(dgz, nonsaturating=True, reduction='mean'):
     if nonsaturating:
         target = torch.ones_like(dgz)
         return F.binary_cross_entropy_with_logits(dgz, target,
@@ -14,7 +14,7 @@ def minimax_generator_loss(dgz, nonsaturating=True, reduction='elementwise_mean'
         return -1.0 * F.binary_cross_entropy_with_logits(dgz, target,
                                                          reduction=reduction)
 
-def minimax_discriminator_loss(dx, dgz, reduction='elementwise_mean'):
+def minimax_discriminator_loss(dx, dgz, reduction='mean'):
     target_ones = torch.ones_like(dgz)
     target_zeros = torch.zeros_like(dx)
     loss = F.binary_cross_entropy_with_logits(dx, target_ones,
@@ -44,14 +44,14 @@ class MinimaxGeneratorLoss(GeneratorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
 
         nonsaturating(bool, optional): Specifies whether to use the
             nonsaturating heuristic loss for the generator
     """
-    def __init__(self, reduction='elementwise_mean', nonsaturating=True, override_train_ops=None):
+    def __init__(self, reduction='mean', nonsaturating=True, override_train_ops=None):
         super(MinimaxGeneratorLoss, self).__init__(reduction, override_train_ops)
         self.nonsaturating = nonsaturating
 
@@ -85,7 +85,7 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """

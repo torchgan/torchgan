@@ -6,7 +6,7 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
 
 .. toctree::
     :caption: GETTING STARTED
-    :maxdepth: 3
+    :maxdepth: 2
 
     getting_started/installation
     getting_started/dependencies
@@ -17,7 +17,7 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
 
 .. toctree::
     :caption: API DOCUMENTATION
-    :maxdepth: 3
+    :maxdepth: 2
 
     modules/losses
     modules/metrics

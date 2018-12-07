@@ -5,10 +5,10 @@ from ..utils import reduce
 __all__ = ['least_squares_generator_loss', 'least_squares_discriminator_loss',
            'LeastSquaresGeneratorLoss', 'LeastSquaresDiscriminatorLoss']
 
-def least_squares_generator_loss(dgz, c=1.0, reduction='elementwise_mean'):
+def least_squares_generator_loss(dgz, c=1.0, reduction='mean'):
     return 0.5 * reduce((dgz - c) ** 2, reduction)
 
-def least_squares_discriminator_loss(dx, dgz, a=0.0, b=1.0, reduction='elementwise_mean'):
+def least_squares_discriminator_loss(dx, dgz, a=0.0, b=1.0, reduction='mean'):
     return 0.5 * (reduce((dx - b) ** 2, reduction) + reduce((dgz - a) ** 2, reduction))
 
 class LeastSquaresGeneratorLoss(GeneratorLoss):
@@ -29,11 +29,11 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, reduction='elementwise_mean', c=1.0, override_train_ops=None):
+    def __init__(self, reduction='mean', c=1.0, override_train_ops=None):
         super(LeastSquaresGeneratorLoss, self).__init__(reduction, override_train_ops)
         self.c = c
 
@@ -67,11 +67,11 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
-    def __init__(self, reduction='elementwise_mean', a=0.0, b=1.0, override_train_ops=None):
+    def __init__(self, reduction='mean', a=0.0, b=1.0, override_train_ops=None):
         super(LeastSquaresDiscriminatorLoss, self).__init__(reduction, override_train_ops)
         self.a = a
         self.b = b

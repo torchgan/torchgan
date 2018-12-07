@@ -5,7 +5,7 @@ from ..utils import reduce
 
 __all__ = ['dragan_gradient_penalty', 'DraganGradientPenalty']
 
-def dragan_gradient_penalty(interpolate, d_interpolate, k=1.0, reduction='elementwise_mean'):
+def dragan_gradient_penalty(interpolate, d_interpolate, k=1.0, reduction='mean'):
     grad_outputs = torch.ones_like(d_interpolate)
     gradients = autograd.grad(outputs=d_interpolate, inputs=interpolate,
                               grad_outputs=grad_outputs,
@@ -35,13 +35,13 @@ class DraganGradientPenalty(DiscriminatorLoss):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
 
         lambd(float,optional) : Hyperparameter lambda for scaling the gradient penalty.
     """
-    def __init__(self, reduction='elementwise_mean', lambd=10.0, k=1.0, override_train_ops=None):
+    def __init__(self, reduction='mean', lambd=10.0, k=1.0, override_train_ops=None):
         super(DraganGradientPenalty, self).__init__(reduction)
         self.lambd = lambd
         self.override_train_ops = override_train_ops

@@ -5,8 +5,8 @@ __all__ = ['BasicBlock2d', 'BottleneckBlock2d', 'TransitionBlock2d', 'Transition
            'DenseBlock2d']
 
 class BasicBlock2d(nn.Module):
-    r"""Basic Block Module as described in `"Densely Connected Convolutional Networks by Huang et. al."
-    <https://arxiv.org/abs/1608.06993>`_
+    r"""Basic Block Module as described in `"Densely Connected Convolutional Networks by Huang et.
+    al." <https://arxiv.org/abs/1608.06993>`_
 
     The output is computed by ``concatenating`` the ``input`` tensor to the ``output`` tensor (of the
     internal model) along the ``channel`` dimension.
@@ -180,15 +180,13 @@ class DenseBlock2d(nn.Module):
     r"""Dense Block Module as described in `"Densely Connected Convolutional Networks by Huang
     et. al." <https://arxiv.org/abs/1608.06993>`_
 
-    The model is
-
     Args:
-        depth (int): The total number of ``block``s that will be present.
+        depth (int): The total number of ``blocks`` that will be present.
         in_channels (int): The channel dimension of the input tensor.
         growth_rate (int): The rate at which the channel dimension increases. The output of
                            the module has a channel dimension of size ``in_channels +
                            depth * growth_rate``.
-        block (torch.nn.Module): Should be once of the Densenet Blocks. Forms the building blocks
+        block (torch.nn.Module): Should be once of the Densenet Blocks. Forms the building block
                                  for the Dense Block.
         kernel (int, tuple): Size of the Convolutional Kernel.
         stride (int, tuple, optional): Stride of the Convolutional Kernel.
