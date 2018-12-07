@@ -20,6 +20,10 @@ class ClassifierScore(EvaluationMetric):
         self.classifier = torchvision.models.inception_v3(True) if classifier is None else classifier
         self.classifier.eval()
         self.transform = transform
+        self.arg_map = {}
+
+    def set_arg_map(self, value):
+        self.arg_map.update(value)
 
     def preprocess(self, x):
         r"""

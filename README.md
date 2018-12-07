@@ -4,7 +4,7 @@
 
   <a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a>
   <a href="https://travis-ci.org/torchgan/torchgan"><img src="https://travis-ci.org/torchgan/torchgan.svg?branch=master" alt="Build Status"></a>
-  <a href="https://codecov.io/gh/torchgan/torchgan"><img src="https://codecov.io/gh/torchgan/torchgan/branch/master/graph/badge.svg" alt="Coverage Status"></a>
+  <!-- <a href="https://codecov.io/gh/torchgan/torchgan"><img src="https://codecov.io/gh/torchgan/torchgan/branch/master/graph/badge.svg" alt="Coverage Status"></a> -->
   <a href="LICENSE"><img src="http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat" alt="License"></a>
   <a href="https://join.slack.com/t/torchgan/shared_invite/enQtNDkyMTQ2ODAyMzczLWEyZjc1ZDdmNTc3ZmNiODFmMmY2YjM2OTZmZTRlOTc3YWE5MTliZTBkZTkwNzQ2MDIwZmI0MGRjYjQwYTczMzQ"><img src="https://img.shields.io/badge/chat-on%20slack-yellow.svg" alt="Slack"></a>
   <a href="https://torchgan.readthedocs.io/en/stable/"><img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Stable Documentation"></a>

@@ -8,7 +8,7 @@ class GeneratorLoss(nn.Module):
 
     Args:
         reduction (string, optional): Specifies the reduction to apply to the output.
-        If `none` no reduction will be applied. If `elementwise_mean` the sum of
+            If `none` no reduction will be applied. If `elementwise_mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
@@ -16,6 +16,10 @@ class GeneratorLoss(nn.Module):
         super(GeneratorLoss, self).__init__()
         self.reduction = reduction
         self.override_train_ops = override_train_ops
+        self.arg_map = {}
+
+    def set_arg_map(self, value):
+        self.arg_map.update(value)
 
     def train_ops(self, generator, discriminator, optimizer_generator, device, batch_size, labels=None):
         if self.override_train_ops is not None:
@@ -58,9 +62,11 @@ class DiscriminatorLoss(nn.Module):
         super(DiscriminatorLoss, self).__init__()
         self.reduction = reduction
         self.override_train_ops = override_train_ops
+        self.arg_map = {}
 
-    # NOTE(avik-pal): batch_size and device gets flipped if the order is not given as below. Investigate this
-    #                 error as might affect our support for custom loss functions.
+    def set_arg_map(self, value):
+        self.arg_map.update(value)
+
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device, batch_size,
                   labels=None):
         if self.override_train_ops is not None:

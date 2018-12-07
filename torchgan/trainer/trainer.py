@@ -3,7 +3,6 @@ import torch
 import torchvision
 from warnings import warn
 from inspect import signature, _empty
-from operator import itemgetter
 from ..models.model import Generator, Discriminator
 from ..losses.loss import GeneratorLoss, DiscriminatorLoss
 from ..logging.logger import Logger
@@ -31,20 +30,12 @@ class Trainer(object):
                        `discriminator` and any other model that you might want to define, with the function and
                        arguments that are needed to construct the model. Refer to the examples to see how to
                        define complex models using this API.
-        optimizers (dict): Contains a mapping between the variable name of the optimizer and the function and arguments
-                       needed to construct the optimizer. Naming convention that is to be used for the proper
-                       functioning of the optimizer: If your model is named `my_new_model` then the optimizer
-                       corresponding to that model must be named `optimizer_my_new_model`. Following any other naming
-                       convention will simply throw an error.
         losses_list (list): A list of the Loss Functions that need to be minimized. For a list of pre-defined losses
                        look at :mod:`torchgan.losses`. All losses in the list must be a subclass of atleast
                        `GeneratorLoss` or `DiscriminatorLoss`.
         metrics_list (list, optional): List of Metric Functions that need to be logged. For a list of pre-defined
                        metrics look at :mod:`torchgan.metrics`. All losses in the list must be a subclass of
                        `EvaluationMetric`.
-        schedulers (dict, optional): Schedulers can either be from Pytorch or can be a custom scheduler as long as
-                       it strictly follows that of Pytorch. If your optimizer is named `optimizer_my_new_model` then
-                       the corresponding scheduler must be named `scheduler_optimizer_my_new_model`.
         device (torch.device, optional): Device in which the operation is to be carried out. If you are using a
                        CPU machine make sure that you change it for proper functioning.
         ncritic (int, optional): Setting it to a value will make the discriminator train that many times more than
@@ -68,49 +59,55 @@ class Trainer(object):
 
     Example:
         >>> dcgan = Trainer(
-                    {"generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels": 16}},
-                     "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 1, "step_channels": 16}}},
-                    {"optimizer_generator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}},
-                     "optimizer_discriminator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
+                    {"generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels":
+                                   16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002,
+                                   "betas": (0.5, 0.999)}}},
+                     "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 1,
+                                       "step_channels": 16}, "optimizer": {"var": "opt_discriminator",
+                                       "name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
                     [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
                     sample_size=64, epochs=20)
     """
-    def __init__(self, models, optimizers, losses_list, metrics_list=None, schedulers=None,
-                 device=torch.device("cuda:0"), ncritic=None, batch_size=128, epochs=5,
-                 sample_size=8, checkpoints="./model/gan", retain_checkpoints=5, recon="./images",
-                 log_dir=None, test_noise=None, nrow=8, **kwargs):
+    def __init__(self, models, losses_list, metrics_list=None, device=torch.device("cuda:0"),
+                 ncritic=None, batch_size=128, epochs=5, sample_size=8, checkpoints="./model/gan",
+                 retain_checkpoints=5, recon="./images", log_dir=None, test_noise=None, nrow=8, **kwargs):
         self.device = device
         self.model_names = []
-        for key, val in models.items():
-            self.model_names.append(key)
-            if "args" in val:
-                setattr(self, key, (val["name"](**val["args"])).to(self.device))
-            else:
-                setattr(self, key, (val["name"]()).to(self.device))
         self.optimizer_names = []
-        for key, val in optimizers.items():
-            self.optimizer_names.append(key)
-            model = getattr(self, key.split("_", 1)[1])
-            if "args" in val:
-                setattr(self, key, val["name"](model.parameters(), **val["args"]))
-            else:
-                setattr(self, key, val["name"](model.parameters()))
         self.schedulers = []
-        if schedulers is not None:
-            for key, val in schedulers.items():
-                opt = getattr(self, key.split("_", 1)[1])
-                if "args" in val:
-                    self.schedulers.append(val["name"](opt, **val["args"]))
+        for key, model in models.items():
+            self.model_names.append(key)
+            if "args" in model:
+                setattr(self, key, (model["name"](**model["args"])).to(self.device))
+            else:
+                setattr(self, key, (model["name"]()).to(self.device))
+            opt = model["optimizer"]
+            opt_name = "optimizer_{}".format(key)
+            if "var" in opt:
+                opt_name = opt["var"]
+            self.optimizer_names.append(opt_name)
+            model_params = getattr(self, key).parameters()
+            if "args" in opt:
+                setattr(self, opt_name, (opt["name"](model_params, **opt["args"])))
+            else:
+                setattr(self, opt_name, (opt["name"](model_params)))
+            if "scheduler" in opt:
+                sched = opt["scheduler"]
+                if "args" in sched:
+                    self.schedulers.append(sched["name"](getattr(self, opt_name), **sched["args"]))
                 else:
-                    self.schedulers.append(val["name"](opt))
+                    self.schedulers.append(sched["name"](getattr(self, opt_name)))
+
         self.losses = {}
         for loss in losses_list:
             self.losses[type(loss).__name__] = loss
+
         if metrics_list is None:
             self.metrics = None
         else:
             for metric in metrics_list:
                 self.metrics[type(metric).__name__] = metric
+
         self.batch_size = batch_size
         self.sample_size = sample_size
         self.epochs = epochs
@@ -139,6 +136,9 @@ class Trainer(object):
 
         self.logger = Logger(self, losses_list, metrics_list, log_dir=log_dir,
                              nrow=nrow, test_noise=test_noise)
+
+        self._store_loss_maps()
+        self._store_metric_maps()
 
         os.makedirs(self.checkpoints.rsplit("/", 1)[0], exist_ok=True)
         os.makedirs(self.recon, exist_ok=True)
@@ -225,26 +225,7 @@ class Trainer(object):
         except:
             warn("Model could not be loaded from {}. Training from Scratch".format(load_path))
 
-    def set_arg_maps(self, mappings):
-        r"""Helper function to allow custom parameter names in Loss and Metric Functions.
-        Also allows storing of buffers.
-
-        Args:
-            mappings (list, tuple): It must be a tuple or a list of tuples, where the first variable
-                                    name is the name needed by the function and the next variable name is
-                                    the name of the variable already stored in the object.
-
-        Example:
-            >>> #If your loss function needs a parameter `gen` which is stored as `generator` in the trainer.
-            >>> trainer.set_arg_maps(("gen", "generator"))
-        """
-        if type(mappings) is list:
-            for mapping in mappings:
-                setattr(self, mapping[0], mapping[1])
-        else:
-            setattr(self, mappings[0], mappings[1])
-
-    def _get_argument_maps(self, func):
+    def _get_argument_maps(self, default_map, func):
         r"""Extracts the signature of the `func`. Then it returns the list of arguments that
         are present in the object and need to be mapped and passed to the `func` when calling it.
 
@@ -257,16 +238,21 @@ class Trainer(object):
             arguments are not present an error is thrown.
         """
         sig = signature(func)
-        args = [p.name for p in sig.parameters.values() if p.default is _empty\
-                    and p.name != 'kwargs' and p.name != 'args']
-        for arg in args:
-            if arg not in self.__dict__:
-                raise Exception("Argument : {} not present. If the value is stored with some other\
-                                 name use the function `set_arg_maps`".format(arg))
-        for arg in [p.name for p in sig.parameters.values() if p.default is not _empty]:
-            if arg in self.__dict__:
-                args.append(arg)
-        return args
+        arg_map = {}
+        for sig_param in sig.parameters.values():
+            arg = sig_param.name
+            arg_name = arg
+            if arg in default_map:
+                arg_name = default_map[arg]
+            if sig_param.default is not _empty:
+                if arg_name in self.__dict__:
+                    arg_map.update({arg: arg_name})
+            else:
+                if arg_name not in self.__dict__ and arg != 'kwargs' and arg != 'args':
+                    raise Exception("Argument : {} not present.".format(arg_name))
+                else:
+                    arg_map.update({arg: arg_name})
+        return arg_map
 
     def _store_metric_maps(self):
         r"""Creates a mapping between the metrics and the arguments from the object that need to be
@@ -275,7 +261,7 @@ class Trainer(object):
         if self.metrics is not None:
             self.metric_arg_maps = {}
             for name, metric in self.metrics.items():
-                self.metric_arg_maps[name] = self._get_argument_maps(metric.metric_ops)
+                self.metric_arg_maps[name] = self._get_argument_maps(metric.arg_map, metric.metric_ops)
 
     def _store_loss_maps(self):
         r"""Creates a mapping between the losses and the arguments from the object that need to be
@@ -283,18 +269,21 @@ class Trainer(object):
         """
         self.loss_arg_maps = {}
         for name, loss in self.losses.items():
-            self.loss_arg_maps[name] = self._get_argument_maps(loss.train_ops)
+            self.loss_arg_maps[name] = self._get_argument_maps(loss.arg_map, loss.train_ops)
 
     def _get_arguments(self, arg_map):
         r"""Get the argument values from the object and create a dictionary.
 
         Args:
-            arg_map (list): A list of arguments that is generated by `_get_argument_maps`.
+            arg_map (dict): A dict of arguments that is generated by `_get_argument_maps`.
 
         Returns:
             A dictionary mapping the argument name to the value of the argument.
         """
-        return dict(zip(arg_map, itemgetter(*arg_map)(self.__dict__)))
+        args = {}
+        for key, val in arg_map.items():
+            args[key] = self.__dict__[val]
+        return args
 
     def train_iter_custom(self):
         r"""Function that needs to be extended if `train_iter` is to be modified. Use this function
@@ -411,7 +400,5 @@ class Trainer(object):
         self.logger.close()
 
     def __call__(self, data_loader, **kwargs):
-        self._store_loss_maps()
-        self._store_metric_maps()
         self.batch_size = data_loader.batch_size
         self.train(data_loader, **kwargs)
