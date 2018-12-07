@@ -60,7 +60,7 @@ class DraganGradientPenalty(DiscriminatorLoss):
         """
         return dragan_gradient_penalty(interpolate, d_interpolate, self.k, self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, noise,
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
                   device, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
