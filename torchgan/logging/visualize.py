@@ -155,10 +155,10 @@ class GradientVisualize(Visualize):
     def log_tensorboard(self, name):
         self.writer.add_scalar('Gradients/{}'.format(name), self.logs[name][len(self.logs[name]) - 1], self.step)
 
-    def log_console(self, name, gradsum):
+    def log_console(self, name):
         print('{} Gradients : {}'.format(name, self.logs[name][len(self.logs[name]) - 1]))
 
-    def log_visdom(self, name, gradsum):
+    def log_visdom(self, name):
         self.vis.line([self.logs[name][len(self.logs[name]) - 1]], [self.step], win=name, update="append",
                       opts=dict(title=name, xlabel="Time Step", ylabel="Gradient"))
 
