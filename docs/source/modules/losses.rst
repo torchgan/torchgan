@@ -54,11 +54,17 @@ Wasserstein Loss
     :members:
 .. autoclass:: WassersteinDiscriminatorLoss
     :members:
+.. autoclass:: WassersteinGradientPenalty
+    :members:
 
 Mutual Information Penalty
 --------------------------
 .. autoclass:: MutualInformationPenalty
     :members:
+
+Dragan Loss
+-----------
+.. autoclass:: DraganGradientPenalty
 
 Auxillary Classifier Loss
 -------------------------
