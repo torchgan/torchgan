@@ -29,6 +29,9 @@ class Logger(object):
     def get_metric_viz(self):
         return self.logger_end_epoch[0]
 
+    def get_grad_viz(self):
+        return self.logger_mid_epoch[0]
+
     def register(self, visualize, *args, mid_epoch=True, **kwargs):
         if mid_epoch:
             self.logger_mid_epoch.append(visualize(*args, writer=self.writer, **kwargs))
