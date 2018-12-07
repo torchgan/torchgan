@@ -162,12 +162,12 @@ class GradientVisualize(Visualize):
         self.vis.line([self.logs[name][len(self.logs[name]) - 1]], [self.step], win=name, update="append",
                       opts=dict(title=name, xlabel="Time Step", ylabel="Gradient"))
 
-    def update_grads(self, name, model, optimizer, eps=1e-5):
+    def update_grads(self, name, model, eps=1e-5):
         gradsum = 0.0
         for p in model.parameters():
             gradsum += torch.sum(p.grad ** 2).item()
         if gradsum > eps:
-            optimizer.zero_grad()
+            model.zero_grad()
             self.logs[name][len(self.logs[name]) - 1] += gradsum
 
     def __call__(self, trainer, **kwargs):
