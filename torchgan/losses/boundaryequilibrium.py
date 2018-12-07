@@ -102,17 +102,18 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
         elif self.k > 1.0:
             self.k = 1.0
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, batch_size,
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
                   device, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
-                   real_inputs, batch_size, device, labels)
+                   real_inputs, device, labels)
         else:
             if labels is None and (generator.label_type == 'required' or discriminator.label_type == 'required'):
                 raise Exception('GAN model requires labels for training')
-            noise = torch.randn(real_inputs.size(0), generator.encoding_dims, device=device)
+            batch_size = real_inputs.size(0)
+            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
             if generator.label_type == 'generated':
-                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),), device=device)
+                label_gen = torch.randint(0, generator.num_classes, (batch_size,), device=device)
             optimizer_discriminator.zero_grad()
             if discriminator.label_type == 'none':
                 dx = discriminator(real_inputs)

@@ -58,15 +58,15 @@ class AuxiliaryClassifierDiscriminatorLoss(DiscriminatorLoss):
     def forward(self, logits, labels):
         return F.cross_entropy(logits, labels, reduction=self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, batch_size,
-                  device, labels=None):
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(generator, discriminator, optimizer_discriminator,
-                    real_inputs, batch_size, device, labels)
+                    real_inputs, device, labels)
         if labels is None:
             raise Exception('ACGAN Discriminator requires labels for training')
         if generator.label_type is 'none':
             raise Exception('Incorrect Model: ACGAN generator must require labels for training')
+        batch_size = real_inputs.size(0)
         noise = torch.randn(batch_size, generator.encoding_dims, device=device)
         optimizer_discriminator.zero_grad()
         cx = discriminator(real_inputs, mode='classifier')
