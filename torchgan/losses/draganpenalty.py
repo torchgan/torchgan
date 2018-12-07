@@ -64,7 +64,7 @@ class DraganGradientPenalty(DiscriminatorLoss):
                   device, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
-                                           real_inputs, noise, labels)
+                                           real_inputs, labels)
         else:
             # NOTE(avik-pal): We don't need the gradients for alpha and beta. Its there
             #                 to prevent an error while calling autograd.grad
