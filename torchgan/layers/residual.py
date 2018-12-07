@@ -1,8 +1,8 @@
 import torch.nn as nn
 
-__all__ = ['ResidualBlock']
+__all__ = ['ResidualBlock2d']
 
-class ResidualBlock(nn.Module):
+class ResidualBlock2d(nn.Module):
     r"""Residual Block Module as described in `"Deep Residual Learning for Image Recognition
     by He et. al." <https://arxiv.org/abs/1512.03385>`_
 
@@ -37,7 +37,7 @@ class ResidualBlock(nn.Module):
     """
     def __init__(self, filters, kernels, strides=None, paddings=None, activation=nn.ReLU,
                  batchnorm=True, shortcut=None, last_activation=None):
-        super(ResidualBlock, self).__init__()
+        super(ResidualBlock2d, self).__init__()
         if strides is None:
             strides = [1 for _ in range(len(kernels))]
         if paddings is None:
@@ -56,13 +56,13 @@ class ResidualBlock(nn.Module):
         self.last_activation = last_activation
 
     def forward(self, x):
-        r"""Computes the output of the residual network
+        r"""Computes the output of the residual block
 
         Args:
-            x (torch.Tensor, optional): A 4D Torch Tensor which is the input to the Residual Block.
+            x (torch.Tensor): A 4D Torch Tensor which is the input to the Residual Block.
 
         Returns:
-            A 4D Torch Tensor after applying the desired functions as specified while creating the
+            4D Torch Tensor after applying the desired functions as specified while creating the
             object.
         """
         out = self.layers(x)

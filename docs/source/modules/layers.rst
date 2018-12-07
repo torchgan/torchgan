@@ -10,30 +10,50 @@ for GAN architectures. Currently the following blocks are supported:
 .. contents::
     :local:
 
-ResidualBlock
+Residual Blocks
+===============
+ResidualBlock2d
+---------------
+.. autoclass:: ResidualBlock2d
+    :members:
+
+Densenet Blocks
+===============
+BasicBlock2d
+------------
+.. autoclass:: BasicBlock2d
+    :members:
+
+BottleneckBlock2d
+-----------------
+.. autoclass:: BottleneckBlock2d
+    :members:
+
+TransitionBlock2d
+-----------------
+.. autoclass:: TransitionBlock2d
+    :members:
+
+TransitionBlockTranspose2d
+--------------------------
+.. autoclass:: TransitionBlockTranspose2d
+    :members:
+
+DenseBlock2d
+------------
+.. autoclass:: DenseBlock2d
+    :members:
+
+Self Attention
 ==============
-.. autoclass:: ResidualBlock
+SelfAttention2d
+---------------
+.. autoclass:: SelfAttention2d
     :members:
 
-DensenetBlocks
-==============
-.. autoclass:: BasicBlock
-    :members:
-.. autoclass:: BottleneckBlock
-    :members:
-.. autoclass:: TransitionBlock
-    :members:
-.. autoclass:: TransitionBlockTranspose
-    :members:
-.. autoclass:: DenseBlock
-    :members:
-
-SelfAttention
-=============
-.. autoclass:: SelfAttention
-    :members:
-
+Spectral Normalization
+======================
 SpectralNorm2d
-==============
+--------------
 .. autoclass:: SpectralNorm2d
     :members:

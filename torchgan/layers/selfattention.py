@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ['SelfAttention']
+__all__ = ['SelfAttention2d']
 
-class SelfAttention(nn.Module):
+class SelfAttention2d(nn.Module):
     r"""Self Attention Module as proposed in the paper `"Self-Attention Generative Adversarial
     Networks by Han Zhang et. al." <https://arxiv.org/abs/1805.08318>`_
 
@@ -31,7 +31,7 @@ class SelfAttention(nn.Module):
         if output_dims == 0:
             raise Exception("The output dims corresponding to the input dims is 0. Increase the input\
                             dims to 8 or more. Else specify output_dims")
-        super(SelfAttention, self).__init__()
+        super(SelfAttention2d, self).__init__()
         self.query = nn.Conv2d(input_dims, output_dims, 1)
         self.key = nn.Conv2d(input_dims, output_dims, 1)
         self.value = nn.Conv2d(input_dims, input_dims, 1)
@@ -46,7 +46,7 @@ class SelfAttention(nn.Module):
 
         Returns:
             A tuple of the ``output`` and the ``attention`` if ``return_attn`` is set to ``True``
-            else just the ``output Tensor``.
+            else just the ``output`` tensor.
         """
         dims = (x.size(0), -1, x.size(2) * x.size(3))
         out_query = self.query(x).view(dims)

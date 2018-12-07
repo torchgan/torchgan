@@ -7,7 +7,7 @@
 [![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://torchgan.readthedocs.io/en/stable/)
 [![Latest Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://torchgan.readthedocs.io/en/latest/)
 
-TorchGAN is a [Pytorch](https://www.pytorch.org) based framework for designing and developing Generative Adverarial Networks. TorchGAN has been designed to provide building blocks for popular GANs and also to allow customization for cutting edge research. Using TorchGAN's modular structure allows
+TorchGAN is a [Pytorch](https://pytorch.org) based framework for designing and developing Generative Adversarial Networks. TorchGAN has been designed to provide building blocks for popular GANs and also to allow customization for cutting edge research. Using TorchGAN's modular structure allows
 
 * Trying out popular GAN models on your dataset.
 * Plug in your new Loss Function, new Architecture, etc. with the traditional ones.

@@ -17,7 +17,7 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
 
 .. toctree::
     :caption: API DOCUMENTATION
-    :maxdepth: 2
+    :maxdepth: 3
 
     modules/losses
     modules/metrics

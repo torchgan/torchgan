@@ -30,7 +30,7 @@ class SpectralNorm2d(nn.Module):
     Example:
         .. code:: python
 
-            >>> layer = SpectralNorm2d(Conv(3, 16, 1))
+            >>> layer = SpectralNorm2d(Conv2d(3, 16, 1))
             >>> x = torch.rand(1, 3, 10, 10)
             >>> layer(x)
     """
