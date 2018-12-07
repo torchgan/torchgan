@@ -52,9 +52,10 @@ class Logger(object):
     def run_end_epoch(self, trainer, epoch, *args):
         print("Epoch {} Summary".format(epoch))
         for logger in self.logger_mid_epoch:
-            if type(logger).__name__ is "LossVisualize" or\
-               type(logger).__name__ is "GradientVisualize":
+            if type(logger).__name__ is "LossVisualize":
                 logger(trainer)
+            elif type(logger).__name__ is "GradientVisualize":
+                logger.report_end_epoch()
             else:
                 logger(*args)
         for logger in self.logger_end_epoch:
