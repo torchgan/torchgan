@@ -64,7 +64,7 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
     - :math:`z` : A sample from the noise prior
 
     .. note::
-        The convergence of EBGAN is highly sensitive to hyperparameter. The ``margin``
+        The convergence of EBGAN is highly sensitive to hyperparameters. The ``margin``
         hyperparameter as per the paper was taken as follows:
 
         +----------------------+--------+

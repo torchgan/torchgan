@@ -13,10 +13,10 @@ class SelfAttention2d(nn.Module):
 
     where
 
-    - ``query`` : 2D Convolution Operation
-    - ``key`` : 2D Convolution Operation
-    - ``value`` : 2D Convolution Operation
-    - ``x`` : Input
+    - :math:`query` : 2D Convolution Operation
+    - :math:`key` : 2D Convolution Operation
+    - :math:`value` : 2D Convolution Operation
+    - :math:`x` : Input
 
     Args:
         input_dims (int): The input channel dimension in the input ``x``.

@@ -12,10 +12,10 @@ class ResidualBlock2d(nn.Module):
 
     where
 
-    - ``x``: Input to the Module
-    - ``layers``: The feed forward network
-    - ``shortcut``: The function to be applied along the skip connection
-    - ``activation``: The activation function applied at the end of the residual block
+    - :math:`x` : Input to the Module
+    - :math:`layers` : The feed forward network
+    - :math:`shortcut` : The function to be applied along the skip connection
+    - :math:`activation` : The activation function applied at the end of the residual block
 
     Args:
         filters (list): A list of the filter sizes. For ex, if the input has a channel

@@ -128,9 +128,7 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
                   device, labels=None):
-        r"""Defines the standard ``train_ops`` used by most losses. Losses which have a different
-        training procedure can either ``subclass`` it **(recommended approach)** or make use of
-        ``override_train_ops`` argument.
+        r"""Defines the standard ``train_ops`` used by boundary equilibrium loss.
 
         .. warning::
             This function is meant to be used internally by the ``Trainer``. Any external calls to

@@ -145,3 +145,12 @@ AuxiliaryClassifierDiscriminatorLoss
 
 .. autoclass:: AuxiliaryClassifierDiscriminatorLoss
     :members:
+
+Feature Matching Loss
+=====================
+
+FeatureMatchingGeneratorLoss
+----------------------------
+
+.. autoclass:: FeatureMatchingGeneratorLoss
+    :members:

@@ -22,24 +22,27 @@ class DraganGradientPenalty(DiscriminatorLoss):
 
     The gradient penalty is calculated as:
 
-    .. math: \lambda \times (norm(grad(D(x))) - 1)^2
+    .. math:: \lambda \times (||grad(D(x))||_2 - k)^2
 
     The gradient being taken with respect to x
 
     where
 
-    - G : Generator
-    - D : Disrciminator
-    - :math:`\lambda` : Scaling hyperparameter (default 10.0)
-    - x : Interpolation term for the gradient penalty
+    - :math:`G` : Generator
+    - :math:`D` : Disrciminator
+    - :math:`\lambda` : Scaling hyperparameter
+    - :math:`x` : Interpolation term for the gradient penalty
+    - :math:`k` : Constant
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
             If `none` no reduction will be applied. If `mean` the sum of
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
-
-        lambd(float,optional) : Hyperparameter lambda for scaling the gradient penalty.
+        lambd (float,optional) : Hyperparameter :math:`\lambda` for scaling the gradient penalty.
+        k (float, optional) : Constant.
+        override_train_ops (function, optional): A function is passed to this argument,
+            if the default ``train_ops`` is not to be used.
     """
     def __init__(self, reduction='mean', lambd=10.0, k=1.0, override_train_ops=None):
         super(DraganGradientPenalty, self).__init__(reduction)
@@ -48,12 +51,14 @@ class DraganGradientPenalty(DiscriminatorLoss):
         self.k = k
 
     def forward(self, interpolate, d_interpolate):
-        r"""
+        r"""Computes the loss for the given input.
+
         Args:
             interpolate (torch.Tensor) : It must have the dimensions (N, \*) where
                                          \* means any number of additional dimensions.
-            d_interpolate (torch.Tensor) : It must have the dimensions (N, \*) where
-                                           \* means any number of additional dimensions.
+            d_interpolate (torch.Tensor) : Output of the ``discriminator`` with ``interpolate``
+                                           as the input. It must have the dimensions (N, \*)
+                                           where \* means any number of additional dimensions.
 
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
@@ -62,6 +67,35 @@ class DraganGradientPenalty(DiscriminatorLoss):
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
                   device, labels=None):
+        r"""Defines the standard ``train_ops`` used by the DRAGAN Gradient Penalty.
+
+        .. warning::
+            This function is meant to be used internally by the ``Trainer``. Any external calls to
+            this function is **highly discouraged**.
+
+        The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
+        is as follows:
+
+        1. :math:`interpolate = real + \frac{1}{2} \times (1 - \alpha) \times std(real) \times \beta`
+        2. :math:`d_interpolate = discriminator(interpolate)`
+        3. :math:`loss = loss\_function(interpolate, d_interpolate)`
+        4. Backpropagate by computing :math:`\nabla loss`
+        5. Run a step of the optimizer for discriminator
+
+        Args:
+            generator (torchgan.models.Generator): The model to be optimized.
+            discriminator (torchgan.models.Discriminator): The discriminator which judges the
+                performance of the generator.
+            optimizer_discriminator (torch.optim.Optimizer): Optimizer which updates the ``parameters``
+                of the ``discriminator``.
+            real_inputs (torch.Tensor): The real data to be fed to the ``discriminator``.
+            device (torch.device): Device on which the ``generator`` and ``discriminator`` is present.
+            batch_size (int): Batch Size of the data infered from the ``DataLoader`` by the ``Trainer``.
+            labels (torch.Tensor, optional): Labels for the data.
+
+        Returns:
+            Scalar value of the loss.
+        """
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
                                            real_inputs, labels)
