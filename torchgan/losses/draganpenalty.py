@@ -71,8 +71,8 @@ class DraganGradientPenalty(DiscriminatorLoss):
         is as follows:
 
         1. :math:`interpolate = real + \frac{1}{2} \times (1 - \alpha) \times std(real) \times \beta`
-        2. :math:`d_interpolate = discriminator(interpolate)`
-        3. :math:`loss = loss\_function(interpolate, d_interpolate)`
+        2. :math:`d\_interpolate = discriminator(interpolate)`
+        3. :math:`loss = loss\_function(interpolate, d\_interpolate)`
         4. Backpropagate by computing :math:`\nabla loss`
         5. Run a step of the optimizer for discriminator
 

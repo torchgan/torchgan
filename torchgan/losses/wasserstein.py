@@ -202,8 +202,8 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
 
         1. :math:`fake = generator(noise)`
         2. :math:`interpolate = \epsilon \times real + (1 - \epsilon) \times fake`
-        3. :math:`d_interpolate = discriminator(interpolate)`
-        4. :math:`loss = \lambda loss\_function(interpolate, d_interpolate)`
+        3. :math:`d\_interpolate = discriminator(interpolate)`
+        4. :math:`loss = \lambda loss\_function(interpolate, d\_interpolate)`
         5. Backpropagate by computing :math:`\nabla loss`
         6. Run a step of the optimizer for discriminator
 
