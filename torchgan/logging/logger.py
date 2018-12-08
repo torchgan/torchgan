@@ -18,7 +18,7 @@ class Logger(object):
         self.logger_mid_epoch = []
         self.logger_end_epoch.append(ImageVisualize(trainer, writer=self.writer, test_noise=test_noise,
                                                     nrow=nrow))
-        self.logger_mid_epoch.append(GradientVisualize([], writer=self.writer))
+        self.logger_mid_epoch.append(GradientVisualize(trainer.model_names, writer=self.writer))
         if metrics_list is not None:
             self.logger_end_epoch.append(MetricVisualize(metrics_list, writer=self.writer))
         self.logger_mid_epoch.append(LossVisualize(losses_list, writer=self.writer))
@@ -28,6 +28,9 @@ class Logger(object):
 
     def get_metric_viz(self):
         return self.logger_end_epoch[0]
+
+    def get_grad_viz(self):
+        return self.logger_mid_epoch[0]
 
     def register(self, visualize, *args, mid_epoch=True, **kwargs):
         if mid_epoch:
@@ -49,9 +52,10 @@ class Logger(object):
     def run_end_epoch(self, trainer, epoch, *args):
         print("Epoch {} Summary".format(epoch))
         for logger in self.logger_mid_epoch:
-            if type(logger).__name__ is "LossVisualize" or\
-               type(logger).__name__ is "GradientVisualize":
+            if type(logger).__name__ is "LossVisualize":
                 logger(trainer)
+            elif type(logger).__name__ is "GradientVisualize":
+                logger.report_end_epoch()
             else:
                 logger(*args)
         for logger in self.logger_end_epoch:

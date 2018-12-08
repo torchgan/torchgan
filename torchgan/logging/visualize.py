@@ -140,23 +140,46 @@ class MetricVisualize(Visualize):
                           opts=dict(title=name, xlabel="Time Step", ylabel="Metric Value"))
 
 class GradientVisualize(Visualize):
-    def log_tensorboard(self, name, gradsum):
-        self.writer.add_scalar('Gradients/{}'.format(name), gradsum, self.step)
+    def __init__(self, visualize_list, visdom_port=8097, log_dir=None, writer=None):
+        if visualize_list is None or len(visualize_list) == 0:
+            raise Exception('Gradient Visualizer requires list of model names')
+        self.logs = {}
+        for item in visualize_list:
+            self.logs[item] = [0.0]
+        self.step = 1
+        if TENSORBOARD_LOGGING == 1:
+            self.build_tensorboard(log_dir, writer)
+        if VISDOM_LOGGING == 1:
+            self.build_visdom(visdom_port)
 
-    def log_console(self, name, gradsum):
-        print('{} Gradients : {}'.format(name, gradsum))
+    def log_tensorboard(self, name):
+        self.writer.add_scalar('Gradients/{}'.format(name), self.logs[name][len(self.logs[name]) - 1], self.step)
 
-    def log_visdom(self, name, gradsum):
-        self.vis.line([gradsum], [self.step], win=name, update="append",
+    def log_console(self, name):
+        print('{} Gradients : {}'.format(name, self.logs[name][len(self.logs[name]) - 1]))
+
+    def log_visdom(self, name):
+        self.vis.line([self.logs[name][len(self.logs[name]) - 1]], [self.step], win=name, update="append",
                       opts=dict(title=name, xlabel="Time Step", ylabel="Gradient"))
+
+    def update_grads(self, name, model, eps=1e-5):
+        gradsum = 0.0
+        for p in model.parameters():
+            if p.grad is not None:
+                gradsum += torch.sum(p.grad ** 2).clone().item()
+        if gradsum > eps:
+            self.logs[name][len(self.logs[name]) - 1] += gradsum
+            model.zero_grad()
+
+    def report_end_epoch(self):
+        for key, val in self.logs.items():
+            print('{} Mean Gradients : {}'.format(key, sum(val) / len(val)))
 
     def __call__(self, trainer, **kwargs):
         for name in trainer.model_names:
-            model = getattr(trainer, name)
-            gradsum = 0.0
-            for p in model.parameters():
-                gradsum += p.norm(2).item()
-            super(GradientVisualize, self).__call__(name, gradsum, **kwargs)
+            super(GradientVisualize, self).__call__(name, **kwargs)
+            self.logs[name].append(0.0)
+
 
 class ImageVisualize(Visualize):
     def __init__(self, trainer, visdom_port=8097, log_dir=None, writer=None, test_noise=None, nrow=8):
