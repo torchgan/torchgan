@@ -367,7 +367,7 @@ class Trainer(object):
             Even though ``__call__`` calls this function, it is best if ``train`` is not called directly.
             When ``__call__`` is invoked, we infer the ``batch_size`` from the ``data_loader``. Also,
             we are certain not going to change the interface of the ``__call__`` function so it gives
-            the user a stable API, while we can change the flow of execution in future.
+            the user a stable API, while we can change the flow of execution of ``train`` in future.
 
         .. warning::
             The user should never try to change this function in subclass. It is too delicate and
@@ -377,8 +377,8 @@ class Trainer(object):
         ``logger``, ``train_iter``, ``save_model``, ``eval_ops`` and ``optim_ops``.
 
         Args:
-            data_loader (torch.data.DataLoader): A DataLoader for the trainer to iterate over and train the
-                models.
+            data_loader (torch.utils.data.DataLoader): A DataLoader for the trainer to iterate over
+                and train the models.
         """
         for name in self.optimizer_names:
             getattr(self, name).zero_grad()

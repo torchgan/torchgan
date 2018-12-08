@@ -43,9 +43,8 @@ class MinimaxGeneratorLoss(GeneratorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
         nonsaturating(bool, optional): Specifies whether to use the nonsaturating heuristic
             loss for the generator.
         override_train_ops (function, optional): A function is passed to this argument,
@@ -86,9 +85,8 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
         override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
     """

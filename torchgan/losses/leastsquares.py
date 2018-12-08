@@ -28,9 +28,8 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
         c (float, optional): Target generator label.
         override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
@@ -70,9 +69,8 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
         a (float, optional): Target discriminator label for generated image.
         b (float, optional): Target discriminator label for real image.
         override_train_ops (function, optional): A function is passed to this argument,

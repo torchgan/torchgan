@@ -16,8 +16,7 @@ def dragan_gradient_penalty(interpolate, d_interpolate, k=1.0, reduction='mean')
     return reduce(gradient_penalty, reduction)
 
 class DraganGradientPenalty(DiscriminatorLoss):
-    r"""Gradient Penalty for the DRAGAN discriminator from
-    `"On Convergence and Stability of GANs
+    r"""Gradient Penalty for the DRAGAN discriminator from `"On Convergence and Stability of GANs
     by Kodali et. al." <https://arxiv.org/abs/1705.07215>`_ paper
 
     The gradient penalty is calculated as:
@@ -36,9 +35,8 @@ class DraganGradientPenalty(DiscriminatorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
         lambd (float,optional) : Hyperparameter :math:`\lambda` for scaling the gradient penalty.
         k (float, optional) : Constant.
         override_train_ops (function, optional): A function is passed to this argument,
