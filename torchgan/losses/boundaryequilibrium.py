@@ -128,10 +128,6 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
                   device, labels=None):
         r"""Defines the standard ``train_ops`` used by boundary equilibrium loss.
 
-        .. warning::
-            This function is meant to be used internally by the ``Trainer``. Any external calls to
-            this function is **highly discouraged**.
-
         The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
         is as follows:
 

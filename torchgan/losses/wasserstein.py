@@ -32,21 +32,24 @@ class WassersteinGeneratorLoss(GeneratorLoss):
 
     where
 
-    - G : Generator
-    - f : Critic/Discriminator
-    - z : A sample from the noise prior
+    - :math:`G` : Generator
+    - :math:`f` : Critic/Discriminator
+    - :math:`z` : A sample from the noise prior
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
+        override_train_ops (function, optional): A function is passed to this argument,
+            if the default ``train_ops`` is not to be used.
     """
     def forward(self, fgz):
-        r"""
+        r"""Computes the loss for the given input.
+
         Args:
-            dgz (torch.Tensor) : Output of the Generator. It must have the dimensions
-                                 (N, \*) where \* means any number of additional dimensions.
+            dgz (torch.Tensor) : Output of the Discriminator with generated data. It must have the
+                                 dimensions (N, \*) where \* means any number of additional
+                                 dimensions.
 
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
@@ -64,19 +67,20 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
 
     where
 
-    - G : Generator
-    - f : Critic/Discriminator
-    - x : A sample from the data distribution
-    - z : A sample from the noise prior
+    - :math:`G` : Generator
+    - :math:`f` : Critic/Discriminator
+    - :math:`x` : A sample from the data distribution
+    - :math:`z` : A sample from the noise prior
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
-        clamp (tuple, optional): Tuple that specifies the maximum and minimum parameter
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
+        clip (tuple, optional): Tuple that specifies the maximum and minimum parameter
             clamping to be applied, as per the original version of the Wasserstein loss
-            without Gradient Penalty. Defaults to None.
+            without Gradient Penalty.
+        override_train_ops (function, optional): A function is passed to this argument,
+            if the default ``train_ops`` is not to be used.
     """
     def __init__(self, reduction='mean', clip=None, override_train_ops=None):
         super(WassersteinDiscriminatorLoss, self).__init__(reduction, override_train_ops)
@@ -86,12 +90,15 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
             self.clip = None
 
     def forward(self, fx, fgz):
-        r"""
+        r"""Computes the loss for the given input.
+
         Args:
-            dx (torch.Tensor) : Output of the Discriminator. It must have the dimensions
-                                (N, \*) where \* means any number of additional dimensions.
-            dgz (torch.Tensor) : Output of the Generator. It must have the dimensions
-                                 (N, \*) where \* means any number of additional dimensions.
+            fx (torch.Tensor) : Output of the Discriminator with real data. It must have the
+                                dimensions (N, \*) where \* means any number of additional
+                                dimensions.
+            fgz (torch.Tensor) : Output of the Discriminator with generated data. It must have the
+                                 dimensions (N, \*) where \* means any number of additional
+                                 dimensions.
 
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
@@ -100,6 +107,32 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
             device, labels=None):
+        r"""Defines the standard ``train_ops`` used by wasserstein discriminator loss.
+
+        The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
+        is as follows:
+
+        1. Clamp the discriminator parameters to satisfy :math:`lipschitz\ condition`
+        2. :math:`fake = generator(noise)`
+        3. :math:`value_1 = discriminator(fake)`
+        4. :math:`value_2 = discriminator(real)`
+        5. :math:`loss = loss\_function(value_1, value_2)`
+        6. Backpropagate by computing :math:`\nabla loss`
+        7. Run a step of the optimizer for discriminator
+
+        Args:
+            generator (torchgan.models.Generator): The model to be optimized.
+            discriminator (torchgan.models.Discriminator): The discriminator which judges the
+                performance of the generator.
+            optimizer_discriminator (torch.optim.Optimizer): Optimizer which updates the ``parameters``
+                of the ``discriminator``.
+            real_inputs (torch.Tensor): The real data to be fed to the ``discriminator``.
+            device (torch.device): Device on which the ``generator`` and ``discriminator`` is present.
+            labels (torch.Tensor, optional): Labels for the data.
+
+        Returns:
+            Scalar value of the loss.
+        """
         if self.override_train_ops is not None:
             return self.override_train_ops(generator, discriminator,
                     optimizer_discriminator, real_inputs, device, labels)
@@ -118,24 +151,24 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
 
     The gradient penalty is calculated as:
 
-    .. math: \lambda \times (norm(grad(D(x))) - 1)^2
+    .. math: \lambda \times (||\nabla(D(x))||_2 - 1)^2
 
     The gradient being taken with respect to x
 
     where
 
-    - G : Generator
-    - D : Disrciminator/Critic
-    - :math:`\lambda` : Scaling hyperparameter (default 10.0)
-    - x : Interpolation term for the gradient penalty
+    - :math:`G` : Generator
+    - :math:`D` : Disrciminator/Critic
+    - :math:`\lambda` : Scaling hyperparameter
+    - :math:`x` : Interpolation term for the gradient penalty
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
-
-        lambd(float,optional) : Hyperparameter lambda for scaling the gradient penalty.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
+        lambd (float,optional): Hyperparameter lambda for scaling the gradient penalty.
+        override_train_ops (function, optional): A function is passed to this argument,
+            if the default ``train_ops`` is not to be used.
     """
     def __init__(self, reduction='mean', lambd=10.0, override_train_ops=None):
         super(WassersteinGradientPenalty, self).__init__(reduction, override_train_ops)
@@ -143,12 +176,14 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         self.override_train_ops = override_train_ops
 
     def forward(self, interpolate, d_interpolate):
-        r"""
+        r"""Computes the loss for the given input.
+
         Args:
             interpolate (torch.Tensor) : It must have the dimensions (N, \*) where
                                          \* means any number of additional dimensions.
-            d_interpolate (torch.Tensor) : It must have the dimensions (N, \*) where
-                                           \* means any number of additional dimensions.
+            d_interpolate (torch.Tensor) : Output of the ``discriminator`` with ``interpolate``
+                                           as the input. It must have the dimensions (N, \*)
+                                           where \* means any number of additional dimensions.
 
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
@@ -160,6 +195,32 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
 
     def train_ops(self, generator, discriminator, optimizer_discriminator,
             real_inputs, device, labels=None):
+        r"""Defines the standard ``train_ops`` used by the Wasserstein Gradient Penalty.
+
+        The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
+        is as follows:
+
+        1. :math:`fake = generator(noise)`
+        2. :math:`interpolate = \epsilon \times real + (1 - \epsilon) \times fake`
+        3. :math:`d_interpolate = discriminator(interpolate)`
+        4. :math:`loss = \lambda loss\_function(interpolate, d_interpolate)`
+        5. Backpropagate by computing :math:`\nabla loss`
+        6. Run a step of the optimizer for discriminator
+
+        Args:
+            generator (torchgan.models.Generator): The model to be optimized.
+            discriminator (torchgan.models.Discriminator): The discriminator which judges the
+                performance of the generator.
+            optimizer_discriminator (torch.optim.Optimizer): Optimizer which updates the ``parameters``
+                of the ``discriminator``.
+            real_inputs (torch.Tensor): The real data to be fed to the ``discriminator``.
+            device (torch.device): Device on which the ``generator`` and ``discriminator`` is present.
+            batch_size (int): Batch Size of the data infered from the ``DataLoader`` by the ``Trainer``.
+            labels (torch.Tensor, optional): Labels for the data.
+
+        Returns:
+            Scalar value of the loss.
+        """
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
                    real_inputs, labels)

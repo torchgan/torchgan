@@ -45,10 +45,6 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
     def train_ops(self, generator, discriminator, optimizer_generator, real_inputs, device, labels=None):
         r"""Defines the standard ``train_ops`` used for feature matching.
 
-        .. warning::
-            This function is meant to be used internally by the ``Trainer``. Any external calls to
-            this function is **highly discouraged**.
-
         The ``standard optimization algorithm`` for the ``generator`` defined in this train_ops
         is as follows:
 

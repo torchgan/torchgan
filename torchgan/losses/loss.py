@@ -42,10 +42,6 @@ class GeneratorLoss(nn.Module):
         training procedure can either ``subclass`` it **(recommended approach)** or make use of
         ``override_train_ops`` argument.
 
-        .. warning::
-            This function is meant to be used internally by the ``Trainer``. Any external calls to
-            this function is **highly discouraged**.
-
         The ``standard optimization algorithm`` for the ``generator`` defined in this train_ops
         is as follows:
 
@@ -135,10 +131,6 @@ class DiscriminatorLoss(nn.Module):
         r"""Defines the standard ``train_ops`` used by most losses. Losses which have a different
         training procedure can either ``subclass`` it **(recommended approach)** or make use of
         ``override_train_ops`` argument.
-
-        .. warning::
-            This function is meant to be used internally by the ``Trainer``. Any external calls to
-            this function is **highly discouraged**.
 
         The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
         is as follows:

@@ -20,6 +20,11 @@ that you subclass the :class:`GeneratorLoss` and :class:`DiscriminatorLoss`.
     If this is used make sure to take into account the arguments and their order.
     A better alternative is to subclass the Loss and define a custom ``train_ops``.
 
+.. warning::
+    ``train_ops`` are designed to be used internally through the ``Trainer``. Hence it
+    is highly recommended that this function is not directly used by external sources,
+    i.e. no call to this function is made outside the ``Trainer``.
+
 Loss
 ====
 
