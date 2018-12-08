@@ -11,19 +11,22 @@ class DCGANGenerator(Generator):
     by Radford et. al. " <https://arxiv.org/abs/1511.06434>`_ paper
 
     Args:
-        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior. Default 100
-        out_size      (int, optional) : Height and width of the input image to be generated. Must be at least 16
-                                        and should be an exact power of 2. Defaults to 32
-        out_channels (int, optional) : Number of channels in the output Tensor.
-        step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
-                                        the convolutional features
-                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
-                                        where d = step_channels.
-        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator.
-        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
-                                                  Defaults to LeakyReLU(0.2) when None is passed.
-        last_nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
-                                                       Defaults to tanh when None is passed.
+        encoding_dims (int, optional): Dimension of the encoding vector sampled from the noise prior.
+        out_size (int, optional): Height and width of the input image to be generated. Must be at
+            least 16 and should be an exact power of 2.
+        out_channels (int, optional): Number of channels in the output Tensor.
+        step_channels (int, optional): Number of channels in multiples of which the DCGAN steps up
+            the convolutional features. The step up is done as dim :math:`z \rightarrow d \rightarrow
+            2 \times d \rightarrow 4 \times d \rightarrow 8 \times d` where :math:`d` = step_channels.
+        batchnorm (bool, optional): If True, use batch normalization in the convolutional layers of
+            the generator.
+        nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the intermediate
+            convolutional layers. Defaults to ``LeakyReLU(0.2)`` when None is passed.
+        last_nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the final
+            convolutional layer. Defaults to ``Tanh()`` when None is passed.
+        label_type (str, optional): The type of labels expected by the Generator. The available
+            choices are 'none' if no label is needed, 'required' if the original labels are
+            needed and 'generated' if labels are to be sampled from a distribution.
     """
     def __init__(self, encoding_dims=100, out_size=32, out_channels=3, step_channels=64,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None, label_type='none'):
@@ -60,6 +63,17 @@ class DCGANGenerator(Generator):
         self._weight_initializer()
 
     def forward(self, x, feature_matching=False):
+        r"""Calculates the output tensor on passing the encoding ``x`` through the Generator.
+
+        Args:
+            x (torch.Tensor): A 2D torch tensor of the encoding sampled from a probability
+                distribution.
+            feature_matching (bool, optional): Returns the activation from a predefined intermediate
+                layer.
+
+        Returns:
+            A 4D torch.Tensor of the generated image.
+        """
         x = x.view(-1, x.size(1), 1, 1)
         return self.model(x)
 
@@ -70,19 +84,21 @@ class DCGANDiscriminator(Discriminator):
     by Radford et. al. " <https://arxiv.org/abs/1511.06434>`_ paper
 
     Args:
-        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior.
-        in_size (int, optional)       : Height and width of the input image. Must be greater than 16 and must be
-                                        an exact power of 2. Default 32
-        in_channels (int, optional) : Number of channels in the input Image.
-        step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
-                                        the convolutional features
-                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
-                                        where d = step_channels.
-        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator.
-        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
-                                                  Defaults to LeakyReLU(0.2) when None is passed.
-        last_nonlinearity (toch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
-                                                      Defaults to sigmoid when None is passed.
+        in_size (int, optional): Height and width of the input image to be evaluated. Must be at
+            least 16 and should be an exact power of 2.
+        in_channels (int, optional): Number of channels in the input Tensor.
+        step_channels (int, optional): Number of channels in multiples of which the DCGAN steps up
+            the convolutional features. The step up is done as dim :math:`z \rightarrow d \rightarrow
+            2 \times d \rightarrow 4 \times d \rightarrow 8 \times d` where :math:`d` = step_channels.
+        batchnorm (bool, optional): If True, use batch normalization in the convolutional layers of
+            the generator.
+        nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the intermediate
+            convolutional layers. Defaults to ``LeakyReLU(0.2)`` when None is passed.
+        last_nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the final
+            convolutional layer. Defaults to ``Tanh()`` when None is passed.
+        label_type (str, optional): The type of labels expected by the Generator. The available
+            choices are 'none' if no label is needed, 'required' if the original labels are
+            needed and 'generated' if labels are to be sampled from a distribution.
     """
 
     def __init__(self, in_size=32, in_channels=3, step_channels=64, batchnorm=True,
@@ -114,6 +130,16 @@ class DCGANDiscriminator(Discriminator):
         self._weight_initializer()
 
     def forward(self, x, feature_matching=False):
+        r"""Calculates the output tensor on passing the image ``x`` through the Discriminator.
+
+        Args:
+            x (torch.Tensor): A 4D torch tensor of the image.
+            feature_matching (bool, optional): Returns the activation from a predefined intermediate
+                layer.
+
+        Returns:
+            A 1D torch.Tensor of the probability of each image being real.
+        """
         x = self.model(x)
         if feature_matching is True:
             return x

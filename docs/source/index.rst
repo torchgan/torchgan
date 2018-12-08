@@ -19,9 +19,9 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
     :caption: API DOCUMENTATION
     :maxdepth: 2
 
+    modules/layers
+    modules/logging
     modules/losses
     modules/metrics
     modules/models
-    modules/layers
-    modules/logging
     modules/trainer
