@@ -49,7 +49,7 @@ class SpectralNorm2d(nn.Module):
         self.w_bar = Parameter(w.data)
         del self.module._parameters[self.name]
 
-    def l2normalize(self, x, eps=1e-12):
+    def _l2normalize(self, x, eps=1e-12):
         r"""Function to calculate the ``L2 Normalized`` form of a Tensor
 
         Args:
@@ -70,8 +70,8 @@ class SpectralNorm2d(nn.Module):
         """
         height = self.w_bar.data.shape[0]
         for _ in range(self.power_iterations):
-            self.v.data = self.l2normalize(torch.mv(torch.t(self.w_bar.view(height, -1)), self.u))
-            self.u.data = self.l2normalize(torch.mv(self.w_bar.view(height, -1), self.v))
+            self.v.data = self._l2normalize(torch.mv(torch.t(self.w_bar.view(height, -1)), self.u))
+            self.u.data = self._l2normalize(torch.mv(self.w_bar.view(height, -1), self.v))
         sigma = self.u.dot(self.w_bar.view(height, -1).mv(self.v))
         setattr(self.module, self.name, self.w_bar / sigma.expand_as(self.w_bar))
         return self.module.forward(*args)
