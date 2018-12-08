@@ -12,28 +12,28 @@ class InfoGANGenerator(DCGANGenerator):
     by Chen et. al. " <https://arxiv.org/abs/1606.03657>`_ paper
 
     Args:
-        dim_dis (int) : Dimension of the discrete latent code sampled from the prior.
-        dim_cont (int) : Dimension of the continuous latent code sampled from the prior.
-        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior.
-        out_size      (int, optional) : Height and width of the input image to be generated. Must be at least 16
-                                        and should be an exact power of 2. Defaults to 32
-        out_channels (int, optional) : Number of channels in the output Tensor.
-        step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
-                                        the convolutional features
-                                        The step up is done as dim z -> d - > 2 * d -> 4 * d - > 8 * d
-                                        where d = step_channels.
-        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator.
-        nonlinearity(torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
-                                                  Defaults to LeakyReLU(0.2) when None is passed.
-        last_nonlinearity(torch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
-                                                       Defaults to tanh when None is passed.
+        dim_dis (int): Dimension of the discrete latent code sampled from the prior.
+        dim_cont (int): Dimension of the continuous latent code sampled from the prior.
+        encoding_dims (int, optional): Dimension of the encoding vector sampled from the noise prior.
+        out_size (int, optional): Height and width of the input image to be generated. Must be at
+            least 16 and should be an exact power of 2.
+        out_channels (int, optional): Number of channels in the output Tensor.
+        step_channels (int, optional): Number of channels in multiples of which the DCGAN steps up
+            the convolutional features. The step up is done as dim :math:`z \rightarrow d \rightarrow
+            2 \times d \rightarrow 4 \times d \rightarrow 8 \times d` where :math:`d` = step_channels.
+        batchnorm (bool, optional): If True, use batch normalization in the convolutional layers of
+            the generator.
+        nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the intermediate
+            convolutional layers. Defaults to ``LeakyReLU(0.2)`` when None is passed.
+        last_nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the final
+            convolutional layer. Defaults to ``Tanh()`` when None is passed.
 
     Example:
         >>> import torchgan.models as models
-        >>> G = models.InfoGANGenerator(...)
-        >>> z = ...
-        >>> c_cont = ...
-        >>> c_dis = ...
+        >>> G = models.InfoGANGenerator(10, 30)
+        >>> z = torch.randn(10, 100)
+        >>> c_cont = torch.randn(10, 10)
+        >>> c_dis = torch.randn(10, 30)
         >>> x = G(z, c_cont, c_dis)
     """
     def __init__(self, dim_dis, dim_cont, encoding_dims=100, out_size=32, out_channels=3,
@@ -59,30 +59,28 @@ class InfoGANDiscriminator(DCGANDiscriminator):
     Gaussian for the continuous latent code and a Categorical distribution for the discrete latent code
 
     Args:
-        dim_dis (int) : Dimension of the discrete latent code sampled from the prior
-        dim_cont (int) : Dimension of the continuous latent code sampled from the prior
-        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior. Default 100
-        in_size      (int, optional) : Height and width of the input image. Must be at least 16
-                                        and should be an exact power of 2. Defaults to 32
-        in_channels (int, optional) : Number of channels in the output Tensor. Default 3
-        step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
-                                        the convolutional features
-                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
-                                        where d = step_channels. Default 64
-
-        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator
-                                     Default True
-
-        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
-                                                  Defaults to LeakyReLU(0.2) when None is passed. Default None
-
-        last_nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
-                                                       Defaults to tanh when None is passed. Default None
+        dim_dis (int): Dimension of the discrete latent code sampled from the prior.
+        dim_cont (int): Dimension of the continuous latent code sampled from the prior.
+        encoding_dims (int, optional): Dimension of the encoding vector sampled from the noise prior.
+        in_size (int, optional): Height and width of the input image to be evaluated. Must be at
+            least 16 and should be an exact power of 2.
+        in_channels (int, optional): Number of channels in the input Tensor.
+        step_channels (int, optional): Number of channels in multiples of which the DCGAN steps up
+            the convolutional features. The step up is done as dim :math:`z \rightarrow d \rightarrow
+            2 \times d \rightarrow 4 \times d \rightarrow 8 \times d` where :math:`d` = step_channels.
+        batchnorm (bool, optional): If True, use batch normalization in the convolutional layers of
+            the generator.
+        nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the intermediate
+            convolutional layers. Defaults to ``LeakyReLU(0.2)`` when None is passed.
+        last_nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the final
+            convolutional layer. Defaults to ``Tanh()`` when None is passed.
+        latent_nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the ``dist_conv``.
+            Defaults to ``LeakyReLU(0.2)`` when None is passed.
     Example:
         >>> import torchgan.models as models
-        >>> D = models.InfoGANDiscriminator(...)
-        >>> x = ...
-        >>> score, q_categorical, q_gaussian = D(x)
+        >>> D = models.InfoGANDiscriminator(10, 30)
+        >>> x = torch.randn(10, 3, 32, 32)
+        >>> score, q_categorical, q_gaussian = D(x, return_latents=True)
     """
     def __init__(self, dim_dis, dim_cont, in_size=32, in_channels=3, step_channels=64,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None, latent_nonlinearity=None):
