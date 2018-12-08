@@ -305,6 +305,7 @@ class Trainer(object):
         self.train_iter_custom()
         ldis, lgen, dis_iter, gen_iter = 0.0, 0.0, 0, 0
         loss_logs = self.logger.get_loss_viz()
+        grad_logs = self.logger.get_grad_viz()
         for name, loss in self.losses.items():
             if isinstance(loss, GeneratorLoss) and isinstance(loss, DiscriminatorLoss):
                 cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
@@ -312,16 +313,26 @@ class Trainer(object):
                 if type(cur_loss) is tuple:
                     lgen, ldis, gen_iter, dis_iter = lgen + cur_loss[0], ldis + cur_loss[1],\
                         gen_iter + 1, dis_iter + 1
+                for model_name in self.model_names:
+                    grad_logs.update_grads(model_name, getattr(self, model_name))
             elif isinstance(loss, GeneratorLoss):
                 if self.ncritic is None or\
                    self.loss_information["discriminator_iters"] % self.ncritic == 0:
                     cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
                     loss_logs.logs[name].append(cur_loss)
                     lgen, gen_iter = lgen + cur_loss, gen_iter + 1
+                for model_name in self.model_names:
+                    model = getattr(self, model_name)
+                    if isinstance(model, Generator):
+                        grad_logs.update_grads(model_name, model)
             elif isinstance(loss, DiscriminatorLoss):
                 cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
                 loss_logs.logs[name].append(cur_loss)
                 ldis, dis_iter = ldis + cur_loss, dis_iter + 1
+                for model_name in self.model_names:
+                    model = getattr(self, model_name)
+                    if isinstance(model, Discriminator):
+                        grad_logs.update_grads(model_name, model)
         return lgen, ldis, gen_iter, dis_iter
 
     def eval_ops(self, epoch, **kwargs):
@@ -353,6 +364,9 @@ class Trainer(object):
             data_loader (torch.DataLoader): A DataLoader for the trainer to iterate over and train the
                                             models.
         """
+        for name in self.optimizer_names:
+            getattr(self, name).zero_grad()
+
         for epoch in range(self.start_epoch, self.epochs):
 
             for model in self.model_names:
