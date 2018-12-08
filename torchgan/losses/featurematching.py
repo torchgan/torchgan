@@ -7,7 +7,7 @@ __all__ = ['FeatureMatchingGeneratorLoss']
 
 class FeatureMatchingGeneratorLoss(GeneratorLoss):
     r"""Feature Matching Generator loss from
-    `"Improved Training of GANs by Salimans et. al." <https://arxiv.org/abs/1701.07875>`_ paper
+    `"Improved Training of GANs by Salimans et. al." <https://arxiv.org/abs/1606.03498>`_ paper
 
     The loss can be described as:
 
