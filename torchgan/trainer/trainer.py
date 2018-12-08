@@ -68,7 +68,7 @@ class Trainer(object):
                     sample_size=64, epochs=20)
     """
     def __init__(self, models, losses_list, metrics_list=None, device=torch.device("cuda:0"),
-                 ncritic=None, epochs=5, sample_size=8, checkpoints="./model/gan",retain_checkpoints=5,
+                 ncritic=None, epochs=5, sample_size=8, checkpoints="./model/gan", retain_checkpoints=5,
                  recon="./images", log_dir=None, test_noise=None, nrow=8, **kwargs):
         self.device = device
         self.model_names = []
@@ -413,7 +413,7 @@ class Trainer(object):
             for model in self.model_names:
                 getattr(self, model).eval()
 
-            self.eval_ops(epoch, **kwargs)
+            self.eval_ops(**kwargs)
             self.logger.run_end_epoch(self, epoch)
             self.optim_ops()
 

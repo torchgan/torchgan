@@ -1,3 +1,4 @@
+================
 torchgan.metrics
 ================
 
@@ -10,11 +11,16 @@ performance of GANs. Currently available metrics are:
     :local:
 
 Metric
-------
+======
+
+EvaluationMetric
+----------------
+
 .. autoclass:: EvaluationMetric
     :members:
 
 Classifier Score
-----------------
+================
+
 .. autoclass:: ClassifierScore
     :members:
