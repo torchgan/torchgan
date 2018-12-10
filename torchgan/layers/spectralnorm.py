@@ -44,8 +44,8 @@ class SpectralNorm2d(nn.Module):
         width = w.view(height, -1).data.shape[1]
         self.u = Parameter(w.data.new(height).normal_(0, 1), requires_grad=False)
         self.v = Parameter(w.data.new(width).normal_(0, 1), requires_grad=False)
-        self.u.data = self.l2normalize(self.u.data)
-        self.v.data = self.l2normalize(self.v.data)
+        self.u.data = self._l2normalize(self.u.data)
+        self.v.data = self._l2normalize(self.v.data)
         self.w_bar = Parameter(w.data)
         del self.module._parameters[self.name]
 
