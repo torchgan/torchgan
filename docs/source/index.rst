@@ -25,3 +25,9 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
     modules/metrics
     modules/models
     modules/trainer
+
+.. toctree::
+    :caption: TUTORIALS
+    :maxdepth: 2
+
+    tutorials/sagan.rst
