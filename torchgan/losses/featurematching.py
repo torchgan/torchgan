@@ -28,16 +28,17 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
     def forward(self, fx, fgz):
         return F.mse_loss(fgz, fx, reduction=self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_generator, real_inputs, device, batch_size, labels=None):
+    def train_ops(self, generator, discriminator, optimizer_generator, real_inputs, device, labels=None):
         if self.override_train_ops is not None:
-            return self.override_train_ops(generator, discriminator, optimizer_generator, device, batch_size, labels)
+            return self.override_train_ops(generator, discriminator, optimizer_generator, device, labels)
         else:
             if labels is None and generator.label_type == 'required':
                 raise Exception('GAN model requires labels for training')
-            noise = torch.randn(real_inputs.size(0), generator.encoding_dims, device=device)
+            batch_size = real_inputs.size(0)
+            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
             optimizer_generator.zero_grad()
             if generator.label_type == 'generated':
-                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),), device=device)
+                label_gen = torch.randint(0, generator.num_classes, (batch_size,), device=device)
             if generator.label_type == 'none':
                 fake = generator(noise)
             elif generator.label_type == 'required':

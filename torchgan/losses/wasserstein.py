@@ -99,16 +99,16 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
         return wasserstein_discriminator_loss(fx, fgz, self.reduction)
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
-            device, batch_size, labels=None):
+            device, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(generator, discriminator,
-                    optimizer_discriminator, real_inputs, device, batch_size, labels)
+                    optimizer_discriminator, real_inputs, device, labels)
         else:
             if self.clip is not None:
                 for p in discriminator.parameters():
                     p.data.clamp_(self.clip[0], self.clip[1])
             return super(WassersteinDiscriminatorLoss, self).train_ops(generator, discriminator,
-                    optimizer_discriminator, real_inputs, device, batch_size, labels)
+                    optimizer_discriminator, real_inputs, device, labels)
 
 
 class WassersteinGradientPenalty(DiscriminatorLoss):
@@ -159,16 +159,17 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         return wasserstein_gradient_penalty(interpolate, d_interpolate, self.reduction)
 
     def train_ops(self, generator, discriminator, optimizer_discriminator,
-            real_inputs, batch_size, device, labels=None):
+            real_inputs, device, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
                    real_inputs, labels)
         else:
             if labels is None and (generator.label_type == 'required' or discriminator.label_type == 'required'):
                 raise Exception('GAN model requires labels for training')
-            noise = torch.randn(real_inputs.size(0), generator.encoding_dims, device=device)
+            batch_size = real_inputs.size(0)
+            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
             if generator.label_type == 'generated':
-                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),), device=device)
+                label_gen = torch.randint(0, generator.num_classes, (batch_size,), device=device)
             optimizer_discriminator.zero_grad()
             if generator.label_type == 'none':
                 fake = generator(noise)
