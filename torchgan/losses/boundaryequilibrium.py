@@ -19,11 +19,10 @@ class BoundaryEquilibriumGeneratorLoss(GeneratorLoss):
     - :math:`D` : Discriminator
 
     Args:
-        reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
-        override_train_ops (function, optional): A function is passed to this argument,
-            if the default ``train_ops`` is not to be used.
+       reduction (str, optional): Specifies the reduction to apply to the output.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
+        override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
     def forward(self, dgz):
         r"""Computes the loss for the given input.
@@ -58,11 +57,10 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
     - :math:`\gamma` : Goal bias hyperparameter
 
     Args:
-        reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
-        override_train_ops (function, optional): A function is passed to this argument,
-            if the default ``train_ops`` is not to be used.
+       reduction (str, optional): Specifies the reduction to apply to the output.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
+        override_train_ops (function, optional): Function to be used in place ofthe default ``train_ops``
         init_k (float, optional): Initial value of the balance point ``k``.
         lambd (float, optional): Learning rate of the running average.
         gamma (float, optional): Goal bias hyperparameter.
@@ -74,6 +72,7 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
         self.k = init_k
         self.lambd = lambd
         self.gamma = gamma
+        # TODO(Aniket1998): Integrate this with the metrics API in a later release
         self.convergence_metric = None
 
     def forward(self, dx, dgz):
@@ -137,10 +136,7 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
         4. :math:`loss = loss\_function(value_1, value_2)`
         5. Backpropagate by computing :math:`\nabla loss`
         6. Run a step of the optimizer for discriminator
-
-        The optimization method is exactly same as that of the ``DiscriminatorLoss``. The only difference
-        is in the return type of the forward function which gives 3 loss values. Finally at the end
-        of one update step, the algorithm needs to update the value of :math:`k`.
+        7. Update the value of :math: `k`.
 
         Args:
             generator (torchgan.models.Generator): The model to be optimized.
@@ -150,7 +146,6 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
                 of the ``discriminator``.
             real_inputs (torch.Tensor): The real data to be fed to the ``discriminator``.
             device (torch.device): Device on which the ``generator`` and ``discriminator`` is present.
-            batch_size (int): Batch Size of the data infered from the ``DataLoader`` by the ``Trainer``.
             labels (torch.Tensor, optional): Labels for the data.
 
         Returns:
