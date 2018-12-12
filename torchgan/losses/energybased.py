@@ -138,7 +138,7 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
         if isinstance(discriminator, AutoEncodingDiscriminator):
             setattr(discriminator, "embeddings", False)
         loss = super(EnergyBasedDiscriminatorLoss, self).train_ops(generator, discriminator,
-            optimizer_generator, real_inputs, device, batch_size, labels)
+            optimizer_generator, real_inputs, device, labels)
         if isinstance(discriminator, AutoEncodingDiscriminator):
             setattr(discriminator, "embeddings", True)
         return loss
