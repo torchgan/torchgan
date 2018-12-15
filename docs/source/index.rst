@@ -31,3 +31,4 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
     :maxdepth: 2
 
     tutorials/sagan.rst
+    tutorials/bgan.rst
