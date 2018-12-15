@@ -212,4 +212,6 @@ class ImageVisualize(Visualize):
                     image = generator(*self.test_noise[pos])
                     image = torchvision.utils.make_grid(image)
                     super(ImageVisualize, self).__call__(trainer, image, model, **kwargs)
+                self.step -= 1
                 pos = pos + 1
+        self.step += 1 if pos > 0 else 0
