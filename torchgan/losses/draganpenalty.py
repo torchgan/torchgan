@@ -34,7 +34,7 @@ class DraganGradientPenalty(DiscriminatorLoss):
     - :math:`k` : Constant
 
     Args:
-       reduction (str, optional): Specifies the reduction to apply to the output.
+        reduction (str, optional): Specifies the reduction to apply to the output.
             If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
             If ``sum`` the elements of the output are summed.
         lambd (float,optional) : Hyperparameter :math:`\lambda` for scaling the gradient penalty.

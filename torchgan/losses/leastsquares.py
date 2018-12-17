@@ -27,7 +27,7 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
     - :math:`z` : A sample from the noise prior
 
     Args:
-       reduction (str, optional): Specifies the reduction to apply to the output.
+        reduction (str, optional): Specifies the reduction to apply to the output.
             If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
             If ``sum`` the elements of the output are summed.
         c (float, optional): Target generator label.
@@ -67,7 +67,7 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
     - :math:`b` : Target discriminator label for real image
 
     Args:
-       reduction (str, optional): Specifies the reduction to apply to the output.
+        reduction (str, optional): Specifies the reduction to apply to the output.
             If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
             If ``sum`` the elements of the output are summed.
         a (float, optional): Target discriminator label for generated image.
