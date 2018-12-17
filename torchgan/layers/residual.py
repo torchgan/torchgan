@@ -29,7 +29,7 @@ class ResidualBlock2d(nn.Module):
             out += self.shortcut(x)
         return out if nonlinearity is None else nonlinearity(out)
 
-class ResidualBlockTranspose2d(ResidualBlock2d):
+class ResidualBlockTranspose2d(nn.Module):
     def __init__(self, filters, kernels, strides=None, paddings=None, nonlinearity=None,
                  batchnorm=True, shortcut=None):
         super(ResidualBlockTranspose2d, self).__init__()
@@ -50,3 +50,9 @@ class ResidualBlockTranspose2d(ResidualBlock2d):
                 layers.append(nl)
         self.layers = nn.Sequential(*layers)
         self.shortcut = shortcut
+
+    def forward(self, x, nonlinearity=None):
+        out = self.layers(x)
+        if self.shortcut is not None:
+            out += self.shortcut(x)
+        return out if nonlinearity is None else nonlinearity(out)
