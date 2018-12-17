@@ -45,6 +45,8 @@ Energy Based Loss
     :members:
 .. autoclass:: EnergyBasedDiscriminatorLoss
     :members:
+.. autoclass:: EnergyBasedPullingAwayTerm
+    :members:
 
 Wasserstein Loss
 ----------------
