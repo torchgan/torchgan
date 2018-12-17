@@ -36,13 +36,14 @@ Currently available backends are:
     To enable this set the ``VISDOM_LOGGING`` to 1. If the package is pre-installed
     on your system, this variable is enabled by default.
 
-    If you want to disable this then :code:`os.environ["VISDOM_LOGGING"] = "0"`. Make sure to do it
-    before loading torchgan.
+    If you want to disable this then :code:`os.environ["VISDOM_LOGGING"] = "0"`. We recommend using
+    visdom if you need to save your plots. In general tensorboard support is better in terms of the
+    image display.
 
     .. warning::
-        If this package is present and **VISDOM_LOGGING** is set to 1, then a server is started in port
-        ``8097``. This server is not closed even when the code finishes running. So it
-        needs to be manually turned off.
+        If this package is present and **VISDOM_LOGGING** is set to 1, then a server must be started
+        using the command `python -m visdom.server` before the Training is started. Otherwise the
+        code will simply crash.
 
 3. **Console**:
     The details of training are printed on the console. This is enabled by default but can be turned
