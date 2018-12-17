@@ -4,16 +4,17 @@ import torch.nn as nn
 __all__ = ['VirtualBatchNorm']
 
 class VirtualBatchNorm(nn.Module):
-    def __init__(self, in_features, ref_batch, eps=1e-5):
+    def __init__(self, in_features, dims=2, eps=1e-5):
         super(VirtualBatchNorm, self).__init__()
         self.in_features = in_features
-        sizes = [1 for i in range(len(ref_batch.shape))]
-        sizes[1] = ref_batch.size(1)
+        if dims == 1:
+            sizes = [1 for _ in range(dims + 1)]  # 1D inputs will be of the form (N,C)
+        else:
+            sizes = [1 for _ in range(dims + 2)]  # 2D inputs are of the form (N,C,X,Y)
         self.weight = nn.Parameter(torch.Tensor(*sizes))
         self.bias = nn.Parameter(torch.Tensor(*sizes))
-        # TODO(Aniket1998): Error occurs if input batch size does not match reference batch size
-        # which might not be enforced during test time. The original paper does not address this either
-        self.ref_batch = ref_batch
+        self.ref_mu = None
+        self.ref_var = None
         self.eps = eps
 
     def _batch_stats(self, x):
@@ -27,12 +28,12 @@ class VirtualBatchNorm(nn.Module):
         x = (x - mu) / std
         return x * self.weight + self.bias
 
-    def forward(self, x):
-        ref_mu, ref_var = self._batch_stats(self.ref_batch)
-        ref_mu = ref_mu.clone().detach()
-        ref_var = ref_var.clone().detach()
-        # During test time, the optimal weight and bias are adjusted according to the statistics
-        # of the reference batch, which should then not change
-        if self.training:
-            self.ref_batch = self._normalize(self.ref_batch, ref_mu, ref_var)
-        return self._normalize(x, ref_mu, ref_var)
+    def forward(self, x, ref=False):
+        if ref is True:
+            self.ref_mu, self.ref_var = self._batch_stats(x)
+            self.ref_mu = self.ref_mu.clone().detach()
+            self.ref_var = self.ref_var.clone().detach()
+        else:
+            if self.ref_mu is None or self.ref_var is None:
+                raise Exception('Cannot normalize without performing forward pass through reference batch')
+        return self._normalize(x, self.ref_mu, self.ref_var)
