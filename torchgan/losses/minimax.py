@@ -43,12 +43,14 @@ class MinimaxGeneratorLoss(GeneratorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
+        override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
         nonsaturating(bool, optional): Specifies whether to use the nonsaturating heuristic
             loss for the generator.
-        override_train_ops (function, optional): A function is passed to this argument,
-            if the default ``train_ops`` is not to be used.
+        reduction (str, optional): Specifies the reduction to apply to the output.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
     """
     def __init__(self, reduction='mean', nonsaturating=True, override_train_ops=None):
         super(MinimaxGeneratorLoss, self).__init__(reduction, override_train_ops)

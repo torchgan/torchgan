@@ -20,11 +20,10 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
     - :math:`z` : A sample from the noise prior
 
     Args:
-        reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
-        override_train_ops (function, optional): A function is passed to this argument,
-            if the default ``train_ops`` is not to be used.
+       reduction (str, optional): Specifies the reduction to apply to the output.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
+        override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
     def forward(self, fx, fgz):
         r"""Computes the loss for the given input.
@@ -49,8 +48,10 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
         is as follows:
 
         1. :math:`fake = generator(noise)`
-        2. :math:`value_1 = discriminator(fake)` where :math:`value_1` is from an intermediate discriminator layer
-        3. :math:`value_2 = discriminator(real)` where :math:`value_2` is from the same intermediate discriminator layer
+        2. :math:`value_1 = discriminator(fake)` where :math:`value_1` is an activation an intermediate
+                                                 discriminator layer
+        3. :math:`value_2 = discriminator(real)` where :math:`value_2` is an activation the same intermediate
+                                                 discriminator layer
         4. :math:`loss = loss\_function(value_1, value_2)`
         5. Backpropagate by computing :math:`\nabla loss`
         6. Run a step of the optimizer for generator

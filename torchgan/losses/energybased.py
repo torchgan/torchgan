@@ -36,11 +36,10 @@ class EnergyBasedGeneratorLoss(GeneratorLoss):
     - :math:`D` : Discriminator
     - :math:`z` : A sample from the noise prior
 
-    Args:
-        reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
-        override_train_ops (function, optional): A function is passed to this argument,
+       reduction (str, optional): Specifies the reduction to apply to the output.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
+       override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
     """
     def forward(self, dgz):
@@ -126,12 +125,11 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
         +----------------------+--------+
 
     Args:
-        reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
-        margin (float, optional): The margin hyperparameter.
-        override_train_ops (function, optional): A function is passed to this argument,
-            if the default ``train_ops`` is not to be used.
+       reduction (str, optional): Specifies the reduction to apply to the output.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
+       margin (float, optional): The margin hyperparameter.
+       override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
     def __init__(self, reduction='mean', margin=80.0, override_train_ops=None):
         super(EnergyBasedDiscriminatorLoss, self).__init__(reduction, override_train_ops)
