@@ -3,10 +3,9 @@ import torch
 import torchvision
 from warnings import warn
 from inspect import signature, _empty
-from operator import itemgetter
-from tensorboardX import SummaryWriter
 from ..models.model import Generator, Discriminator
 from ..losses.loss import GeneratorLoss, DiscriminatorLoss
+from ..logging.logger import Logger
 
 __all__ = ['Trainer']
 
@@ -31,20 +30,12 @@ class Trainer(object):
                        `discriminator` and any other model that you might want to define, with the function and
                        arguments that are needed to construct the model. Refer to the examples to see how to
                        define complex models using this API.
-        optimizers (dict): Contains a mapping between the variable name of the optimizer and the function and arguments
-                       needed to construct the optimizer. Naming convention that is to be used for the proper
-                       functioning of the optimizer: If your model is named `my_new_model` then the optimizer
-                       corresponding to that model must be named `optimizer_my_new_model`. Following any other naming
-                       convention will simply throw an error.
         losses_list (list): A list of the Loss Functions that need to be minimized. For a list of pre-defined losses
                        look at :mod:`torchgan.losses`. All losses in the list must be a subclass of atleast
                        `GeneratorLoss` or `DiscriminatorLoss`.
         metrics_list (list, optional): List of Metric Functions that need to be logged. For a list of pre-defined
                        metrics look at :mod:`torchgan.metrics`. All losses in the list must be a subclass of
                        `EvaluationMetric`.
-        schedulers (dict, optional): Schedulers can either be from Pytorch or can be a custom scheduler as long as
-                       it strictly follows that of Pytorch. If your optimizer is named `optimizer_my_new_model` then
-                       the corresponding scheduler must be named `scheduler_optimizer_my_new_model`.
         device (torch.device, optional): Device in which the operation is to be carried out. If you are using a
                        CPU machine make sure that you change it for proper functioning.
         ncritic (int, optional): Setting it to a value will make the discriminator train that many times more than
@@ -60,79 +51,74 @@ class Trainer(object):
                        if the value is set to 3, we save at most 3 models and start rewriting the models after that.
         recon (str, optional): Directory where the sampled images are saved. Make sure the directory exists from
                        beforehand.
-        log_tensorboard (bool, optional): If `True`, tensorboard logs will be generated in the `runs` directory.
+        log_dir (str, optional): The directory for logging tensorboard.
         test_noise (torch.Tensor, optional): If provided then it will be used as the noise for image sampling.
+        nrow (int, optional): Number of rows in which the image is to be stored.
 
     Any other argument that you need to store in the object can be simply passed via keyword arguments.
 
     Example:
         >>> dcgan = Trainer(
-                    {"generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels": 16}},
-                     "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 1, "step_channels": 16}}},
-                    {"optimizer_generator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}},
-                     "optimizer_discriminator": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}},
+                    {"generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels":
+                                   16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002,
+                                   "betas": (0.5, 0.999)}}},
+                     "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 1,
+                                       "step_channels": 16}, "optimizer": {"var": "opt_discriminator",
+                                       "name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
                     [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
                     sample_size=64, epochs=20)
     """
-    def __init__(self, models, optimizers, losses_list, metrics_list=None, schedulers=None,
-                 device=torch.device("cuda:0"), ncritic=None, batch_size=128,
-                 sample_size=8, epochs=5, checkpoints="./model/gan", retain_checkpoints=5,
-                 recon="./images", log_tensorboard=True, test_noise=None, **kwargs):
+    def __init__(self, models, losses_list, metrics_list=None, device=torch.device("cuda:0"),
+                 ncritic=None, batch_size=128, epochs=5, sample_size=8, checkpoints="./model/gan",
+                 retain_checkpoints=5, recon="./images", log_dir=None, test_noise=None, nrow=8, **kwargs):
         self.device = device
         self.model_names = []
-        for key, val in models.items():
-            self.model_names.append(key)
-            if "args" in val:
-                setattr(self, key, (val["name"](**val["args"])).to(self.device))
-            else:
-                setattr(self, key, (val["name"]()).to(self.device))
         self.optimizer_names = []
-        for key, val in optimizers.items():
-            self.optimizer_names.append(key)
-            model = getattr(self, key.split("_", 1)[1])
-            if "args" in val:
-                setattr(self, key, val["name"](model.parameters(), **val["args"]))
-            else:
-                setattr(self, key, val["name"](model.parameters()))
         self.schedulers = []
-        if schedulers is not None:
-            for key, val in schedulers.items():
-                opt = getattr(self, key.split("_", 1)[1])
-                if "args" in val:
-                    self.schedulers.append(val["name"](opt, **val["args"]))
+        for key, model in models.items():
+            self.model_names.append(key)
+            if "args" in model:
+                setattr(self, key, (model["name"](**model["args"])).to(self.device))
+            else:
+                setattr(self, key, (model["name"]()).to(self.device))
+            opt = model["optimizer"]
+            opt_name = "optimizer_{}".format(key)
+            if "var" in opt:
+                opt_name = opt["var"]
+            self.optimizer_names.append(opt_name)
+            model_params = getattr(self, key).parameters()
+            if "args" in opt:
+                setattr(self, opt_name, (opt["name"](model_params, **opt["args"])))
+            else:
+                setattr(self, opt_name, (opt["name"](model_params)))
+            if "scheduler" in opt:
+                sched = opt["scheduler"]
+                if "args" in sched:
+                    self.schedulers.append(sched["name"](getattr(self, opt_name), **sched["args"]))
                 else:
-                    self.schedulers.append(val["name"](opt))
+                    self.schedulers.append(sched["name"](getattr(self, opt_name)))
+
         self.losses = {}
-        self.loss_logs = {}
         for loss in losses_list:
-            name = type(loss).__name__
-            self.loss_logs[name] = []
-            self.losses[name] = loss
+            self.losses[type(loss).__name__] = loss
+
         if metrics_list is None:
             self.metrics = None
-            self.metric_logs = None
         else:
-            self.metric_logs = {}
-            self.metrics = {}
             for metric in metrics_list:
-                name = type(metric).__name__
-                self.metric_logs[name] = []
-                self.metrics[name] = metric
+                self.metrics[type(metric).__name__] = metric
+
         self.batch_size = batch_size
         self.sample_size = sample_size
         self.epochs = epochs
         self.checkpoints = checkpoints
         self.retain_checkpoints = retain_checkpoints
         self.recon = recon
-        self.test_noise = []
-        for model in self.model_names:
-            if isinstance(getattr(self, model), Generator):
-                self.test_noise.append(torch.randn(self.sample_size, getattr(self, model).encoding_dims,
-                                                   device=self.device) if test_noise is None else test_noise)
+
         # Not needed but we need to store this to avoid errors. Also makes life simpler
-        self.noise = torch.randn(1)
-        self.real_inputs = torch.randn(1)
-        self.labels = torch.randn(1)
+        self.noise = None
+        self.real_inputs = None
+        self.labels = None
 
         self.loss_information = {
             'generator_losses': 0.0,
@@ -143,20 +129,18 @@ class Trainer(object):
         self.ncritic = ncritic
         self.start_epoch = 0
         self.last_retained_checkpoint = 0
-        self.log_tensorboard = log_tensorboard
-        if self.log_tensorboard:
-            self.tensorboard_information = {
-                "step": 0,
-                "repeat_step": 4,
-                "repeats": 1
-            }
-        self.nrow = 8
         for key, val in kwargs.items():
             if key in self.__dict__:
                 warn("Overiding the default value of {} from {} to {}".format(key, getattr(self, key), val))
             setattr(self, key, val)
 
-        os.makedirs(self.checkpoints, exist_ok=True)
+        self.logger = Logger(self, losses_list, metrics_list, log_dir=log_dir,
+                             nrow=nrow, test_noise=test_noise)
+
+        self._store_loss_maps()
+        self._store_metric_maps()
+
+        os.makedirs(self.checkpoints.rsplit("/", 1)[0], exist_ok=True)
         os.makedirs(self.recon, exist_ok=True)
 
     def save_model(self, epoch, save_items=None):
@@ -188,8 +172,7 @@ class Trainer(object):
             'loss_information': self.loss_information,
             'loss_objects': self.losses,
             'metric_objects': self.metrics,
-            'loss_logs': self.loss_logs,
-            'metric_logs': self.metric_logs
+            'loss_logs': (self.logger.get_loss_viz()).logs
         }
         for save_item in self.model_names + self.optimizer_names:
             model.update({save_item: (getattr(self, save_item)).state_dict()})
@@ -230,9 +213,7 @@ class Trainer(object):
             self.losses = checkpoint['loss_objects']
             self.metrics = checkpoint['metric_objects']
             self.loss_information = checkpoint['loss_information']
-            self.loss_logs = checkpoint['loss_logs']
-            self.metric_logs = checkpoint['metric_logs']
-            # NOTE(avik-pal): Training might not occur in this case
+            (self.logger.get_loss_viz()).logs = checkpoint['loss_logs']
             for load_item in self.model_names + self.optimizer_names:
                 getattr(self, load_item).load_state_dict(checkpoint[load_item])
             if load_items is not None:
@@ -244,140 +225,7 @@ class Trainer(object):
         except:
             warn("Model could not be loaded from {}. Training from Scratch".format(load_path))
 
-    # TODO(avik-pal): The _get_step will fail in a lot of cases
-    def _get_step(self, update=True):
-        r"""Tensorboard Log Helper function. If called returns the current global tensorboard step.
-
-        Args:
-            update (bool, optional): If set to `False` no change is made to the tensorboard logging
-                                     parameters. It is set to `False` when logging of Images and
-                                     Metrics are being done.
-        """
-        if not update:
-            return self.tensorboard_information["step"]
-        if self.tensorboard_information["repeats"] < self.tensorboard_information["repeat_step"]:
-            self.tensorboard_information["repeats"] += 1
-            return self.tensorboard_information["step"]
-        else:
-            self.tensorboard_information["step"] += 1
-            self.tensorboard_information["repeats"] = 1
-            return self.tensorboard_information["step"]
-
-    def sample_images(self, epoch):
-        r"""Generates the Image by calling the corresponding Generator at the end of every epoch.
-        If `tensorboard` logging is enabled the image can be viewed there as well. Note that the test noise
-        is initialized at the time of Object Creation and this function does not handle that in any way.
-
-        Args:
-            epoch (int): Current epoch at which the sampler is being called.
-        """
-        pos = 0
-        for model in self.model_names:
-            if isinstance(getattr(self, model), Generator):
-                save_path = "{}/epoch{}_{}.png".format(self.recon, epoch + 1, model)
-                print("Generating and Saving Images to {}".format(save_path))
-                generator = getattr(self, model)
-                with torch.no_grad():
-                    # TODO(Aniket1998): This is a terrible temporary fix
-                    # Sampling images varies from generator to generator and
-                    # a more robust sample_images method is required
-                    if generator.label_type == 'none':
-                        images = generator(self.test_noise[pos].to(self.device))
-                    else:
-                        label_gen = torch.randint(0, generator.num_classes, (self.sample_size,), device=self.device)
-                        images = generator(self.test_noise[pos].to(self.device), label_gen)
-                    pos = pos + 1
-                    img = torchvision.utils.make_grid(images)
-                    torchvision.utils.save_image(img, save_path, nrow=self.nrow)
-                    if self.log_tensorboard:
-                        self.writer.add_image("Generated Samples/{}".format(model), img, self._get_step(False))
-
-    def train_logger(self, epoch, running_losses):
-        r"""Generates log while training the model
-
-        Args:
-            epoch (int): Current epoch at which the sampler is being called.
-            running_losses (dict): A dictionary containing a map between the name of the loss and its averaged value.
-        """
-        print('Epoch {} Summary: '.format(epoch + 1))
-        for name, val in running_losses.items():
-            print('Mean {} : {}'.format(name, val))
-
-    def tensorboard_log_gradients(self):
-        r"""Function for gradient logging in tensorboard. Currently logs the sum of the L2 norm of the gradients
-        of all the parameters of a model. Requires `log_tensorboard` to be set to `True`
-        """
-        if self.log_tensorboard:
-            for name in self.model_names:
-                model = getattr(self, name)
-                gradsum = 0.0
-                for p in model.parameters():
-                    gradsum += p.norm(2).item()
-                self.writer.add_scalar('Gradients/{}'.format(name), gradsum, self._get_step())
-
-    def tensorboard_log_losses(self):
-        r"""This function handles all form of logging with tensorboard for losses. It logs 4 major things.
-        2 of them are simply the net running discriminator loss and generator loss. Next it plots both of
-        them together in the same graph. It allows a better understanding of the convergence of the model.
-        Then all the individual loss function values are plotted in seperate graphs.
-        For all these to be logged the `log_tensorboard` parameter must be set to `True`.
-        """
-        if self.log_tensorboard:
-            running_generator_loss = self.loss_information["generator_losses"] /\
-                self.loss_information["generator_iters"]
-            running_discriminator_loss = self.loss_information["discriminator_losses"] /\
-                self.loss_information["discriminator_iters"]
-            self.writer.add_scalar("Running Discriminator Loss",
-                                   running_discriminator_loss,
-                                   self._get_step())
-            self.writer.add_scalar("Running Generator Loss",
-                                   running_generator_loss,
-                                   self._get_step())
-            self.writer.add_scalars("Running Losses",
-                                   {"Running Discriminator Loss": running_discriminator_loss,
-                                    "Running Generator Loss": running_generator_loss},
-                                   self._get_step())
-            for name, value in self.loss_logs.items():
-                val = value[-1]
-                if type(val) is tuple:
-                    self.writer.add_scalar('Losses/{}-Generator'.format(name), val[0], self._get_step(False))
-                    self.writer.add_scalar('Losses/{}-Discriminator'.format(name), val[1], self._get_step(False))
-                else:
-                    self.writer.add_scalar('Losses/{}'.format(name), val, self._get_step(False))
-
-    def tensorboard_log_metrics(self, epoch):
-        r"""This function handles all form of logging with tensorboard for the metrics. It plots
-        all the individual metric values in seperate graphs.
-        For all these to be logged the `log_tensorboard` parameter must be set to `True`.
-
-        Args:
-            epoch (int): Current epoch at which the sampler is being called.
-        """
-        if self.log_tensorboard:
-            if self.metric_logs:
-                for name, value in self.metric_logs.items():
-                    self.writer.add_scalar("Metrics/{}".format(name), value[-1], epoch)
-
-    def set_arg_maps(self, mappings):
-        r"""Helper function to allow custom parameter names in Loss and Metric Functions.
-        Also allows storing of buffers.
-
-        Args:
-            mappings (list, tuple): It must be a tuple or a list of tuples, where the first variable
-                                    name is the name needed by the function and the next variable name is
-                                    the name of the variable already stored in the object.
-
-        Example:
-            >>> #If your loss function needs a parameter `gen` which is stored as `generator` in the trainer.
-            >>> trainer.set_arg_maps(("gen", "generator"))
-        """
-        if type(mappings) is list:
-            for mapping in mappings:
-                setattr(self, mapping[0], mapping[1])
-        else:
-            setattr(self, mappings[0], mappings[1])
-
-    def _get_argument_maps(self, func):
+    def _get_argument_maps(self, default_map, func):
         r"""Extracts the signature of the `func`. Then it returns the list of arguments that
         are present in the object and need to be mapped and passed to the `func` when calling it.
 
@@ -390,16 +238,21 @@ class Trainer(object):
             arguments are not present an error is thrown.
         """
         sig = signature(func)
-        args = [p.name for p in sig.parameters.values() if p.default is _empty\
-                    and p.name != 'kwargs' and p.name != 'args']
-        for arg in args:
-            if arg not in self.__dict__:
-                raise Exception("Argument : {} not present. If the value is stored with some other\
-                                 name use the function `set_arg_maps`".format(arg))
-        for arg in [p.name for p in sig.parameters.values() if p.default is not _empty]:
-            if arg in self.__dict__:
-                args.append(arg)
-        return args
+        arg_map = {}
+        for sig_param in sig.parameters.values():
+            arg = sig_param.name
+            arg_name = arg
+            if arg in default_map:
+                arg_name = default_map[arg]
+            if sig_param.default is not _empty:
+                if arg_name in self.__dict__:
+                    arg_map.update({arg: arg_name})
+            else:
+                if arg_name not in self.__dict__ and arg != 'kwargs' and arg != 'args':
+                    raise Exception("Argument : {} not present.".format(arg_name))
+                else:
+                    arg_map.update({arg: arg_name})
+        return arg_map
 
     def _store_metric_maps(self):
         r"""Creates a mapping between the metrics and the arguments from the object that need to be
@@ -408,7 +261,7 @@ class Trainer(object):
         if self.metrics is not None:
             self.metric_arg_maps = {}
             for name, metric in self.metrics.items():
-                self.metric_arg_maps[name] = self._get_argument_maps(metric.metric_ops)
+                self.metric_arg_maps[name] = self._get_argument_maps(metric.arg_map, metric.metric_ops)
 
     def _store_loss_maps(self):
         r"""Creates a mapping between the losses and the arguments from the object that need to be
@@ -416,18 +269,21 @@ class Trainer(object):
         """
         self.loss_arg_maps = {}
         for name, loss in self.losses.items():
-            self.loss_arg_maps[name] = self._get_argument_maps(loss.train_ops)
+            self.loss_arg_maps[name] = self._get_argument_maps(loss.arg_map, loss.train_ops)
 
     def _get_arguments(self, arg_map):
         r"""Get the argument values from the object and create a dictionary.
 
         Args:
-            arg_map (list): A list of arguments that is generated by `_get_argument_maps`.
+            arg_map (dict): A dict of arguments that is generated by `_get_argument_maps`.
 
         Returns:
             A dictionary mapping the argument name to the value of the argument.
         """
-        return dict(zip(arg_map, itemgetter(*arg_map)(self.__dict__)))
+        args = {}
+        for key, val in arg_map.items():
+            args[key] = self.__dict__[val]
+        return args
 
     def train_iter_custom(self):
         r"""Function that needs to be extended if `train_iter` is to be modified. Use this function
@@ -448,38 +304,36 @@ class Trainer(object):
         """
         self.train_iter_custom()
         ldis, lgen, dis_iter, gen_iter = 0.0, 0.0, 0, 0
+        loss_logs = self.logger.get_loss_viz()
+        grad_logs = self.logger.get_grad_viz()
         for name, loss in self.losses.items():
             if isinstance(loss, GeneratorLoss) and isinstance(loss, DiscriminatorLoss):
                 cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
-                self.loss_logs[name].append(cur_loss)
+                loss_logs.logs[name].append(cur_loss)
                 if type(cur_loss) is tuple:
                     lgen, ldis, gen_iter, dis_iter = lgen + cur_loss[0], ldis + cur_loss[1],\
                         gen_iter + 1, dis_iter + 1
+                for model_name in self.model_names:
+                    grad_logs.update_grads(model_name, getattr(self, model_name))
             elif isinstance(loss, GeneratorLoss):
                 if self.ncritic is None or\
                    self.loss_information["discriminator_iters"] % self.ncritic == 0:
                     cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
-                    self.loss_logs[name].append(cur_loss)
+                    loss_logs.logs[name].append(cur_loss)
                     lgen, gen_iter = lgen + cur_loss, gen_iter + 1
+                for model_name in self.model_names:
+                    model = getattr(self, model_name)
+                    if isinstance(model, Generator):
+                        grad_logs.update_grads(model_name, model)
             elif isinstance(loss, DiscriminatorLoss):
                 cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
-                self.loss_logs[name].append(cur_loss)
+                loss_logs.logs[name].append(cur_loss)
                 ldis, dis_iter = ldis + cur_loss, dis_iter + 1
+                for model_name in self.model_names:
+                    model = getattr(self, model_name)
+                    if isinstance(model, Discriminator):
+                        grad_logs.update_grads(model_name, model)
         return lgen, ldis, gen_iter, dis_iter
-
-    def log_metrics(self, epoch):
-        r"""Helper function to log the metric values. It prints the metric values and also generates
-        tensorboard logs if activated.
-
-        Args:
-            epoch (int): Current epoch at which the sampler is being called.
-        """
-        if self.metric_logs is None:
-            warn('No evaluation metric logs present')
-        else:
-            for name, val in self.metric_logs.items():
-                print('{} : {}'.format(name, val[-1]))
-            self.tensorboard_log_metrics(epoch)
 
     def eval_ops(self, epoch, **kwargs):
         r"""Runs all evaluation operations at the end of every epoch. It calls all the metric functions that
@@ -488,12 +342,11 @@ class Trainer(object):
         Args:
             epoch (int): Current epoch at which the sampler is being called.
         """
-        self.sample_images(epoch)
         if self.metrics is not None:
             for name, metric in self.metrics.items():
-                self.metric_logs[name].append(metric.metric_ops(\
+                metric_logs = self.logger.get_metric_viz()
+                metric_logs.logs[name].append(metric.metric_ops(\
                     **self._get_arguments(self.metric_arg_maps[name])))
-                self.log_metrics(epoch)
 
     def optim_ops(self):
         r"""Runs all the schedulers at the end of every epoch.
@@ -511,6 +364,9 @@ class Trainer(object):
             data_loader (torch.DataLoader): A DataLoader for the trainer to iterate over and train the
                                             models.
         """
+        for name in self.optimizer_names:
+            getattr(self, name).zero_grad()
+
         for epoch in range(self.start_epoch, self.epochs):
 
             for model in self.model_names:
@@ -531,32 +387,32 @@ class Trainer(object):
                 self.loss_information['generator_iters'] += gen_iter
                 self.loss_information['discriminator_iters'] += dis_iter
 
-                self.tensorboard_log_losses()
-                self.tensorboard_log_gradients()
+                self.logger.run_mid_epoch(self)
 
             if "save_items" in kwargs:
                 self.save_model(epoch, kwargs["save_items"])
             else:
                 self.save_model(epoch)
 
-            self.train_logger(epoch,
-                              {'Generator Loss': self.loss_information['generator_losses'] /\
-                              self.loss_information['generator_iters'],
-                              'Discriminator Loss': self.loss_information['discriminator_losses'] /\
-                              self.loss_information['discriminator_iters']})
-
             for model in self.model_names:
                 getattr(self, model).eval()
 
             self.eval_ops(epoch, **kwargs)
+            self.logger.run_end_epoch(self, epoch)
             self.optim_ops()
 
         print("Training of the Model is Complete")
 
+    def complete(self, **kwargs):
+        r"""Marks the end of training. It saves the final model and turns off the
+        logger.
+        """
+        if "save_items" in kwargs:
+            self.save_model(-1, kwargs["save_items"])
+        else:
+            self.save_model(-1)
+        self.logger.close()
+
     def __call__(self, data_loader, **kwargs):
-        self.writer = SummaryWriter()
-        self._store_loss_maps()
-        self._store_metric_maps()
         self.batch_size = data_loader.batch_size
         self.train(data_loader, **kwargs)
-        self.writer.close()
