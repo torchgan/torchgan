@@ -28,12 +28,14 @@ class VirtualBatchNorm(nn.Module):
         x = (x - mu) / std
         return x * self.weight + self.bias
 
-    def forward(self, x, ref=False):
-        if ref is True:
+    def forward(self, x):
+        if self.ref_mu is None or self.ref_var is None:
             self.ref_mu, self.ref_var = self._batch_stats(x)
             self.ref_mu = self.ref_mu.clone().detach()
             self.ref_var = self.ref_var.clone().detach()
+            out = self._normalize(x, self.ref_mu, self.ref_var)
         else:
-            if self.ref_mu is None or self.ref_var is None:
-                raise Exception('Cannot normalize without performing forward pass through reference batch')
-        return self._normalize(x, self.ref_mu, self.ref_var)
+            out = self._normalize(x, self.ref_mu, self.ref_var)
+            self.ref_mu = None
+            self.ref_var = None
+        return out
