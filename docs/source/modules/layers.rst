@@ -19,6 +19,12 @@ ResidualBlock2d
 .. autoclass:: ResidualBlock2d
     :members:
 
+ResidualBlockTranspose2d
+------------------------
+
+.. autoclass:: ResidualBlockTranspose2d
+    :members:
+
 Densenet Blocks
 ===============
 

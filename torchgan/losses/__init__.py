@@ -7,4 +7,5 @@ from .mutualinfo import *
 from .energybased import *
 from .draganpenalty import *
 from .auxclassifier import *
+from .historical import *
 from .featurematching import *

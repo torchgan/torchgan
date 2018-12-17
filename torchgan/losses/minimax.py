@@ -14,8 +14,8 @@ def minimax_generator_loss(dgz, nonsaturating=True, reduction='mean'):
         return -1.0 * F.binary_cross_entropy_with_logits(dgz, target,
                                                          reduction=reduction)
 
-def minimax_discriminator_loss(dx, dgz, reduction='mean'):
-    target_ones = torch.ones_like(dgz)
+def minimax_discriminator_loss(dx, dgz, label_smoothing=0.0, reduction='elementwise_mean'):
+    target_ones = torch.ones_like(dgz) * (1.0 - label_smoothing)
     target_zeros = torch.zeros_like(dx)
     loss = F.binary_cross_entropy_with_logits(dx, target_ones,
                                               reduction=reduction)
@@ -84,12 +84,19 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
     - :math:`z` : A sample from the noise prior
 
     Args:
+        label_smoothing (float, optional): The factor by which the labels (1 in this case) needs
+            to be smoothened. For example, label_smoothing = 0.2 changes the value of the real
+            labels to 0.8.
         reduction (str, optional): Specifies the reduction to apply to the output.
             If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
             If ``sum`` the elements of the output will be summed.
         override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
     """
+    def __init__(self, label_smoothing=0.0, reduction='mean', override_train_ops=None):
+        super(MinimaxDiscriminatorLoss, self).__init__(reduction, override_train_ops)
+        self.label_smoothing = label_smoothing
+
     def forward(self, dx, dgz):
         r"""Computes the loss for the given input.
 
@@ -104,4 +111,4 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return minimax_discriminator_loss(dx, dgz, reduction=self.reduction)
+        return minimax_discriminator_loss(dx, dgz, label_smoothing=self.label_smoothing, reduction=self.reduction)

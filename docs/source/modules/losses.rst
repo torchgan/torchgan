@@ -100,6 +100,12 @@ EnergyBasedDiscriminatorLoss
 .. autoclass:: EnergyBasedDiscriminatorLoss
     :members:
 
+EnergyBasedPullingAwayTerm
+--------------------------
+
+.. autoclass:: EnergyBasedPullingAwayTerm
+    :members:
+
 Wasserstein Loss
 ================
 
@@ -158,4 +164,19 @@ FeatureMatchingGeneratorLoss
 ----------------------------
 
 .. autoclass:: FeatureMatchingGeneratorLoss
+    :members:
+
+Historical Averaging
+====================
+
+HistoricalAverageGeneratorLoss
+------------------------------
+
+.. autoclass:: HistoricalAverageGeneratorLoss
+    :members:
+
+HistoricalAverageDiscriminatorLoss
+----------------------------------
+
+.. autoclass:: HistoricalAverageDiscriminatorLoss
     :members:
