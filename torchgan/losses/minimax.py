@@ -14,8 +14,8 @@ def minimax_generator_loss(dgz, nonsaturating=True, reduction='elementwise_mean'
         return -1.0 * F.binary_cross_entropy_with_logits(dgz, target,
                                                          reduction=reduction)
 
-def minimax_discriminator_loss(dx, dgz, reduction='elementwise_mean'):
-    target_ones = torch.ones_like(dgz)
+def minimax_discriminator_loss(dx, dgz, label_smoothing=0.0, reduction='elementwise_mean'):
+    target_ones = torch.ones_like(dgz) * (1.0 - label_smoothing)
     target_zeros = torch.zeros_like(dx)
     loss = F.binary_cross_entropy_with_logits(dx, target_ones,
                                               reduction=reduction)
@@ -89,6 +89,11 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
             the elements will be divided by the number of elements in the output. If
             `sum` the output will be summed.
     """
+    def __init__(self, label_smoothing=0.0, reduction='elementwise_mean', override_train_ops=None):
+        super(DiscriminatorLoss, self).__init__()
+        self.reduction = reduction
+        self.override_train_ops = override_train_ops
+        self.label_smoothing = label_smoothing
 
     def forward(self, dx, dgz):
         r"""
@@ -101,4 +106,4 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return minimax_discriminator_loss(dx, dgz, reduction=self.reduction)
+        return minimax_discriminator_loss(dx, dgz, label_smoothing=self.label_smoothing, reduction=self.reduction)
