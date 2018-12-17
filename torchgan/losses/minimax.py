@@ -90,7 +90,7 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
             `sum` the output will be summed.
     """
     def __init__(self, label_smoothing=0.0, reduction='elementwise_mean', override_train_ops=None):
-        super(DiscriminatorLoss, self).__init__()
+        super(MinimaxDiscriminatorLoss, self).__init__(reduction, override_train_ops)
         self.reduction = reduction
         self.override_train_ops = override_train_ops
         self.label_smoothing = label_smoothing
