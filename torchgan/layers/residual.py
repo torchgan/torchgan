@@ -3,9 +3,10 @@ import torch.nn as nn
 __all__ = ['ResidualBlock2d', 'ResidualBlockTranspose2d']
 
 class ResidualBlock2d(nn.Module):
-    def __init__(self, filters, kernels, strides=None, paddings=None, activation=nn.ReLU,
+    def __init__(self, filters, kernels, strides=None, paddings=None, nonlinearity=None,
                  batchnorm=True, shortcut=None):
         super(ResidualBlock2d, self).__init__()
+        nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         if strides is None:
             strides = [1 for _ in range(len(kernels))]
         if paddings is None:
@@ -18,23 +19,21 @@ class ResidualBlock2d(nn.Module):
             if batchnorm:
                 layers.append(nn.BatchNorm2d(filters[i]))
             if i != len(filters):  # Last layer does not get an activation
-                layers.append(activation())
+                layers.append(nl)
         self.layers = nn.Sequential(*layers)
         self.shortcut = shortcut
 
-    def forward(self, x, activation=None):
+    def forward(self, x, nonlinearity=None):
         out = self.layers(x)
         if self.shortcut is not None:
             out += self.shortcut(x)
-        if activation is None:
-            return out
-        else:
-            return activation(out)
+        return out if nonlinearity is None else nonlinearity(out)
 
 class ResidualBlockTranspose2d(ResidualBlock2d):
-    def __init__(self, filters, kernels, strides=None, paddings=None, activation=nn.ReLU,
+    def __init__(self, filters, kernels, strides=None, paddings=None, nonlinearity=None,
                  batchnorm=True, shortcut=None):
         super(ResidualBlockTranspose2d, self).__init__()
+        nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         if strides is None:
             strides = [1 for _ in range(len(kernels))]
         if paddings is None:
@@ -48,6 +47,6 @@ class ResidualBlockTranspose2d(ResidualBlock2d):
             if batchnorm:
                 layers.append(nn.BatchNorm2d(filters[i]))
             if i != len(filters):  # Last layer does not get an activation
-                layers.append(activation())
+                layers.append(nl)
         self.layers = nn.Sequential(*layers)
         self.shortcut = shortcut
