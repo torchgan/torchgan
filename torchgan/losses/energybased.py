@@ -222,7 +222,7 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
         """
         return reduce(dx + F.relu(-dgz + self.margin), self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_generator, real_inputs, device,
+    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device,
                   batch_size, labels=None):
         r"""This function sets the ``embeddings`` attribute of the ``AutoEncodingDiscriminator`` to
         ``False`` and calls the ``train_ops`` of the ``DiscriminatorLoss``. After the call the
@@ -249,7 +249,7 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
             if isinstance(discriminator, AutoEncodingDiscriminator):
                 setattr(discriminator, "embeddings", False)
             loss = super(EnergyBasedDiscriminatorLoss, self).train_ops(generator, discriminator,
-                optimizer_generator, real_inputs, device, labels)
+                optimizer_discriminator, real_inputs, device, labels)
             if isinstance(discriminator, AutoEncodingDiscriminator):
                 setattr(discriminator, "embeddings", True)
             return loss
