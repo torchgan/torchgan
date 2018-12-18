@@ -5,7 +5,6 @@ from ..utils import reduce
 __all__ = ['HistoricalAverageGeneratorLoss', 'HistoricalAverageDiscriminatorLoss']
 
 class HistoricalAverageGeneratorLoss(GeneratorLoss):
-    # TODO(Aniket1998): Find a generalisation for multi agent GANs
     r"""Historical Average Generator Loss from
     `"Improved Techniques for Training GANs
     by Salimans et. al." <https://arxiv.org/pdf/1606.03498.pdf>`_ paper
@@ -72,7 +71,6 @@ class HistoricalAverageGeneratorLoss(GeneratorLoss):
                 return loss.item()
 
 class HistoricalAverageDiscriminatorLoss(DiscriminatorLoss):
-    # TODO(Aniket1998): Find a generalisation for multi agent GANs
     r"""Historical Average Discriminator Loss from
     `"Improved Techniques for Training GANs
     by Salimans et. al." <https://arxiv.org/pdf/1606.03498.pdf>`_ paper
