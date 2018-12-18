@@ -45,6 +45,8 @@ Energy Based Loss
     :members:
 .. autoclass:: EnergyBasedDiscriminatorLoss
     :members:
+.. autoclass:: EnergyBasedPullingAwayTerm
+    :members:
 
 Wasserstein Loss
 ----------------
@@ -52,16 +54,22 @@ Wasserstein Loss
     :members:
 .. autoclass:: WassersteinDiscriminatorLoss
     :members:
+.. autoclass:: WassersteinGradientPenalty
+    :members:
 
 Mutual Information Penalty
 --------------------------
 .. autoclass:: MutualInformationPenalty
     :members:
 
+
+Dragan Loss
+-----------
+.. autoclass:: DraganGradientPenalty
+
 Auxillary Classifier Loss
 -------------------------
 .. autoclass:: AuxiliaryClassifierGeneratorLoss
     :members:
-
 .. autoclass:: AuxiliaryClassifierDiscriminatorLoss
     :members:
