@@ -220,7 +220,7 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return reduce(dx + F.relu(-dgz + self.margin), self.reduction)
+        return energy_based_discriminator_loss(dx, dgz, self.margin, self.reduction)
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device,
                   batch_size, labels=None):
