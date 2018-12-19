@@ -28,6 +28,14 @@ class MinibatchDiscrimination1d(nn.Module):
         self.T = nn.Parameter(torch.Tensor(in_features, out_features, intermediate_features))
         nn.init.normal_(self.T)
 
+    r"""Computes the output of the Minibatch Discrimination Layer
+
+        Args:
+            x (torch.Tensor): A Torch Tensor of dimensions :math: `(N, infeatures)`
+
+        Returns:
+            3D Torch Tensor of size :math: `(N,infeatures + outfeatures)` after applying Minibatch Discrimination
+    """
     def forward(self, x):
         M = torch.mm(x, self.T.view(self.in_features, -1))
         M = M.view(-1, self.out_features, self.intermediate_features).unsqueeze(0)
