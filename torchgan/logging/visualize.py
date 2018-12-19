@@ -15,8 +15,8 @@ class Visualize(object):
 
     Args:
         visualize_list (list, optional): List of the functions needed for visualization.
-        visdom_port (int, optional): Port to log using ``visdom``. A deafult server is started
-            at port ``8097``. So manually a new server has to be started if the post is changed.
+        visdom_port (int, optional): Port to log using ``visdom``. The visdom server needs to be
+            manually started at this port else an error will be thrown and the code will crash.
             This is ignored if ``VISDOM_LOGGING`` is ``0``.
         log_dir (str, optional): Directory where TensorboardX should store the logs. This is
             ignored if ``TENSORBOARD_LOGGING`` is ``0``.
@@ -95,8 +95,8 @@ class LossVisualize(Visualize):
 
     Args:
         visualize_list (list, optional): List of the functions needed for visualization.
-        visdom_port (int, optional): Port to log using ``visdom``. A deafult server is started
-            at port ``8097``. So manually a new server has to be started if the post is changed.
+        visdom_port (int, optional): Port to log using ``visdom``. The visdom server needs to be
+            manually started at this port else an error will be thrown and the code will crash.
             This is ignored if ``VISDOM_LOGGING`` is ``0``.
         log_dir (str, optional): Directory where TensorboardX should store the logs. This is
             ignored if ``TENSORBOARD_LOGGING`` is ``0``.
@@ -195,8 +195,8 @@ class MetricVisualize(Visualize):
 
     Args:
         visualize_list (list, optional): List of the functions needed for visualization.
-        visdom_port (int, optional): Port to log using ``visdom``. A deafult server is started
-            at port ``8097``. So manually a new server has to be started if the post is changed.
+        visdom_port (int, optional): Port to log using ``visdom``. The visdom server needs to be
+            manually started at this port else an error will be thrown and the code will crash.
             This is ignored if ``VISDOM_LOGGING`` is ``0``.
         log_dir (str, optional): Directory where TensorboardX should store the logs. This is
             ignored if ``TENSORBOARD_LOGGING`` is ``0``.
@@ -227,8 +227,8 @@ class GradientVisualize(Visualize):
 
     Args:
         visualize_list (list, optional): List of the functions needed for visualization.
-        visdom_port (int, optional): Port to log using ``visdom``. A deafult server is started
-            at port ``8097``. So manually a new server has to be started if the post is changed.
+        visdom_port (int, optional): Port to log using ``visdom``. The visdom server needs to be
+            manually started at this port else an error will be thrown and the code will crash.
             This is ignored if ``VISDOM_LOGGING`` is ``0``.
         log_dir (str, optional): Directory where TensorboardX should store the logs. This is
             ignored if ``TENSORBOARD_LOGGING`` is ``0``.
@@ -306,8 +306,8 @@ class ImageVisualize(Visualize):
 
     Args:
         trainer (torchgan.trainer.Trainer): The base trainer used for training.
-        visdom_port (int, optional): Port to log using ``visdom``. A deafult server is started
-            at port ``8097``. So manually a new server has to be started if the post is changed.
+        visdom_port (int, optional): Port to log using ``visdom``. The visdom server needs to be
+            manually started at this port else an error will be thrown and the code will crash.
             This is ignored if ``VISDOM_LOGGING`` is ``0``.
         log_dir (str, optional): Directory where TensorboardX should store the logs. This is
             ignored if ``TENSORBOARD_LOGGING`` is ``0``.
