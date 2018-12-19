@@ -11,12 +11,24 @@ class MinibatchDiscrimination1d(nn.Module):
     Allows the Discriminator to easily detect mode collapse by augmenting the activations to the succeeding
     layer with side information that allows it to determine the 'closeness' of the minibatch examples
     with each other
+        .. math :: M_i = T * \f(\vx_{i})
+        .. math :: c_b(\vx_{i}, \vx_{j}) = \exp(-||M_{i, b} - M_{j, b}||_{L_1}) \in \mathbb{R}.
+        .. math :: o(\vx_{i})_b &= \sum_{j=1}^{n} c_b(\vx_{i},\vx_{j}) \in \mathbb{R} \\
+    o(\vx_{i}) &= \Big[ o(\vx_{i})_1, o(\vx_{i})_2, \dots, o(\vx_{i})_B \Big] \in \mathbb{R}^B \\
+    o(\X) &\in \mathbb{R}^{n \times B}
+    This is followed by concatenating :math: `$o(\vx_{i})$` and :math: `\f(\vx_{i})`
+
+    Where
+
+    - :math: `\f(\vx_{i}) \in \mathbb{R}^A` : Activations from an intermediate layer
+    - :math: `\f(\vx_{i}) \in \mathbb{R}^A` : Parameter Tensor for generating minibatch discrimination matrix
+
 
     Args:
-        in_features (int): Features input
-        out_features (int): Number of output features that are to be concatenated
-        eps (float, optional): Value to be added to variance for numerical stability while normalizing
-
+        in_features (int): Features input corresponding to dimension :math: `A`
+        out_features (int): Number of output features that are to be concatenated corresponding to dimension :math: `B`
+        intermediate_features (int): Intermediate number of features corresponding to dimension :math: `C`
+        Returns a Tensor of size :math: `(N, in_features + out_features)` where :math: `N` is the batch size
         Returns:
             A Tensor of size :math: `(N, in_features + out_features)` where :math: `N` is the batch size
     """
