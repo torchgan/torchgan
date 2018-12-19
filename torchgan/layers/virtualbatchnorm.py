@@ -37,10 +37,10 @@ class VirtualBatchNorm(nn.Module):
 
     def _batch_stats(self, x):
         r"""Computes the statistics of the batch ``x``.
-        
+
         Args:
             x (torch.Tensor): Tensor whose statistics need to be computed.
-        
+
         Returns:
             A tuple of the mean and variance of the batch ``x``.
         """
@@ -50,12 +50,12 @@ class VirtualBatchNorm(nn.Module):
 
     def _normalize(self, x, mu, var):
         r"""Normalizes the tensor ``x`` using the statistics ``mu`` and ``var``.
-        
+
         Args:
             x (torch.Tensor): The Tensor to be normalized.
             mu (torch.Tensor): Mean using which the Tensor is to be normalized.
             var (torch.Tensor): Variance used in the normalization of ``x``.
-        
+
         Returns:
             Normalized Tensor ``x``.
         """
@@ -68,7 +68,7 @@ class VirtualBatchNorm(nn.Module):
         scale = self.scale.view(*sizes)
         bias = self.bias.view(*sizes)
         return x * scale + bias
-    
+
     def forward(self, x):
         r"""Computes the output of the Virtual Batch Normalization
 
