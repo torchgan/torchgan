@@ -51,6 +51,14 @@ class VirtualBatchNorm(nn.Module):
         bias = self.bias.view(*sizes)
         return x * scale + bias
 
+    r"""Computes the output of the Virtual Batch Normalization
+
+        Args:
+            x (torch.Tensor): A Torch Tensor of dimension at least 2 which is to be Normalized
+
+        Returns:
+            Torch Tensor of the same dimension after normalizing with respect to the statistics of the reference batch
+        """
     def forward(self, x):
         assert x.size(1) == self.in_features
         if self.ref_mu is None or self.ref_var is None:
