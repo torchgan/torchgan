@@ -28,7 +28,7 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-# readme = open('README.md').read()
+readme = open('README.md').read()
 
 VERSION = find_version('torchgan', '__init__.py')
 
@@ -45,8 +45,8 @@ setup(
     author='Avik Pal & Aniket Das',
     author_email='torchgan@gmail.com',
     url='https://github.com/torchgan/torchgan',
-    description='PyTorch based framework for easy and efficient training of GANs',
-    # long_description=readme,
+    description='Research Framework for easy and efficient training of GANs based on Pytorch',
+    long_description=readme,
     license='MIT',
 
     # Package info

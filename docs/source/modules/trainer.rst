@@ -1,3 +1,4 @@
+================
 torchgan.trainer
 ================
 
@@ -10,6 +11,7 @@ can be handled elegantly with the default trainer itself. But if incase you need
 `subclass` the trainer for any reason follow the docs closely.
 
 Trainer
--------
+=======
+
 .. autoclass:: Trainer
     :members:

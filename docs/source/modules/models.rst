@@ -1,3 +1,4 @@
+===============
 torchgan.models
 ===============
 
@@ -23,37 +24,95 @@ All models follow the same structure. There are additional customization options
 Look into the individual documentation for such capabilities.
 
 GAN
----
+===
+
+Generator
+---------
+
 .. autoclass:: Generator
     :members:
 
     .. automethod:: _weight_initializer
+
+Discriminator
+-------------
+
 .. autoclass:: Discriminator
     :members:
-    
+
     .. automethod:: _weight_initializer
 
-DCGAN
------
+Deep Convolutional GAN
+======================
+
+DCGANGenerator
+--------------
+
 .. autoclass:: DCGANGenerator
+    :members:
+
+DCGANDiscriminator
+------------------
+
 .. autoclass:: DCGANDiscriminator
+    :members:
 
 Conditional GAN
----------------
+===============
+
+ConditionalGANGenerator
+-----------------------
+
 .. autoclass:: ConditionalGANGenerator
+    :members:
+
+ConditionalGANDiscriminator
+---------------------------
+
 .. autoclass:: ConditionalGANDiscriminator
+    :members:
 
 InfoGAN
--------
+=======
+
+InfoGANGenerator
+----------------
+
 .. autoclass:: InfoGANGenerator
+    :members:
+
+InfoGANDiscriminator
+--------------------
+
 .. autoclass:: InfoGANDiscriminator
+    :members:
 
 AutoEncoders
-------------
-.. autoclass:: AutoEncodingGenerator
-.. autoclass:: AutoEncodingDiscriminator
+============
 
-ACGAN
------
+AutoEncodingGenerator
+---------------------
+
+.. autoclass:: AutoEncodingGenerator
+    :members:
+
+AutoEncodingDiscriminator
+-------------------------
+
+.. autoclass:: AutoEncodingDiscriminator
+    :members:
+
+Auxiliary Classifier GAN
+========================
+
+ACGANGenerator
+--------------
+
 .. autoclass:: ACGANGenerator
+    :members:
+
+ACGANDiscriminator
+------------------
+
 .. autoclass:: ACGANDiscriminator
+    :members:

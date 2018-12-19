@@ -12,19 +12,24 @@ class AutoEncodingGenerator(Generator):
     by Berthelot et. al." <https://arxiv.org/abs/1703.10717>`_ paper
 
     Args:
-        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior. Default 100
-        out_size(int, optional)      : Height and Width of the output image to be generated. Must be a power of 2.
-                                       Default 32
-        out_channels (int, optional) : Number of channels in the output Tensor.
-        step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
-                                        the convolutional features
-                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
-                                        where d = step_channels.
-        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator.
-        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
-                                                  Defaults to LeakyReLU(0.2) when None is passed.
-        last_nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
-                                                       Defaults to tanh when None is passed.
+        encoding_dims (int, optional): Dimension of the encoding vector sampled from the noise prior.
+        out_size (int, optional): Height and width of the input image to be generated. Must be at
+            least 16 and should be an exact power of 2.
+        out_channels (int, optional): Number of channels in the output Tensor.
+        step_channels (int, optional): Number of channels in multiples of which the DCGAN steps up
+            the convolutional features. The step up is done as dim :math:`z \rightarrow d \rightarrow
+            2 \times d \rightarrow 4 \times d \rightarrow 8 \times d` where :math:`d` = step_channels.
+        scale_factor (int, optional): The scale factor is used to infer properties of the model like
+            ``upsample_pad``, ``upsample_filters``, ``upsample_stride`` and ``upsample_output_pad``.
+        batchnorm (bool, optional): If True, use batch normalization in the convolutional layers of
+            the generator.
+        nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the intermediate
+            convolutional layers. Defaults to ``LeakyReLU(0.2)`` when None is passed.
+        last_nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the final
+            convolutional layer. Defaults to ``Tanh()`` when None is passed.
+        label_type (str, optional): The type of labels expected by the Generator. The available
+            choices are 'none' if no label is needed, 'required' if the original labels are
+            needed and 'generated' if labels are to be sampled from a distribution.
     """
     def __init__(self, encoding_dims=100, out_size=32, out_channels=3, step_channels=64, scale_factor=2,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None, label_type='none'):
@@ -90,6 +95,15 @@ class AutoEncodingGenerator(Generator):
         self._weight_initializer()
 
     def forward(self, z):
+        r"""Calculates the output tensor on passing the encoding ``z`` through the Generator.
+
+        Args:
+            z (torch.Tensor): A 2D torch tensor of the encoding sampled from a probability
+                distribution.
+
+        Returns:
+            A 4D torch.Tensor of the generated image.
+        """
         x = self.fc(z)
         x = x.view(-1, self.n, self.init_dim, self.init_dim)
         return self.model(x)
@@ -101,20 +115,25 @@ class AutoEncodingDiscriminator(Discriminator):
     by Berthelot et. al." <https://arxiv.org/abs/1703.10717>`_ paper
 
     Args:
-        in_size (int, optional)     : Height and Width of the input image. Must be a power of 2. Default 32
-        in_channels (int, optional) : Number of channels in the input Tensor.
-        encoding_dims (int, optional) : Dimension of the encoding vector sampled from the noise prior.
-        step_channels (int, optional) : Number of channels in multiples of which the DCGAN steps up
-                                        the convolutional features
-                                        The step up is done as dim `z -> d - > 2 * d -> 4 * d - > 8 * d`
-                                        where d = step_channels.
-        batchnorm (bool, optional) : If True, use batch normalization in the convolutional layers of the generator.
-        nonlinearity (torch.nn.Module, optional) : Nonlinearity to be used in the intermediate convolutional layers
-                                                  Defaults to LeakyReLU(0.2) when None is passed.
-        last_nonlinearity (toch.nn.Module, optional) : Nonlinearity to be used in the final convolutional layer
-                                                      Defaults to sigmoid when None is passed.
+        in_size (int, optional): Height and width of the input image to be evaluated. Must be at
+            least 16 and should be an exact power of 2.
+        in_channels (int, optional): Number of channels in the input Tensor.
+        step_channels (int, optional): Number of channels in multiples of which the DCGAN steps up
+            the convolutional features. The step up is done as dim :math:`z \rightarrow d \rightarrow
+            2 \times d \rightarrow 4 \times d \rightarrow 8 \times d` where :math:`d` = step_channels.
+        scale_factor (int, optional): The scale factor is used to infer properties of the model like
+            ``downsample_pad``, ``downsample_filters`` and ``downsample_stride``.
+        batchnorm (bool, optional): If True, use batch normalization in the convolutional layers of
+            the generator.
+        nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the intermediate
+            convolutional layers. Defaults to ``LeakyReLU(0.2)`` when None is passed.
+        last_nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the final
+            convolutional layer. Defaults to ``Tanh()`` when None is passed.
         energy (bool, optional) : If set to True returns the energy instead of the decoder output.
         embeddings (bool, optional) : If set to True the embeddings will be returned.
+        label_type (str, optional): The type of labels expected by the Generator. The available
+            choices are 'none' if no label is needed, 'required' if the original labels are
+            needed and 'generated' if labels are to be sampled from a distribution.
     """
     def __init__(self, in_size=32, in_channels=3, encoding_dims=100, step_channels=64, scale_factor=2,
                  batchnorm=True, nonlinearity=None, last_nonlinearity=None, energy=True, embeddings=False,
@@ -180,6 +199,16 @@ class AutoEncodingDiscriminator(Discriminator):
         self._weight_initializer()
 
     def forward(self, x, feature_matching=False):
+        r"""Calculates the output tensor on passing the image ``x`` through the Discriminator.
+
+        Args:
+            x (torch.Tensor): A 4D torch tensor of the image.
+            feature_matching (bool, optional): Returns the activation from a predefined intermediate
+                layer.
+
+        Returns:
+            A 1D torch.Tensor of the energy value of each image.
+        """
         x1 = self.encoder(x)
         x2 = x1.view(-1, (self.init_dim ** 2) * x1.size(1))
         x2 = self.fc(x2)

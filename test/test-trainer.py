@@ -32,8 +32,8 @@ class TestTrainer(unittest.TestCase):
                           "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}
         }
         losses_list = [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()]
-        trainer = Trainer(network_params, losses_list, batch_size=128, sample_size=1,
-                          epochs=1, device=torch.device('cpu'))
+        trainer = Trainer(network_params, losses_list, sample_size=1, epochs=1,
+                          device=torch.device('cpu'))
         trainer(mnist_dataloader())
 
     def test_trainer_cgan(self):
@@ -46,8 +46,8 @@ class TestTrainer(unittest.TestCase):
                     "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}
         }
         losses_list = [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()]
-        trainer = Trainer(network_params, losses_list, batch_size=128, sample_size=1,
-                          epochs=1, device=torch.device('cpu'))
+        trainer = Trainer(network_params, losses_list, sample_size=1, epochs=1,
+                          device=torch.device('cpu'))
         trainer(mnist_dataloader())
 
     def test_trainer_acgan(self):
@@ -61,6 +61,6 @@ class TestTrainer(unittest.TestCase):
         }
         losses_list = [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss(),
                 AuxiliaryClassifierGeneratorLoss(), AuxiliaryClassifierDiscriminatorLoss()]
-        trainer = Trainer(network_params, losses_list, batch_size=128, sample_size=1,
-                          epochs=1, device=torch.device('cpu'))
+        trainer = Trainer(network_params, losses_list, sample_size=1, epochs=1,
+                          device=torch.device('cpu'))
         trainer(mnist_dataloader())

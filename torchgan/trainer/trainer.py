@@ -14,45 +14,44 @@ class Trainer(object):
 
     Features provided by this Base Trainer are:
 
-    - Loss and Metrics Logging
-    - Generating Image Samples
-    - Logging using Tensorboard
-    - Saving models at the end of every epoch and loading of previously saved models
-    - Highly flexible and allows changing hyperparameters by simply adjusting the keyword arguments.
-    - Custom `train_ops` by mapping the function signature with the values stored in the object
+    - Loss and Metrics Logging via the ``Logger`` class.
+    - Generating Image Samples.
+    - Saving models at the end of every epoch and loading of previously saved models.
+    - Highly flexible and allows changing hyperparameters by simply adjusting the arguments.
 
     Most of the functionalities provided by the Trainer are flexible enough and can be customized by
     simply passing different arguments. You can train anything from a simple DCGAN to complex CycleGANs
-    without ever having to subclass this `Trainer`.
+    without ever having to subclass this ``Trainer``.
 
     Args:
-        models (dict): A dictionary containing a mapping between the variable name, storing the `generator`,
-                       `discriminator` and any other model that you might want to define, with the function and
-                       arguments that are needed to construct the model. Refer to the examples to see how to
-                       define complex models using this API.
-        losses_list (list): A list of the Loss Functions that need to be minimized. For a list of pre-defined losses
-                       look at :mod:`torchgan.losses`. All losses in the list must be a subclass of atleast
-                       `GeneratorLoss` or `DiscriminatorLoss`.
-        metrics_list (list, optional): List of Metric Functions that need to be logged. For a list of pre-defined
-                       metrics look at :mod:`torchgan.metrics`. All losses in the list must be a subclass of
-                       `EvaluationMetric`.
-        device (torch.device, optional): Device in which the operation is to be carried out. If you are using a
-                       CPU machine make sure that you change it for proper functioning.
-        ncritic (int, optional): Setting it to a value will make the discriminator train that many times more than
-                       the generator.
-        batch_size (int, optional): Batch Size for feeding into the discriminator.
-        sample_size (int, optional): Total number of images to be generated at the end of an epoch for logging
-                       purposes.
+        models (dict): A dictionary containing a mapping between the variable name, storing the
+            ``generator``, ``discriminator`` and any other model that you might want to define, with the
+            function and arguments that are needed to construct the model. Refer to the examples to
+            see how to define complex models using this API.
+        losses_list (list): A list of the Loss Functions that need to be minimized. For a list of
+            pre-defined losses look at :mod:`torchgan.losses`. All losses in the list must be a
+            subclass of atleast ``GeneratorLoss`` or ``DiscriminatorLoss``.
+        metrics_list (list, optional): List of Metric Functions that need to be logged. For a list of
+            pre-defined metrics look at :mod:`torchgan.metrics`. All losses in the list must be a
+            subclass of ``EvaluationMetric``.
+        device (torch.device, optional): Device in which the operation is to be carried out. If you
+            are using a CPU machine make sure that you change it for proper functioning.
+        ncritic (int, optional): Setting it to a value will make the discriminator train that many
+            times more than the generator.
+        sample_size (int, optional): Total number of images to be generated at the end of an epoch
+            for logging purposes.
         epochs (int, optional): Total number of epochs for which the models are to be trained.
-        checkpoints (str, optional): Path where the models are to be saved. The naming convention is if checkpoints
-                       is `./model/gan` then models are saved as `./model/gan0.model` and so on. Make sure that the
-                       `model` directory exists from before.
-        retain_checkpoints (int, optional): Total number of checkpoints that should be retained. For example,
-                       if the value is set to 3, we save at most 3 models and start rewriting the models after that.
-        recon (str, optional): Directory where the sampled images are saved. Make sure the directory exists from
-                       beforehand.
-        log_dir (str, optional): The directory for logging tensorboard.
-        test_noise (torch.Tensor, optional): If provided then it will be used as the noise for image sampling.
+        checkpoints (str, optional): Path where the models are to be saved. The naming convention is
+            if checkpoints is ``./model/gan`` then models are saved as ``./model/gan0.model`` and so on.
+        retain_checkpoints (int, optional): Total number of checkpoints that should be retained. For
+            example, if the value is set to 3, we save at most 3 models and start rewriting the models
+            after that.
+        recon (str, optional): Directory where the sampled images are saved. Make sure the directory
+            exists from beforehand.
+        log_dir (str, optional): The directory for logging tensorboard. It is ignored if
+            TENSORBOARD_LOGGING is 0.
+        test_noise (torch.Tensor, optional): If provided then it will be used as the noise for image
+            sampling.
         nrow (int, optional): Number of rows in which the image is to be stored.
 
     Any other argument that you need to store in the object can be simply passed via keyword arguments.
@@ -69,8 +68,8 @@ class Trainer(object):
                     sample_size=64, epochs=20)
     """
     def __init__(self, models, losses_list, metrics_list=None, device=torch.device("cuda:0"),
-                 ncritic=None, batch_size=128, epochs=5, sample_size=8, checkpoints="./model/gan",
-                 retain_checkpoints=5, recon="./images", log_dir=None, test_noise=None, nrow=8, **kwargs):
+                 ncritic=None, epochs=5, sample_size=8, checkpoints="./model/gan", retain_checkpoints=5,
+                 recon="./images", log_dir=None, test_noise=None, nrow=8, **kwargs):
         self.device = device
         self.model_names = []
         self.optimizer_names = []
@@ -108,7 +107,6 @@ class Trainer(object):
             for metric in metrics_list:
                 self.metrics[type(metric).__name__] = metric
 
-        self.batch_size = batch_size
         self.sample_size = sample_size
         self.epochs = epochs
         self.checkpoints = checkpoints
@@ -119,6 +117,7 @@ class Trainer(object):
         self.noise = None
         self.real_inputs = None
         self.labels = None
+        self.batch_size = 1
 
         self.loss_information = {
             'generator_losses': 0.0,
@@ -154,13 +153,13 @@ class Trainer(object):
         - Loss Objects
         - Metric Objects
         - Loss Logs
-        - Metric Logs
+
+        The save location is printed when this function is called.
 
         Args:
             epoch (int, optional): Epoch Number at which the model is being saved
             save_items (str, list, optional): Pass the variable name of any other item you want to save.
-                                              The item must be present in the `__dict__` else training
-                                              will come to an abrupt end.
+                The item must be present in the `__dict__` else training will come to an abrupt end.
         """
         if self.last_retained_checkpoint == self.retain_checkpoints:
             self.last_retained_checkpoint = 0
@@ -195,14 +194,17 @@ class Trainer(object):
         - Loss Objects
         - Metric Objects
         - Loss Logs
-        - Metric Logs
+
+        .. warning::
+            An Exception is raised if the model could not be loaded. Make sure that the model being
+            loaded was saved previously by ``torchgan Trainer`` itself. We currently do not support
+            loading any other form of models but this might be improved in the future.
 
         Args:
-            load_path (string, optional): Path from which the model is to be loaded.
+            load_path (str, optional): Path from which the model is to be loaded.
             load_items (str, list, optional): Pass the variable name of any other item you want to load.
-                                              If the item cannot be found then a warning will be thrown
-                                              and model will start to train from scratch. So make sure
-                                              that item was saved.
+                If the item cannot be found then a warning will be thrown and model will start to train
+                from scratch. So make sure that item was saved.
         """
         if load_path == "":
             load_path = self.checkpoints + str(self.last_retained_checkpoint) + '.model'
@@ -223,14 +225,15 @@ class Trainer(object):
                 else:
                     setattr(self, load_items, checkpoint['load_items'])
         except:
-            warn("Model could not be loaded from {}. Training from Scratch".format(load_path))
+            raise Exception("Model could not be loaded from {}.".format(load_path))
 
     def _get_argument_maps(self, default_map, func):
         r"""Extracts the signature of the `func`. Then it returns the list of arguments that
         are present in the object and need to be mapped and passed to the `func` when calling it.
 
         Args:
-            func (Function): Function whose argument map is to be generated
+            default_map (dict): The keys of this dictionary override the function signature.
+            func (function): Function whose argument map is to be generated.
 
         Returns:
             List of arguments that need to be fed into the function. It contains all the positional
@@ -286,9 +289,9 @@ class Trainer(object):
         return args
 
     def train_iter_custom(self):
-        r"""Function that needs to be extended if `train_iter` is to be modified. Use this function
+        r"""Function that needs to be extended if ``train_iter`` is to be modified. Use this function
         to perform any sort of initialization that need to be done at the beginning of any train
-        iteration. Refer the model zoo and example docs for more details on how to write this function.
+        iteration. Refer the model zoo and tutorials for more details on how to write this function.
         """
         pass
 
@@ -296,11 +299,15 @@ class Trainer(object):
     def train_iter(self):
         r"""Calls the train_ops of the loss functions. This is the core function of the Trainer. In most
         cases you will never have the need to extend this function. In extreme cases simply extend
-        `train_iter_custom`.
+        ``train_iter_custom``.
+
+        .. warning::
+            This function is needed in this exact state for the Trainer to work correctly. So it is
+            highly recommended that this function is not changed even if the ``Trainer`` is subclassed.
 
         Returns:
-            An NTuple of the generator loss, discriminator loss, times the generator was trained and the number
-            of times the discriminator was trained.
+            An NTuple of the ``generator loss``, ``discriminator loss``, ``number of times the generator
+            was trained`` and the ``number of times the discriminator was trained``.
         """
         self.train_iter_custom()
         ldis, lgen, dis_iter, gen_iter = 0.0, 0.0, 0, 0
@@ -335,12 +342,9 @@ class Trainer(object):
                         grad_logs.update_grads(model_name, model)
         return lgen, ldis, gen_iter, dis_iter
 
-    def eval_ops(self, epoch, **kwargs):
-        r"""Runs all evaluation operations at the end of every epoch. It calls all the metric functions that
-        are passed to the Trainer. Also calls the image sampler.
-
-        Args:
-            epoch (int): Current epoch at which the sampler is being called.
+    def eval_ops(self, **kwargs):
+        r"""Runs all evaluation operations at the end of every epoch. It calls all the metric functions
+        that are passed to the Trainer.
         """
         if self.metrics is not None:
             for name, metric in self.metrics.items():
@@ -356,13 +360,25 @@ class Trainer(object):
 
     def train(self, data_loader, **kwargs):
         r"""Uses the information passed by the user while creating the object and trains the model.
-        It iterates over the epochs and the Data and calls the functions for training the models and
-        logging the required variables. You should never try to extend this function. It is too delicate
-        and changing it affects every other function present in this Trainer class.
+        It iterates over the epochs and the DataLoader and calls the functions for training the models
+        and logging the required variables.
+
+        .. note::
+            Even though ``__call__`` calls this function, it is best if ``train`` is not called directly.
+            When ``__call__`` is invoked, we infer the ``batch_size`` from the ``data_loader``. Also,
+            we are certain not going to change the interface of the ``__call__`` function so it gives
+            the user a stable API, while we can change the flow of execution of ``train`` in future.
+
+        .. warning::
+            The user should never try to change this function in subclass. It is too delicate and
+            changing affects every other function present in this ``Trainer`` class.
+
+        This function controls the execution of all the components of the ``Trainer``. It controls the
+        ``logger``, ``train_iter``, ``save_model``, ``eval_ops`` and ``optim_ops``.
 
         Args:
-            data_loader (torch.DataLoader): A DataLoader for the trainer to iterate over and train the
-                                            models.
+            data_loader (torch.utils.data.DataLoader): A DataLoader for the trainer to iterate over
+                and train the models.
         """
         for name in self.optimizer_names:
             getattr(self, name).zero_grad()
@@ -397,15 +413,19 @@ class Trainer(object):
             for model in self.model_names:
                 getattr(self, model).eval()
 
-            self.eval_ops(epoch, **kwargs)
+            self.eval_ops(**kwargs)
             self.logger.run_end_epoch(self, epoch)
             self.optim_ops()
 
         print("Training of the Model is Complete")
 
     def complete(self, **kwargs):
-        r"""Marks the end of training. It saves the final model and turns off the
-        logger.
+        r"""Marks the end of training. It saves the final model and turns off the logger.
+
+        .. note::
+            It is not necessary to call this function. If it is not called the logger is kept
+            alive in the background. So it might be considered a good practice to call this
+            function.
         """
         if "save_items" in kwargs:
             self.save_model(-1, kwargs["save_items"])

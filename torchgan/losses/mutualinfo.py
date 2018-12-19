@@ -4,7 +4,7 @@ from ..utils import reduce
 
 __all__ = ['mutual_information_penalty', 'MutualInformationPenalty']
 
-def mutual_information_penalty(c_dis, c_cont, dist_dis, dist_cont, reduction='elementwise_mean'):
+def mutual_information_penalty(c_dis, c_cont, dist_dis, dist_cont, reduction='mean'):
     log_probs = torch.Tensor([torch.mean(dist.log_prob(c)) for dist, c in
                              zip((dist_dis, dist_cont), (c_dis, c_cont))])
     return reduce(-1.0 * log_probs, reduction)
@@ -21,28 +21,31 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
 
     where
 
-    - x is drawn from the generator distribution G(z,c)
-    - c drawn from the latent code prior P(c)
+    - :math:`x` is drawn from the generator distribution G(z,c)
+    - :math:`c` drawn from the latent code prior :math:`P(c)`
 
     Args:
-        reduction (string, optional): Specifies the reduction to apply to the output.
-            If `none` no reduction will be applied. If `elementwise_mean` the sum of
-            the elements will be divided by the number of elements in the output. If
-            `sum` the output will be summed.
+        lambd (float, optional): The scaling factor for the loss.
+        reduction (str, optional): Specifies the reduction to apply to the output.
+            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
+            If ``sum`` the elements of the output will be summed.
+        override_train_ops (function, optional): A function is passed to this argument,
+            if the default ``train_ops`` is not to be used.
     """
-    def __init__(self, lambd=1.0, reduction='elementwise_mean', override_train_ops=None):
+    def __init__(self, lambd=1.0, reduction='mean', override_train_ops=None):
         super(MutualInformationPenalty, self).__init__(reduction, override_train_ops)
         self.lambd = lambd
 
     def forward(self, c_dis, c_cont, dist_dis, dist_cont):
-        r"""
+        r"""Computes the loss for the given input.
+
         Args:
-            c_dis (int) : The discrete latent code sampled from the prior
-            c_cont (int) : The continuous latent code sampled from the prior
-            dist_dis (torch.distributions.Distribution) : The auxilliary distribution Q(c|x)
-                                                          over the discrete latent code output by the discriminator
-            dist_cont (torch.distributions.Distribution) : The auxilliary distribution Q(c|x)
-                                                           over the continuous latent code output by the discriminator
+            c_dis (int): The discrete latent code sampled from the prior.
+            c_cont (int): The continuous latent code sampled from the prior.
+            dist_dis (torch.distributions.Distribution): The auxilliary distribution :math:`Q(c|x)` over the
+                discrete latent code output by the discriminator.
+            dist_cont (torch.distributions.Distribution): The auxilliary distribution :math:`Q(c|x)` over the
+                continuous latent code output by the discriminator.
 
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
