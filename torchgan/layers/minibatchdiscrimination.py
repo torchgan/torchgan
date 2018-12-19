@@ -17,7 +17,8 @@ class MinibatchDiscrimination1d(nn.Module):
         out_features (int): Number of output features that are to be concatenated
         eps (float, optional): Value to be added to variance for numerical stability while normalizing
 
-        Returns a Tensor of size :math: `(N, in_features + out_features)` where :math: `N` is the batch size
+        Returns:
+            A Tensor of size :math: `(N, in_features + out_features)` where :math: `N` is the batch size
     """
     def __init__(self, in_features, out_features, intermediate_features=16):
         super(MinibatchDiscrimination1d, self).__init__()
@@ -28,15 +29,15 @@ class MinibatchDiscrimination1d(nn.Module):
         self.T = nn.Parameter(torch.Tensor(in_features, out_features, intermediate_features))
         nn.init.normal_(self.T)
 
-    r"""Computes the output of the Minibatch Discrimination Layer
+    def forward(self, x):
+        r"""Computes the output of the Minibatch Discrimination Layer
 
         Args:
             x (torch.Tensor): A Torch Tensor of dimensions :math: `(N, infeatures)`
 
         Returns:
             3D Torch Tensor of size :math: `(N,infeatures + outfeatures)` after applying Minibatch Discrimination
-    """
-    def forward(self, x):
+        """
         M = torch.mm(x, self.T.view(self.in_features, -1))
         M = M.view(-1, self.out_features, self.intermediate_features).unsqueeze(0)
         M_t = M.permute(1, 0, 2, 3)
