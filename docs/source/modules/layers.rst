@@ -75,3 +75,21 @@ SpectralNorm2d
 
 .. autoclass:: SpectralNorm2d
     :members:
+
+Minibatch Discrimination
+========================
+
+MinibatchDiscrimination1d
+-------------------------
+
+.. autoclass:: MinibatchDiscrimination1d 
+    :members:
+
+Virtual Batch Normalization
+===========================
+
+VirtualBatchNorm
+----------------
+
+.. autoclass:: VirtualBatchNorm
+    :members:
