@@ -35,12 +35,11 @@ class DraganGradientPenalty(DiscriminatorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
         lambd (float,optional) : Hyperparameter :math:`\lambda` for scaling the gradient penalty.
         k (float, optional) : Constant.
-        override_train_ops (function, optional): A function is passed to this argument,
-            if the default ``train_ops`` is not to be used.
+        override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
     def __init__(self, reduction='mean', lambd=10.0, k=1.0, override_train_ops=None):
         super(DraganGradientPenalty, self).__init__(reduction)
@@ -84,7 +83,10 @@ class DraganGradientPenalty(DiscriminatorLoss):
                 of the ``discriminator``.
             real_inputs (torch.Tensor): The real data to be fed to the ``discriminator``.
             device (torch.device): Device on which the ``generator`` and ``discriminator`` is present.
+<<<<<<< HEAD
             batch_size (int): Batch Size of the data infered from the ``DataLoader`` by the ``Trainer``.
+=======
+>>>>>>> 0298f6cc39cb46f2beb26094dcc99df556e5c77d
             labels (torch.Tensor, optional): Labels for the data.
 
         Returns:

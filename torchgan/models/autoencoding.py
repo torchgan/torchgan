@@ -129,12 +129,15 @@ class AutoEncodingDiscriminator(Discriminator):
             convolutional layers. Defaults to ``LeakyReLU(0.2)`` when None is passed.
         last_nonlinearity (torch.nn.Module, optional): Nonlinearity to be used in the final
             convolutional layer. Defaults to ``Tanh()`` when None is passed.
+        energy (bool, optional) : If set to True returns the energy instead of the decoder output.
+        embeddings (bool, optional) : If set to True the embeddings will be returned.
         label_type (str, optional): The type of labels expected by the Generator. The available
             choices are 'none' if no label is needed, 'required' if the original labels are
             needed and 'generated' if labels are to be sampled from a distribution.
     """
     def __init__(self, in_size=32, in_channels=3, encoding_dims=100, step_channels=64, scale_factor=2,
-                 batchnorm=True, nonlinearity=None, last_nonlinearity=None, label_type='none'):
+                 batchnorm=True, nonlinearity=None, last_nonlinearity=None, energy=True, embeddings=False,
+                 label_type='none'):
         super(AutoEncodingDiscriminator, self).__init__(in_channels, label_type)
         if in_size < (scale_factor ** 4) or ceil(log(in_size, scale_factor)) != log(in_size, scale_factor):
             raise Exception('Input image size must be at least {} and a perfect power of {}'.format(scale_factor ** 4,
@@ -191,6 +194,8 @@ class AutoEncodingDiscriminator(Discriminator):
         self.encoder = nn.Sequential(*model)
         self.decoder = AutoEncodingGenerator(encoding_dims, in_size, in_channels, step_channels, scale_factor,
                                              batchnorm, nonlinearity, last_nonlinearity)
+        self.energy = energy
+        self.embeddings = embeddings
         self._weight_initializer()
 
     def forward(self, x, feature_matching=False):
@@ -205,11 +210,20 @@ class AutoEncodingDiscriminator(Discriminator):
             A 1D torch.Tensor of the energy value of each image.
         """
         x1 = self.encoder(x)
-        x1 = x1.view(-1, (self.init_dim ** 2) * x1.size(1))
-        x1 = self.fc(x1)
+        x2 = x1.view(-1, (self.init_dim ** 2) * x1.size(1))
+        x2 = self.fc(x2)
         if feature_matching is True:
-            return x1
-        x1 = self.decoder(x1)
-        x = x.view(-1, x.size(1) * x.size(2) * x.size(3))
-        x1 = x1.view(-1, x1.size(1) * x1.size(2) * x1.size(3))
-        return torch.mean((x - x1) ** 2, 1)
+            return x2
+        x2 = self.decoder(x2)
+        if self.energy:
+            x = x.view(-1, x.size(1) * x.size(2) * x.size(3))
+            x2 = x2.view(-1, x2.size(1) * x2.size(2) * x2.size(3))
+            if self.embeddings:
+                return x1, torch.mean((x - x2) ** 2, 1)
+            else:
+                return torch.mean((x - x2) ** 2, 1)
+        else:
+            if self.embeddings:
+                return x1, x2
+            else:
+                return x2

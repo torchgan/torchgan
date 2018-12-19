@@ -19,6 +19,12 @@ ResidualBlock2d
 .. autoclass:: ResidualBlock2d
     :members:
 
+ResidualBlockTranspose2d
+------------------------
+
+.. autoclass:: ResidualBlockTranspose2d
+    :members:
+
 Densenet Blocks
 ===============
 
@@ -68,4 +74,22 @@ SpectralNorm2d
 --------------
 
 .. autoclass:: SpectralNorm2d
+    :members:
+
+Minibatch Discrimination
+========================
+
+MinibatchDiscrimination1d
+-------------------------
+
+.. autoclass:: MinibatchDiscrimination1d
+    :members:
+
+Virtual Batch Normalization
+===========================
+
+VirtualBatchNorm
+----------------
+
+.. autoclass:: VirtualBatchNorm
     :members:

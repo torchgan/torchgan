@@ -28,11 +28,10 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
         c (float, optional): Target generator label.
-        override_train_ops (function, optional): A function is passed to this argument,
-            if the default ``train_ops`` is not to be used.
+        override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
     def __init__(self, reduction='mean', c=1.0, override_train_ops=None):
         super(LeastSquaresGeneratorLoss, self).__init__(reduction, override_train_ops)
@@ -69,12 +68,11 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
 
     Args:
         reduction (str, optional): Specifies the reduction to apply to the output.
-            If ``none`` no reduction will be applied. If ``mean`` the mean of the output.
-            If ``sum`` the elements of the output will be summed.
+            If ``none`` no reduction will be applied. If ``mean`` the outputs are averaged over batch size.
+            If ``sum`` the elements of the output are summed.
         a (float, optional): Target discriminator label for generated image.
         b (float, optional): Target discriminator label for real image.
-        override_train_ops (function, optional): A function is passed to this argument,
-            if the default ``train_ops`` is not to be used.
+        override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
     def __init__(self, reduction='mean', a=0.0, b=1.0, override_train_ops=None):
         super(LeastSquaresDiscriminatorLoss, self).__init__(reduction, override_train_ops)
