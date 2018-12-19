@@ -5,23 +5,25 @@ __all__ = ['MinibatchDiscrimination1d']
 
 # The original paper by Salimans et. al. discusses only 1D minibatch discrimination
 class MinibatchDiscrimination1d(nn.Module):
-    r"""1D Minibatch Discrimination Module as proposed in the paper
-    `"Improved Techniques for Training GANs by Salimans et. al." <https://arxiv.org/abs/1805.08318>`_
+    r"""1D Minibatch Discrimination Module as proposed in the paper `"Improved Techniques for
+    Training GANs by Salimans et. al." <https://arxiv.org/abs/1805.08318>`_
 
     Allows the Discriminator to easily detect mode collapse by augmenting the activations to the succeeding
     layer with side information that allows it to determine the 'closeness' of the minibatch examples
     with each other
-        .. math :: M_i = T * \f(\vx_{i})
-        .. math :: c_b(\vx_{i}, \vx_{j}) = \exp(-||M_{i, b} - M_{j, b}||_{L_1}) \in \mathbb{R}.
-        .. math :: o(\vx_{i})_b &= \sum_{j=1}^{n} c_b(\vx_{i},\vx_{j}) \in \mathbb{R} \\
-    o(\vx_{i}) &= \Big[ o(\vx_{i})_1, o(\vx_{i})_2, \dots, o(\vx_{i})_B \Big] \in \mathbb{R}^B \\
-    o(\X) &\in \mathbb{R}^{n \times B}
-    This is followed by concatenating :math: `$o(\vx_{i})$` and :math: `\f(\vx_{i})`
 
-    Where
+    .. math :: M_i = T * f(x_{i})
+    .. math :: c_b(x_{i}, x_{j}) = \exp(-||M_{i, b} - M_{j, b}||_1) \in \mathbb{R}.
+    .. math :: o(x_{i})_b &= \sum_{j=1}^{n} c_b(x_{i},x_{j}) \in \mathbb{R} \\
+    .. math :: o(x_{i}) &= \Big[ o(x_{i})_1, o(x_{i})_2, \dots, o(x_{i})_B \Big] \in \mathbb{R}^B \\
+    .. math :: o(X) \in \mathbb{R}^{n \times B}
 
-    - :math: `\f(\vx_{i}) \in \mathbb{R}^A` : Activations from an intermediate layer
-    - :math: `\f(\vx_{i}) \in \mathbb{R}^A` : Parameter Tensor for generating minibatch discrimination matrix
+    This is followed by concatenating :math:`o(x_{i})` and :math:`f(x_{i})`
+
+    where
+
+    - :math:`f(x_{i}) \in \mathbb{R}^A` : Activations from an intermediate layer
+    - :math:`f(x_{i}) \in \mathbb{R}^A` : Parameter Tensor for generating minibatch discrimination matrix
 
 
     Args:
