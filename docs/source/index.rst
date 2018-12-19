@@ -32,5 +32,5 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
 
     tutorials/intro.rst
     tutorials/sagan.rst
-    tutorials/bgan.rst
+    tutorials/custom_loss.rst
     tutorials/cyclegan.rst

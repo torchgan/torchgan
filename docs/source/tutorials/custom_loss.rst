@@ -1,21 +1,59 @@
 
-Boundary Seeking GAN Tutorial
-=============================
+Writing your own Custom Losses
+==============================
 
-**Author** - `Avik Pal <https://avik-pal.github.io>`__
+**Author** - `Avik Pal <https://avik-pal.github.io>`__ & `Aniket
+Das <https://aniket1998.github.io>`__
 
-`Try this tutorial on
-Colab <https://colab.research.google.com/drive/1-ImMfOQs5-zA0d5YoFh_x98tzK1kWk8i>`__
+**TorchGAN** is designed keeping a high degree of extensibility in mind,
+and allows you to write custom loss functions of your own without having
+to rewrite the entire training and evaluation loop. This can be done by
+extending the ``torchgan.losses.GeneratorLoss`` or the
+``torchgan.losses.DiscriminatorLoss`` object.
 
-In this tutorial we shall be implementing the paper `Boundary-Seeking
-Genarative Adversarial Networks by Hjelm et.
-al. <https://arxiv.org/abs/1702.08431>`__. The aim of this tutorial is
-to understand how to implement **custom loss functions** and **use them
-with the Base Trainer**. Since this is a basic tutorial we will not be
-demonstrating how to write custom **train_ops** in this tutorial. As you
-shall see, you will have to design a custom train_ops in very few cases.
+All **TorchGAN** losses have a ``train_ops`` associated with it that
+dictates what steps are to be followed for the loss to be computed and
+backpropagated. By default, most of the ``train_ops`` follow a **Two
+Timescale Update Rule (TTUR)** as follows
 
-First we shall import the necessary classes and functions
+1. Sample a noise vector from a Normal Distribution
+   :math:`z \sim \mathcal{N}(0,\,1)`
+2. :math:`d_{real} = D(x)`
+3. :math:`d_{fake} = D(G(z))`
+4. :math:`\mathcal{L} = Loss(d_{real}, d_{fake})` (*for a Generator Loss
+   :math:`d_{real}` is generally not computed*)
+5. Backpropagate over :math:`\mathcal{L}`
+
+Where \* :math:`x` is a sample from the Data Distribution \* :math:`D`
+is the Discriminator Network \* :math:`G` is the Generator Network
+
+Simple losses that conform to this kind of an update rule can be easily
+implemented by overriding the ``forward`` method of the
+``GeneratorLoss`` or ``DiscriminatorLoss`` object
+
+\*\* *NB: It is highly recommended that you go over the Introduction to
+TorchGAN Tutorial before reading this* \*
+
+Writing Custom Losses that follow the Standard Update Rule
+----------------------------------------------------------
+
+We shall demonstrate this by implementing the `Boundary Seeking GAN by
+Hjelm et. al. <https://arxiv.org/abs/1702.08431>`__, also known as BGAN
+BGAN involves a departure from the Minimax Loss by changing the
+Generator Loss term in the following manner
+
+.. math::  \mathcal{L_{generator}} = \frac{1}{2}E_{z \sim p(z)}[(log(D(G(z))) - log(1 - D(G(z))))^2]
+
+where
+
+-  :math:`z` is the noise sampled from a probability distribution
+-  :math:`D` is the Discriminator Network
+-  :math:`G` is the Generator Network
+
+We can observe that the update rule for such a loss confirms with the
+Standard Update Rule used in **TorchGAN**, hence this loss can be
+implemented simply by extending the ``torchgan.losses.GeneratorLoss``
+object and overriding the ``forward`` method
 
 .. code:: ipython3
 
@@ -83,32 +121,25 @@ input. So we are going to construct a DataLoader for the MNIST Dataset.
 
     dataloader = torch.utils.data.DataLoader(dataset, shuffle=True, batch_size=512, num_workers=8)
 
-Boundary Seeking Loss
----------------------
+Defining the Boundary Seeking Loss
+----------------------------------
 
-Now we shall be implementing a custom loss function. Since the Boundary
-Seeking Loss is to be minimized by the generator we need to make it a
-subclass of the **GeneratorLoss**. This also allows us to use the
-default **Generator train_ops**. Apart from these, for the **Logger** to
-provide meaningful results we need to make this subclass.
+As discussed above, the Boundary Seeking Loss is implementing by
+overriding the ``forward`` pass of the Generator Loss without requiring
+any modifications to the ``train_ops``.
 
---------------
+The ``forward`` method receives the object :math:`d_{fake} = D(G(z))` as
+a parameter, where :math:`G` is the Generator Network, :math:`D` is the
+Discriminator Network and :math:`z` is a sample from the Noise Prior.
 
-Boundary Seeking Loss is defined in the following way:
-
-.. math::  Loss = \frac{1}{2}E_{z \sim p(z)}[(log(D(G(z))) - log(1 - D(G(z))))^2]
-
-where
-
--  :math:`z` is the noise sampled from a probability distribution
--  :math:`D` is the Discriminator Network
--  :math:`G` is the Generator Network
-
-As is evident from the defination of the loss function, the output of
-the Discriminator must be a probability of the image being fake/real.
-However, for generalization the output of the DCGANDiscriminator we
-don’t use a Sigmoid as the last layer, hence we shall be using
-**torch.sigmoid** in the loss function.
+*NB: This example shall be using the standard DCGAN Generator and
+Discriminator available in ``torchgan.models``. By default, the last
+layer of the discriminator does not apply a Sigmoid nonlinearity, the
+reasson for which has already been discussed in the **Introduction to
+TorchGAN** tutorial. As a result, the nonlinearity is applied within the
+loss by a call to ``torch.sigmoid``. One can also alternatively omit
+this and set the ``last_nonlinearity`` property of the DCGAN
+Discriminator to ``torch.nn.Sigmoid`` *
 
 .. code:: ipython3
 
@@ -180,7 +211,7 @@ Visualize the Training Data
 
 
 
-.. image:: ../assets/bgan_1.png
+.. image:: ../assets/custom_loss_1.png
 
 
 Training BGAN
@@ -2478,4 +2509,4 @@ Visualizing the Generated Images
 
 
 
-.. image:: ../assets/bgan_2.png
+.. image:: ../assets/custom_loss_2.png
