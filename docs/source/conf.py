@@ -30,6 +30,7 @@ import sphinx_rtd_theme
 
 # Mock Imports
 autodoc_mock_imports = ['torch',
+	'pillow',
 	'torchvision',
 	'tensorboardX',
 	'visdom']
