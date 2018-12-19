@@ -4,6 +4,28 @@ import torch.nn as nn
 __all__ = ['VirtualBatchNorm']
 
 class VirtualBatchNorm(nn.Module):
+    r"""Virtual Batch Normalization Module as proposed in the paper
+    `"Improved Techniques for Training GANs by Salimans et. al." <https://arxiv.org/abs/1805.08318>`_
+
+    Performs Normalizes the features of a batch based on the statistics collected on a reference
+    batch of samples that are chosen once and fixed from the start, as opposed to regular
+    batch normalization that uses the statistics of the batch being normalized
+
+    Virtual Batch Normalization requires that the size of the batch being normalized is at least
+    a multiple of (and ideally equal to) the size of the reference batch. Keep this in mind while
+    choosing the batch size in ```torch.utils.data.DataLoader``` or use ```drop_last=True```
+
+    .. math:: y = \frac{x - \mathrm{E}[x_{ref}]}{\sqrt{\mathrm{Var}[x_{ref}] + \epsilon}} * \gamma + \beta
+
+    where
+
+    - :math:`x` : Batch Being Normalized
+    - :math:`x_{ref}` : Reference Batch
+
+    Args:
+        in_features (int): Size of the input dimension to be normalized
+        eps (float, optional): Value to be added to variance for numerical stability while normalizing
+    """
     def __init__(self, in_features, eps=1e-5):
         super(VirtualBatchNorm, self).__init__()
         self.in_features = in_features
