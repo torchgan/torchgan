@@ -58,7 +58,7 @@ class VirtualBatchNorm(nn.Module):
 
         Returns:
             Torch Tensor of the same dimension after normalizing with respect to the statistics of the reference batch
-        """
+    """
     def forward(self, x):
         assert x.size(1) == self.in_features
         if self.ref_mu is None or self.ref_var is None:
