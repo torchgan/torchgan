@@ -27,12 +27,12 @@ class MinibatchDiscrimination1d(nn.Module):
 
 
     Args:
-        in_features (int): Features input corresponding to dimension :math: `A`
-        out_features (int): Number of output features that are to be concatenated corresponding to dimension :math: `B`
-        intermediate_features (int): Intermediate number of features corresponding to dimension :math: `C`
+        in_features (int): Features input corresponding to dimension :math:`A`
+        out_features (int): Number of output features that are to be concatenated corresponding to dimension :math:`B`
+        intermediate_features (int): Intermediate number of features corresponding to dimension :math:`C`
 
     Returns:
-        A Tensor of size :math: `(N, in_features + out_features)` where :math: `N` is the batch size
+        A Tensor of size :math:`(N, in_features + out_features)` where :math:`N` is the batch size
     """
     def __init__(self, in_features, out_features, intermediate_features=16):
         super(MinibatchDiscrimination1d, self).__init__()

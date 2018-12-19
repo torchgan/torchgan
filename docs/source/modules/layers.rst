@@ -82,7 +82,7 @@ Minibatch Discrimination
 MinibatchDiscrimination1d
 -------------------------
 
-.. autoclass:: MinibatchDiscrimination1d 
+.. autoclass:: MinibatchDiscrimination1d
     :members:
 
 Virtual Batch Normalization

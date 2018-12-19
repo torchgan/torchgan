@@ -23,8 +23,8 @@ You can construct a new model by simply calling its constructor.
 All models follow the same structure. There are additional customization options.
 Look into the individual documentation for such capabilities.
 
-GAN
-===
+Vanilla GAN
+===========
 
 Generator
 ---------
