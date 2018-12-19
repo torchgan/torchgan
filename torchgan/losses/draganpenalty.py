@@ -83,10 +83,6 @@ class DraganGradientPenalty(DiscriminatorLoss):
                 of the ``discriminator``.
             real_inputs (torch.Tensor): The real data to be fed to the ``discriminator``.
             device (torch.device): Device on which the ``generator`` and ``discriminator`` is present.
-<<<<<<< HEAD
-            batch_size (int): Batch Size of the data infered from the ``DataLoader`` by the ``Trainer``.
-=======
->>>>>>> 0298f6cc39cb46f2beb26094dcc99df556e5c77d
             labels (torch.Tensor, optional): Labels for the data.
 
         Returns:
