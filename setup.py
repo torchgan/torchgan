@@ -36,7 +36,7 @@ requirements = [
     'numpy',
     'torch',
     'torchvision',
-    'pillow=5.3.0',
+    'pillow==5.3.0',
 ]
 
 setup(
