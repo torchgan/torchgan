@@ -30,7 +30,7 @@ installed properly. If not, head over to the installation instructions
 on the `official documentation
 website <https://torchgan.readthedocs.io/en/latest/>`__.
 
-.. code:: ipython3
+.. code:: python3
 
     # General Imports
     import os
@@ -53,7 +53,7 @@ website <https://torchgan.readthedocs.io/en/latest/>`__.
     from torchgan.losses import WassersteinGeneratorLoss, WassersteinDiscriminatorLoss, WassersteinGradientPenalty
     from torchgan.trainer import Trainer
 
-.. code:: ipython3
+.. code:: python3
 
     # Set random seed for reproducibility
     manualSeed = 144
@@ -105,7 +105,7 @@ into the networks
 Finally the **torchgan.trainer.Trainer** needs a **DataLoader** as
 input. So we are going to construct a DataLoader for the MNIST Dataset.
 
-.. code:: ipython3
+.. code:: python3
 
     dataset = dsets.ImageFolder("./CelebA",
                                 transform=transforms.Compose([transforms.CenterCrop(160),
@@ -113,7 +113,7 @@ input. So we are going to construct a DataLoader for the MNIST Dataset.
                                                               transforms.ToTensor(),
                                                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]))
 
-.. code:: ipython3
+.. code:: python3
 
     dataloader = data.DataLoader(dataset, batch_size=64, shuffle=True, num_workers=8)
 
@@ -174,7 +174,7 @@ architectural improvement. Hence subclassing the Generator, allows us to
 use the default **train_ops**. We shall be discussing on how to write a
 custom **train_ops** in a future tutorial.
 
-.. code:: ipython3
+.. code:: python3
 
     class SAGANGenerator(Generator):
         def __init__(self, encoding_dims=100, step_channels=64):
@@ -229,7 +229,7 @@ channel dimension of the input image. In our case, we have grayscale
 images so this value is *1*. The :math:`2^{nd}` argument is the
 **label_type**, which is again **‘none’**
 
-.. code:: ipython3
+.. code:: python3
 
     class SAGANDiscriminator(Discriminator):
         def __init__(self, step_channels=64):
@@ -305,7 +305,7 @@ As observed we are using the **TTUR (Two Timescale Update Rule)** for
 training the models. Hence we can easily customize most of the training
 pipeline even with such high levels of abstraction.
 
-.. code:: ipython3
+.. code:: python3
 
     network_params = {
         "generator": {"name": SAGANGenerator, "args": {"step_channels": 32},
@@ -314,7 +314,7 @@ pipeline even with such high levels of abstraction.
                           "optimizer": {"name": Adam, "args": {"lr": 0.0004, "betas": (0.0, 0.999)}}}
     }
 
-.. code:: ipython3
+.. code:: python3
 
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
@@ -344,14 +344,14 @@ losses, all of which are defined in the **torchgan.losses** module.
 
 We need the **clip** parameter to enforce the **Lipschitz condition**.
 
-.. code:: ipython3
+.. code:: python3
 
     losses_list = [WassersteinGeneratorLoss(), WassersteinDiscriminatorLoss(clip=(-0.01, 0.01))]
 
 Visualize the Training Data
 ---------------------------
 
-.. code:: ipython3
+.. code:: python3
 
     # Plot some of the training images
     real_batch = next(iter(dataloader))
@@ -381,11 +381,11 @@ training is to use **tensorboardX**. It plots all the data and
 periodically displays the generated images. It allows us to track
 failure of the model early.
 
-.. code:: ipython3
+.. code:: python3
 
     trainer = Trainer(network_params, losses_list, sample_size=64, epochs=epochs, device=device)
 
-.. code:: ipython3
+.. code:: python3
 
     trainer(dataloader)
 
@@ -555,7 +555,7 @@ failure of the model early.
     Training of the Model is Complete
 
 
-.. code:: ipython3
+.. code:: python3
 
     trainer.complete()
 
@@ -568,7 +568,7 @@ failure of the model early.
 Visualize the Generated Data
 ----------------------------
 
-.. code:: ipython3
+.. code:: python3
 
     # Grab a batch of real images from the dataloader
     real_batch = next(iter(dataloader))

@@ -55,7 +55,7 @@ Standard Update Rule used in **TorchGAN**, hence this loss can be
 implemented simply by extending the ``torchgan.losses.GeneratorLoss``
 object and overriding the ``forward`` method
 
-.. code:: ipython3
+.. code:: python3
 
     # General Imports
     import os
@@ -77,7 +77,7 @@ object and overriding the ``forward`` method
     from torchgan.losses import GeneratorLoss, MinimaxDiscriminatorLoss
     from torchgan.trainer import Trainer
 
-.. code:: ipython3
+.. code:: python3
 
     # Set random seed for reproducibility
     manualSeed = 999
@@ -111,7 +111,7 @@ into the networks
 Finally the **torchgan.trainer.Trainer** needs a **DataLoader** as
 input. So we are going to construct a DataLoader for the MNIST Dataset.
 
-.. code:: ipython3
+.. code:: python3
 
     dataset = dsets.MNIST(root="./mnist", train=True, download=True,
                           transform=transforms.Compose([transforms.Resize((32, 32)),
@@ -141,7 +141,7 @@ loss by a call to ``torch.sigmoid``. One can also alternatively omit
 this and set the ``last_nonlinearity`` property of the DCGAN
 Discriminator to ``torch.nn.Sigmoid`` *
 
-.. code:: ipython3
+.. code:: python3
 
     class BoundarySeekingLoss(GeneratorLoss):
         def forward(self, dx):
@@ -152,7 +152,7 @@ As per the paper, only the Generator Loss is modified. Hence we will use
 one of the predefined losses, **MinimaxDiscriminatorLoss** for the
 Discriminator.
 
-.. code:: ipython3
+.. code:: python3
 
     losses = [BoundarySeekingLoss(), MinimaxDiscriminatorLoss()]
 
@@ -166,7 +166,7 @@ how to do this please refer to the previous set of tutorials.
 It should be noted that we have modified the Discriminator Output to use
 a **nn.Sigmoid** to conform with our Loss Function.
 
-.. code:: ipython3
+.. code:: python3
 
     network_config = {
         "generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels": 8},
@@ -175,7 +175,7 @@ a **nn.Sigmoid** to conform with our Loss Function.
                           "optimizer": {"name": Adam, "args": {"lr": 0.0001, "betas": (0.5, 0.999)}}}
     }
 
-.. code:: ipython3
+.. code:: python3
 
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
@@ -199,7 +199,7 @@ a **nn.Sigmoid** to conform with our Loss Function.
 Visualize the Training Data
 ---------------------------
 
-.. code:: ipython3
+.. code:: python3
 
     # Plot some of the training images
     real_batch = next(iter(dataloader))
@@ -221,11 +221,11 @@ Now we shall start the training. First we need to create the **Trainer**
 object. When creating this object all the necessary neural nets and
 their optimizers get instantiated.
 
-.. code:: ipython3
+.. code:: python3
 
     trainer = Trainer(network_config, losses, ncritic=5, epochs=epochs, sample_size=64, device=device)
 
-.. code:: ipython3
+.. code:: python3
 
     trainer(dataloader)
 
@@ -2488,7 +2488,7 @@ their optimizers get instantiated.
 Visualizing the Generated Images
 --------------------------------
 
-.. code:: ipython3
+.. code:: python3
 
     # Grab a batch of real images from the dataloader
     real_batch = next(iter(dataloader))

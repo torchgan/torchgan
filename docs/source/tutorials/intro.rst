@@ -23,7 +23,7 @@ website <https://torchgan.readthedocs.io/en/latest/>`__.
 Imports
 -------
 
-.. code:: ipython3
+.. code:: python3
 
     # General Imports
     import os
@@ -48,7 +48,7 @@ Imports
     from torchgan.losses import *
     from torchgan.trainer import Trainer
 
-.. code:: ipython3
+.. code:: python3
 
     # Set random seed for reproducibility
     manualSeed = 999
@@ -81,7 +81,7 @@ We then wrap the dataset in a **DataLoader**. This is done because
 **TorchGAN Trainer** , which shall be explored in later sections
 requires said DataLoader to be passed as a parameter while training
 
-.. code:: ipython3
+.. code:: python3
 
     dataset = dsets.MNIST(root='./mnist', train=True,
                           transform=transforms.Compose([transforms.Resize((32, 32)),
@@ -89,7 +89,7 @@ requires said DataLoader to be passed as a parameter while training
                                                         transforms.Normalize(mean = (0.5, 0.5, 0.5), std = (0.5, 0.5, 0.5))]),
                           download=True)
 
-.. code:: ipython3
+.. code:: python3
 
     dataloader = data.DataLoader(dataset, batch_size=64, shuffle=True)
 
@@ -188,7 +188,7 @@ discussed before* ). Also try tinkering with the various hyperparameters
 like *"encoding\_dims", "step\_channels", "nonlinearity" and
 "last\_nonlinearity"*
 
-.. code:: ipython3
+.. code:: python3
 
     dcgan_network = {
         "generator": {
@@ -239,7 +239,7 @@ the highly robust training pipeline
 
 The loss objects to be used by the trainer are added in a list as shown
 
-.. code:: ipython3
+.. code:: python3
 
     minimax_losses = [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()]
     wgangp_losses = [WassersteinGeneratorLoss(), WassersteinDiscriminatorLoss(), WassersteinGradientPenalty()]
@@ -248,7 +248,7 @@ The loss objects to be used by the trainer are added in a list as shown
 Visualize the Training Data
 ---------------------------
 
-.. code:: ipython3
+.. code:: python3
 
     # Plot some of the training images
     real_batch = next(iter(dataloader))
@@ -293,7 +293,7 @@ Setting up the Visualizer using either a **TensorboardX** or **Vizdom**
 backend is the recommended approach for visualizing the training
 process.
 
-.. code:: ipython3
+.. code:: python3
 
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
@@ -314,11 +314,11 @@ process.
     Epochs: 40
 
 
-.. code:: ipython3
+.. code:: python3
 
     trainer = Trainer(dcgan_network, lsgan_losses, sample_size=64, epochs=epochs, device=device)
 
-.. code:: ipython3
+.. code:: python3
 
     trainer(dataloader)
 
@@ -659,7 +659,7 @@ tutorial, we plot some of the sampled images here itself.
 *NB: It is highly recommended to view the results on TensorboardX or
 Vizdom if you are running this tutorial locally*
 
-.. code:: ipython3
+.. code:: python3
 
     # Grab a batch of real images from the dataloader
     real_batch = next(iter(dataloader))
@@ -699,7 +699,7 @@ DCGAN except the number of class labels has to be passed as an
 additional parameter in the dictionary defining the model.We reuse all
 the hyperparameters from the previous section
 
-.. code:: ipython3
+.. code:: python3
 
     cgan_network = {
         "generator": {
@@ -745,11 +745,11 @@ Loss Functions
 We reuse the Least Squares loss used to train the DCGAN in the previous
 section
 
-.. code:: ipython3
+.. code:: python3
 
     trainer_cgan = Trainer(cgan_network, lsgan_losses, sample_size=64, epochs=epochs, device=device)
 
-.. code:: ipython3
+.. code:: python3
 
     trainer_cgan(dataloader)
 
@@ -785,7 +785,7 @@ section
 Visualizing the Samples
 -----------------------
 
-.. code:: ipython3
+.. code:: python3
 
     # Grab a batch of real images from the dataloader
     real_batch = next(iter(dataloader))

@@ -23,7 +23,7 @@ It is fairly simple to modify the DataLoader to support other datasets
 and we would highly encourage you to do so in order to get more familiar
 with the way *torchgan and Pytorch in general work*.
 
-.. code:: ipython3
+.. code:: python3
 
     import os, sys, glob, random
     import numpy as np
@@ -43,7 +43,7 @@ with the way *torchgan and Pytorch in general work*.
     import matplotlib.pyplot as plt
     %matplotlib inline
 
-.. code:: ipython3
+.. code:: python3
 
     # Set random seed for reproducibility
     manualSeed = 999
@@ -103,7 +103,7 @@ This is a vital detail. The reson for this shall be explained when we
 will subclass the ``Trainer``. But remember that sending a ``list`` or
 ``tuple`` will create issues for our code.
 
-.. code:: ipython3
+.. code:: python3
 
     class ImageDataset(Dataset):
         def __init__(self, root, transform=None, mode='train'):
@@ -119,7 +119,7 @@ will subclass the ``Trainer``. But remember that sending a ``list`` or
         def __len__(self):
             return max(len(self.files_A), len(self.files_B))
 
-.. code:: ipython3
+.. code:: python3
 
     dataset = ImageDataset("./datasets/cityscapes",
                            transform=transforms.Compose([transforms.CenterCrop((64, 64)),
@@ -132,7 +132,7 @@ trying this notebook in a less powerful machine please reduce the
 batch_size otherwise you will most likely encounter a CUDA Out Of Memory
 Issue.
 
-.. code:: ipython3
+.. code:: python3
 
     dataloader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=8)
 
@@ -153,11 +153,11 @@ image pair in such a scenario. The easiest way would be to replace the
 selection line for image_B to
 ``np.random.randint(0, len(self.files_B))``*
 
-.. code:: ipython3
+.. code:: python3
 
     a = next(iter(dataloader))
 
-.. code:: ipython3
+.. code:: python3
 
     plt.figure(figsize=(8,8))
     plt.axis("off")
@@ -191,7 +191,7 @@ of Instance Normalization for Style Transfer. On a similar context, we
 shall be using Instance Norm instead of Batch Norm and finally swap the
 **Zero Padding** of the Convolutional Layer with **Reflection Padding**.
 
-.. code:: ipython3
+.. code:: python3
 
     class ResidualBlock(nn.Module):
         def __init__(self, in_features):
@@ -223,7 +223,7 @@ receive 2 inputs ``sample_size`` and ``device`` and it should return a
 list of the arguments needed by the ``forward`` function of the
 generator
 
-.. code:: ipython3
+.. code:: python3
 
     class CycleGANGenerator(Generator):
         def __init__(self, image_batch, in_channels=3, out_channels=3, res_blocks=5):
@@ -274,7 +274,7 @@ The only difference is the normalization used. Just like in the
 Generator we shall be using Instance Normalization even in the
 Discriminator.
 
-.. code:: ipython3
+.. code:: python3
 
     class CycleGANDiscriminator(Discriminator):
         def __init__(self, in_channels=3):
@@ -341,7 +341,7 @@ error message stating which argument was not found. Then you can define
 that argument or use the ``set_arg_map`` to fix that. The details of
 this method is clearly demonstrated in the documentation.
 
-.. code:: ipython3
+.. code:: python3
 
     class CycleGANGeneratorLoss(GeneratorLoss):
         def train_ops(self, gen_a2b, gen_b2a, dis_a, dis_b, optimizer_gen_a2b, optimizer_gen_b2a,
@@ -368,7 +368,7 @@ train_ops and we are guaranteed to get those from the Trainer.
 
 .. math:: L_{GAN} = \frac{1}{4} \times (((D_A(Image_A) - 1)^2 - (D_A(G_{B2A}(Image_B))^2) + ((D_B(Image_B) - 1)^2 - (D_B(G_{A2B}(Image_A))^2))
 
-.. code:: ipython3
+.. code:: python3
 
     class CycleGANDiscriminatorLoss(DiscriminatorLoss):
         def train_ops(self, gen_a2b, gen_b2a, dis_a, dis_b, optimizer_dis_a, optimizer_dis_b,
@@ -413,25 +413,25 @@ the ``train_iter``. In this function we shall simply unpack the data
 into 2 variables ``image_a`` and ``image_b``, exactly what the
 ``train_ops`` needed.
 
-.. code:: ipython3
+.. code:: python3
 
     class CycleGANTrainer(Trainer):
         def train_iter_custom(self):
             self.image_a = self.real_inputs['A'].to(self.device)
             self.image_b = self.real_inputs['B'].to(self.device)
 
-.. code:: ipython3
+.. code:: python3
 
     device = torch.device("cuda:0")
 
 ``image_batch`` will act as a reference and we can visualize its
 transformation over the course of the model training.
 
-.. code:: ipython3
+.. code:: python3
 
     image_batch = next(iter(dataloader))
 
-.. code:: ipython3
+.. code:: python3
 
     network_config = {
         "gen_a2b": {"name": CycleGANGenerator, "args": {"image_batch": image_batch['A']},
@@ -444,7 +444,7 @@ transformation over the course of the model training.
                   "optimizer": {"name": Adam, "args": {"lr": 0.0001, "betas": (0.5, 0.999)}}}
     }
 
-.. code:: ipython3
+.. code:: python3
 
     losses = [CycleGANGeneratorLoss(), CycleGANDiscriminatorLoss()]
 
@@ -455,11 +455,11 @@ object has some attributes named ``image_a`` and ``image_b``. The
 trainer stores any keyword argument that it receives, hence this is the
 simplest way to prevent that error
 
-.. code:: ipython3
+.. code:: python3
 
     trainer = CycleGANTrainer(network_config, losses, device=device, epochs=100, image_a=None, image_b=None)
 
-.. code:: ipython3
+.. code:: python3
 
     trainer(dataloader)
 
@@ -571,7 +571,7 @@ simplest way to prevent that error
 Visualizing the Generated Data
 ------------------------------
 
-.. code:: ipython3
+.. code:: python3
 
     plt.figure(figsize=(16,16))
     plt.axis("off")
