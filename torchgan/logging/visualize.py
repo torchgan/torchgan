@@ -293,8 +293,9 @@ class GradientVisualize(Visualize):
     def report_end_epoch(self):
         r"""Prints to the console at the end of the epoch.
         """
-        for key, val in self.logs.items():
-            print('{} Mean Gradients : {}'.format(key, sum(val) / len(val)))
+        if CONSOLE_LOGGING == 1:
+            for key, val in self.logs.items():
+                print('{} Mean Gradients : {}'.format(key, sum(val) / len(val)))
 
     def __call__(self, trainer, **kwargs):
         for name in trainer.model_names:

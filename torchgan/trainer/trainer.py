@@ -104,6 +104,7 @@ class Trainer(object):
         if metrics_list is None:
             self.metrics = None
         else:
+            self.metrics = {}
             for metric in metrics_list:
                 self.metrics[type(metric).__name__] = metric
 

@@ -62,7 +62,7 @@ class Logger(object):
     def get_metric_viz(self):
         r"""Get the MetricVisualize object.
         """
-        return self.logger_end_epoch[0]
+        return self.logger_end_epoch[1]
 
     def get_grad_viz(self):
         r"""Get the GradientVisualize object.

@@ -15,14 +15,19 @@ class ClassifierScore(EvaluationMetric):
     Args:
         classifier (torch.nn.Module, optional) : The model to be used as a base to compute the classifier
             score. If ``None`` is passed the pretrained ``torchvision.models.inception_v3`` is used.
+            .. note ::
+                Ensure that the classifier is on the same ``device`` as the Trainer to avoid sudden
+                crash.
         transform (torchvision.transforms, optional) : Transformations applied to the image before feeding
             it to the classifier. Look up the documentation of the torchvision models for this transforms.
+        sample_size (int): Batch Size for calculation of Classifier Score.
     """
-    def __init__(self, classifier=None, transform=None):
+    def __init__(self, classifier=None, transform=None, sample_size=1):
         super(ClassifierScore, self).__init__()
         self.classifier = torchvision.models.inception_v3(True) if classifier is None else classifier
         self.classifier.eval()
         self.transform = transform
+        self.sample_size = sample_size
 
     def preprocess(self, x):
         r"""
@@ -36,7 +41,6 @@ class ClassifierScore(EvaluationMetric):
             The output from the classifier.
         """
         x = x if self.transform is None else self.transform(x)
-        x = x.unsqueeze(0)
         return self.classifier(x)
 
     def calculate_score(self, x):
@@ -64,7 +68,7 @@ class ClassifierScore(EvaluationMetric):
         Returns:
             The Classifier Score (scalar quantity)
         """
-        noise = torch.randn(1, generator.encoding_dims, device=device)
-        img = generator(noise).detach().cpu()
-        score = self.__call__(img.squeeze(0))
+        noise = torch.randn(self.sample_size, generator.encoding_dims, device=device)
+        img = generator(noise).detach()
+        score = self.__call__(img)
         return score
