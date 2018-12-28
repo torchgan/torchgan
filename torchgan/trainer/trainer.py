@@ -37,7 +37,8 @@ class Trainer(object):
         device (torch.device, optional): Device in which the operation is to be carried out. If you
             are using a CPU machine make sure that you change it for proper functioning.
         ncritic (int, optional): Setting it to a value will make the discriminator train that many
-            times more than the generator.
+            times more than the generator. If it is set to a negative value the generator will be
+            trained that many times more than the discriminator.
         sample_size (int, optional): Total number of images to be generated at the end of an epoch
             for logging purposes.
         epochs (int, optional): Total number of epochs for which the models are to be trained.
@@ -68,7 +69,7 @@ class Trainer(object):
                     sample_size=64, epochs=20)
     """
     def __init__(self, models, losses_list, metrics_list=None, device=torch.device("cuda:0"),
-                 ncritic=None, epochs=5, sample_size=8, checkpoints="./model/gan", retain_checkpoints=5,
+                 ncritic=1, epochs=5, sample_size=8, checkpoints="./model/gan", retain_checkpoints=5,
                  recon="./images", log_dir=None, test_noise=None, nrow=8, **kwargs):
         self.device = device
         self.model_names = []
@@ -126,7 +127,15 @@ class Trainer(object):
             'generator_iters': 0,
             'discriminator_iters': 0,
         }
-        self.ncritic = ncritic
+
+        assert ncritic != 0
+        if ncritic > 0:
+            self.ncritic = ncritic
+            self.ngen = 1
+        else:
+            self.ncritic = 1
+            self.ngen = abs(ncritic)
+
         self.start_epoch = 0
         self.last_retained_checkpoint = 0
         for key, val in kwargs.items():
@@ -316,16 +325,21 @@ class Trainer(object):
         grad_logs = self.logger.get_grad_viz()
         for name, loss in self.losses.items():
             if isinstance(loss, GeneratorLoss) and isinstance(loss, DiscriminatorLoss):
-                cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
-                loss_logs.logs[name].append(cur_loss)
-                if type(cur_loss) is tuple:
-                    lgen, ldis, gen_iter, dis_iter = lgen + cur_loss[0], ldis + cur_loss[1],\
-                        gen_iter + 1, dis_iter + 1
+                # NOTE(avik-pal): In most cases this loss is meant to optimize the Discriminator
+                #                 but we might need to think of a better solution
+                if self.loss_information["generator_iters"] % self.ngen == 0:
+                    cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
+                    loss_logs.logs[name].append(cur_loss)
+                    if type(cur_loss) is tuple:
+                        lgen, ldis, gen_iter, dis_iter = lgen + cur_loss[0], ldis + cur_loss[1],\
+                            gen_iter + 1, dis_iter + 1
+                    else:
+                        # NOTE(avik-pal): We assume that it is a Discriminator Loss by default.
+                        ldis, dis_iter = ldis + cur_loss, dis_iter + 1
                 for model_name in self.model_names:
                     grad_logs.update_grads(model_name, getattr(self, model_name))
             elif isinstance(loss, GeneratorLoss):
-                if self.ncritic is None or\
-                   self.loss_information["discriminator_iters"] % self.ncritic == 0:
+                if self.loss_information["discriminator_iters"] % self.ncritic == 0:
                     cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
                     loss_logs.logs[name].append(cur_loss)
                     lgen, gen_iter = lgen + cur_loss, gen_iter + 1
@@ -334,9 +348,10 @@ class Trainer(object):
                     if isinstance(model, Generator):
                         grad_logs.update_grads(model_name, model)
             elif isinstance(loss, DiscriminatorLoss):
-                cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
-                loss_logs.logs[name].append(cur_loss)
-                ldis, dis_iter = ldis + cur_loss, dis_iter + 1
+                if self.loss_information["generator_iters"] % self.ngen == 0:
+                    cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
+                    loss_logs.logs[name].append(cur_loss)
+                    ldis, dis_iter = ldis + cur_loss, dis_iter + 1
                 for model_name in self.model_names:
                     model = getattr(self, model_name)
                     if isinstance(model, Discriminator):
