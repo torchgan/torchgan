@@ -1,8 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from .loss import GeneratorLoss, DiscriminatorLoss
-from ..utils import reduce
+from .functional import auxiliary_classification_loss
 
 __all__ = ['AuxiliaryClassifierGeneratorLoss', 'AuxiliaryClassifierDiscriminatorLoss']
 
@@ -19,8 +17,9 @@ class AuxiliaryClassifierGeneratorLoss(GeneratorLoss):
             if the default ``train_ops`` is not to be used.
     """
     def forward(self, logits, labels):
-        return F.cross_entropy(logits, labels, reduction=self.reduction)
+        return auxiliary_classification_loss(logits, labels, self.reduction)
 
+    def train_ops(self, generator, discriminator, optimizer_generator, device, batch_size, labels=None):
         r"""Defines the standard ``train_ops`` used by the Auxiliary Classifier generator loss.
 
         The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
@@ -48,7 +47,6 @@ class AuxiliaryClassifierGeneratorLoss(GeneratorLoss):
         Returns:
             Scalar value of the loss.
         """
-    def train_ops(self, generator, discriminator, optimizer_generator, device, batch_size, labels=None):
         if self.override_train_ops is not None:
             return self.override_train_ops(generator, discriminator, optimizer_generator, device, batch_size, labels)
         if generator.label_type == 'required' and labels is None:
@@ -85,7 +83,7 @@ class AuxiliaryClassifierDiscriminatorLoss(DiscriminatorLoss):
             if the default ``train_ops`` is not to be used.
     """
     def forward(self, logits, labels):
-        return F.cross_entropy(logits, labels, reduction=self.reduction)
+        return auxiliary_classification_loss(logits, labels, self.reduction)
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs, device, labels=None):
         r"""Defines the standard ``train_ops`` used by the Auxiliary Classifier discriminator loss.

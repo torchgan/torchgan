@@ -1,27 +1,8 @@
 import torch
-import torch.nn.functional as F
 from .loss import GeneratorLoss, DiscriminatorLoss
+from .functional import minimax_generator_loss, minimax_discriminator_loss
 
-__all__ = ['minimax_generator_loss', 'minimax_discriminator_loss', 'MinimaxGeneratorLoss', 'MinimaxDiscriminatorLoss']
-
-def minimax_generator_loss(dgz, nonsaturating=True, reduction='mean'):
-    if nonsaturating:
-        target = torch.ones_like(dgz)
-        return F.binary_cross_entropy_with_logits(dgz, target,
-                                                  reduction=reduction)
-    else:
-        target = torch.zeros_like(dgz)
-        return -1.0 * F.binary_cross_entropy_with_logits(dgz, target,
-                                                         reduction=reduction)
-
-def minimax_discriminator_loss(dx, dgz, label_smoothing=0.0, reduction='elementwise_mean'):
-    target_ones = torch.ones_like(dgz) * (1.0 - label_smoothing)
-    target_zeros = torch.zeros_like(dx)
-    loss = F.binary_cross_entropy_with_logits(dx, target_ones,
-                                              reduction=reduction)
-    loss += F.binary_cross_entropy_with_logits(dgz, target_zeros,
-                                               reduction=reduction)
-    return loss
+__all__ = ['MinimaxGeneratorLoss', 'MinimaxDiscriminatorLoss']
 
 class MinimaxGeneratorLoss(GeneratorLoss):
     r"""Minimax game generator loss from the original GAN paper `"Generative Adversarial Networks

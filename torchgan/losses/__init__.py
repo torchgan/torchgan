@@ -9,3 +9,4 @@ from .draganpenalty import *
 from .auxclassifier import *
 from .historical import *
 from .featurematching import *
+from .functional import *
