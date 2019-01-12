@@ -1,26 +1,10 @@
 import torch
-import torch.nn.functional as F
 from .loss import GeneratorLoss, DiscriminatorLoss
 from ..models import AutoEncodingDiscriminator
-from ..utils import reduce
+from .functional import energy_based_generator_loss, energy_based_pulling_away_term, \
+    energy_based_discriminator_loss
 
-__all__ = ['energy_based_generator_loss', 'energy_based_discriminator_loss',
-           'energy_based_pulling_away_term', 'EnergyBasedGeneratorLoss',
-           'EnergyBasedDiscriminatorLoss', 'EnergyBasedPullingAwayTerm']
-
-def energy_based_generator_loss(dgz, reduction='elementwise_mean'):
-    return reduce(dgz, reduction)
-
-def energy_based_discriminator_loss(dx, dgz, margin, reduction='mean'):
-    return reduce(dx + F.relu(-dgz + margin), reduction)
-
-def energy_based_pulling_away_term(d_hid):
-    d_hid_normalized = F.normalize(d_hid, p=2, dim=0)
-    n = d_hid_normalized.size(0)
-    d_hid_normalized = d_hid_normalized.view(n, -1)
-    similarity = torch.matmul(d_hid_normalized, d_hid_normalized.transpose(1, 0))
-    loss_pt = torch.sum(similarity ** 2) / (n * (n - 1))
-    return loss_pt
+__all__ = ['EnergyBasedGeneratorLoss', 'EnergyBasedDiscriminatorLoss', 'EnergyBasedPullingAwayTerm']
 
 class EnergyBasedGeneratorLoss(GeneratorLoss):
     r"""Energy Based GAN generator loss from `"Energy Based Generative Adversarial Network

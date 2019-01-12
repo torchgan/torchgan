@@ -1,26 +1,9 @@
 import torch
-import torch.autograd as autograd
 from .loss import GeneratorLoss, DiscriminatorLoss
-from ..utils import reduce
+from .functional import wasserstein_generator_loss, wasserstein_gradient_penalty, \
+    wasserstein_discriminator_loss
 
-__all__ = ['wasserstein_generator_loss', 'wasserstein_discriminator_loss', 'wasserstein_gradient_penalty',
-           'WassersteinGeneratorLoss', 'WassersteinDiscriminatorLoss', 'WassersteinGradientPenalty']
-
-def wasserstein_generator_loss(fgz, reduction='mean'):
-    return reduce(-1.0 * fgz, reduction)
-
-def wasserstein_discriminator_loss(fx, fgz, reduction='mean'):
-    return reduce(fgz - fx, reduction)
-
-def wasserstein_gradient_penalty(interpolate, d_interpolate, reduction='mean'):
-    grad_outputs = torch.ones_like(d_interpolate)
-    gradients = autograd.grad(outputs=d_interpolate, inputs=interpolate,
-                              grad_outputs=grad_outputs,
-                              create_graph=True, retain_graph=True,
-                              only_inputs=True)[0]
-
-    gradient_penalty = (gradients.norm(2) - 1) ** 2
-    return reduce(gradient_penalty, reduction)
+__all__ = ['WassersteinGeneratorLoss', 'WassersteinDiscriminatorLoss', 'WassersteinGradientPenalty']
 
 class WassersteinGeneratorLoss(GeneratorLoss):
     r"""Wasserstein GAN generator loss from

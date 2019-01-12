@@ -1,19 +1,8 @@
 import torch
-import torch.autograd as autograd
 from .loss import GeneratorLoss, DiscriminatorLoss
-from ..utils import reduce
+from .functional import dragan_gradient_penalty
 
-__all__ = ['dragan_gradient_penalty', 'DraganGradientPenalty']
-
-def dragan_gradient_penalty(interpolate, d_interpolate, k=1.0, reduction='mean'):
-    grad_outputs = torch.ones_like(d_interpolate)
-    gradients = autograd.grad(outputs=d_interpolate, inputs=interpolate,
-                              grad_outputs=grad_outputs,
-                              create_graph=True, retain_graph=True,
-                              only_inputs=True, allow_unused=True)[0]
-
-    gradient_penalty = (gradients.norm(2) - k) ** 2
-    return reduce(gradient_penalty, reduction)
+__all__ = ['DraganGradientPenalty']
 
 class DraganGradientPenalty(DiscriminatorLoss):
     r"""Gradient Penalty for the DRAGAN discriminator from `"On Convergence and Stability of GANs
@@ -92,7 +81,7 @@ class DraganGradientPenalty(DiscriminatorLoss):
             return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
                                            real_inputs, labels)
         else:
-            # NOTE(avik-pal): We don't need the gradients for alpha and beta. Its there
+            # NOTE(avik-pal): We don't need the gradients for alpha and beta. It's there
             #                 to prevent an error while calling autograd.grad
             alpha = torch.rand(size=real_inputs.shape, device=device, requires_grad=True)
             beta = torch.rand(size=real_inputs.shape, device=device, requires_grad=True)

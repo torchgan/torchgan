@@ -1,13 +1,8 @@
 import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
-from ..utils import reduce
+from .functional import mutual_information_penalty
 
-__all__ = ['mutual_information_penalty', 'MutualInformationPenalty']
-
-def mutual_information_penalty(c_dis, c_cont, dist_dis, dist_cont, reduction='mean'):
-    log_probs = torch.Tensor([torch.mean(dist.log_prob(c)) for dist, c in
-                             zip((dist_dis, dist_cont), (c_dis, c_cont))])
-    return reduce(-1.0 * log_probs, reduction)
+__all__ = ['MutualInformationPenalty']
 
 class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
     r"""Mutual Information Penalty as defined in
@@ -50,9 +45,7 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        log_probs = torch.Tensor([torch.mean(dist.log_prob(c)) for dist, c in
-                                 zip((dist_dis, dist_cont), (c_dis, c_cont))])
-        return reduce(-1.0 * log_probs, self.reduction)
+        return mutual_information_penalty(c_dis, c_cont, dist_dis, dist_cont, reduction=self.reduction)
 
     def train_ops(self, generator, discriminator, optimizer_generator, optimizer_discriminator,
                   dis_code, cont_code, device, batch_size):

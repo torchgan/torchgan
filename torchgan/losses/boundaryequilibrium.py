@@ -1,6 +1,6 @@
 import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
-from ..utils import reduce
+from .functional import boundary_equilibrium_generator_loss, boundary_equilibrium_discriminator_loss
 
 __all__ = ['BoundaryEquilibriumGeneratorLoss', 'BoundaryEquilibriumDiscriminatorLoss']
 
@@ -35,7 +35,7 @@ class BoundaryEquilibriumGeneratorLoss(GeneratorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return reduce(dgz, self.reduction)
+        return boundary_equilibrium_generator_loss(dgz, self.reduction)
 
 class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
     r"""Boundary Equilibrium GAN discriminator loss from
@@ -90,10 +90,7 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
             A tuple of 3 loss values, namely the ``total loss``, ``loss due to real data`` and ``loss
             due to fake data``.
         """
-        loss_real = reduce(dx, self.reduction)
-        loss_fake = reduce(dgz, self.reduction)
-        loss_total = loss_real - self.k * loss_fake
-        return loss_total, loss_real, loss_fake
+        return boundary_equilibrium_discriminator_loss(dx, dgz, self.k, self.reduction)
 
     def set_k(self, k=0.0):
         r"""Change the default value of k
@@ -118,10 +115,7 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
         self.k += self.lambd * diff
         # TODO(Aniket1998): Develop this into a proper TorchGAN convergence metric
         self.convergence_metric = loss_real + abs(diff)
-        if self.k < 0.0:
-            self.k = 0.0
-        elif self.k > 1.0:
-            self.k = 1.0
+        self.k = max(min(self.k, 1.0), 0.0)
 
     def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
                   device, labels=None):
