@@ -6,6 +6,7 @@
 [![Slack](https://img.shields.io/badge/chat-on%20slack-yellow.svg)](https://join.slack.com/t/torchgan/shared_invite/enQtNDkyMTQ2ODAyMzczLWEyZjc1ZDdmNTc3ZmNiODFmMmY2YjM2OTZmZTRlOTc3YWE5MTliZTBkZTkwNzQ2MDIwZmI0MGRjYjQwYTczMzQ)
 [![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://torchgan.readthedocs.io/en/stable/)
 [![Latest Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://torchgan.readthedocs.io/en/latest/)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/torchgan/torchgan/master)
 [![PyPI version](https://badge.fury.io/py/torchgan.svg)](https://badge.fury.io/py/torchgan)
 
 TorchGAN is a [Pytorch](https://pytorch.org) based framework for designing and developing Generative Adversarial Networks. This framework has been designed to provide building blocks for popular GANs and also to allow customization for cutting edge research. Using TorchGAN's modular structure allows
@@ -55,9 +56,9 @@ Now open the corresponding file from `build` directory.
 
 We appreciate all contributions. If you are planning to contribute bug-fixes, please do so without any further discussion. If you plan to contribute new features, utility functions or extensions, please first open an issue and discuss the feature with us. For more detailed guidelines head over to the official documentation.
 
-### Disclaimer
+### Tutorials
 
-This package is under active development. So things that are currently working might break in a future release. However, feel free to open issue if you get stuck anywhere.
+The `examples` directory contain a set of tutorials to get you started with torchgan. Some of these notebooks are available on Google Colab (*they are linked in the tutorials themselves*). Additionally, these tutorials can be tried out using the binder link provided.
 
 ### Authors
 
