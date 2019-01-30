@@ -65,3 +65,4 @@ The `examples` directory contain a set of tutorials to get you started with torc
 This package is currently maintained by
 * Avik Pal (@avik-pal)
 * Aniket Das (@Aniket1998)
+* Yatin Dandi (@yatindandi)
