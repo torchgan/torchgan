@@ -10,8 +10,6 @@ stages:
   - Lint Check
   - Test
 
-
-
 jobs:
   include:
     - stage: Lint Check
