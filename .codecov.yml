@@ -9,7 +9,7 @@ coverage:
     project:
       default:
         enabled: true
-        target: 90%
+        target: 75%
 
 ignore:
   - "setup.py"
