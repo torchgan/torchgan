@@ -5,7 +5,6 @@ python:
 
 env:
   - PYTORCH_PACKAGE=pytorch-cpu
-  - PYTORCH_PACKAGE=pytorch-nightly-cpu
 
 stages:
   - Lint Check

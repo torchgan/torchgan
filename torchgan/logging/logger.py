@@ -95,8 +95,8 @@ class Logger(object):
             trainer (torchgan.trainer.Trainer): The base trainer used for training.
         """
         for logger in self.logger_mid_epoch:
-            if type(logger).__name__ is "LossVisualize" or\
-               type(logger).__name__ is "GradientVisualize":
+            if type(logger).__name__ == "LossVisualize" or\
+               type(logger).__name__ == "GradientVisualize":
                 logger(trainer, lock_console=True)
             else:
                 logger(*args, lock_console=True)
@@ -110,16 +110,16 @@ class Logger(object):
         """
         print("Epoch {} Summary".format(epoch + 1))
         for logger in self.logger_mid_epoch:
-            if type(logger).__name__ is "LossVisualize":
+            if type(logger).__name__ == "LossVisualize":
                 logger(trainer)
-            elif type(logger).__name__ is "GradientVisualize":
+            elif type(logger).__name__ == "GradientVisualize":
                 logger.report_end_epoch()
             else:
                 logger(*args)
         for logger in self.logger_end_epoch:
-            if type(logger).__name__ is "ImageVisualize":
+            if type(logger).__name__ == "ImageVisualize":
                 logger(trainer)
-            elif type(logger).__name__ is "MetricVisualize":
+            elif type(logger).__name__ == "MetricVisualize":
                 logger()
             else:
                 logger(*args)

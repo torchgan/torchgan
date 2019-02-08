@@ -118,7 +118,7 @@ class AuxiliaryClassifierDiscriminatorLoss(DiscriminatorLoss):
                     real_inputs, device, labels)
         if labels is None:
             raise Exception('ACGAN Discriminator requires labels for training')
-        if generator.label_type is 'none':
+        if generator.label_type == 'none':
             raise Exception('Incorrect Model: ACGAN generator must require labels for training')
         batch_size = real_inputs.size(0)
         noise = torch.randn(batch_size, generator.encoding_dims, device=device)
