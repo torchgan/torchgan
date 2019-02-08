@@ -10,28 +10,7 @@ stages:
   - Lint Check
   - Test
 
-before_install: &before_install
-  - sudo apt-get update
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  # Useful for debugging any issues with conda
-  - conda info -a
-  - conda create -q -n test-environment -c pytorch python=$TRAVIS_PYTHON_VERSION $PYTORCH_PACKAGE
-  - source activate test-environment
 
-install:
-  - python setup.py install
-  - pip install --upgrade pytest pytest-cov coverage
-
-script:
-  - py.test --cov torchgan --cov-report term-missing
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
 
 jobs:
   include:
@@ -42,5 +21,29 @@ jobs:
       script: flake8 torchgan/
       after_success: # nothing to do
 
-    # Auto Deploy to Pip and Conda from here itself
+    - stage: Test
+      before_install: &before_install
+        - sudo apt-get update
+        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+        - bash miniconda.sh -b -p $HOME/miniconda
+        - export PATH="$HOME/miniconda/bin:$PATH"
+        - hash -r
+        - conda config --set always_yes yes --set changeps1 no
+        - conda update -q conda
+        # Useful for debugging any issues with conda
+        - conda info -a
+        - conda create -q -n test-environment -c pytorch python=$TRAVIS_PYTHON_VERSION $PYTORCH_PACKAGE
+        - source activate test-environment
+
+      install:
+        - python setup.py install
+        - pip install --upgrade pytest pytest-cov coverage
+
+      script:
+        - py.test --cov torchgan --cov-report term-missing
+
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+
+  # Auto Deploy to Pip and Conda from here itself
 
