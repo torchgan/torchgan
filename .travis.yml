@@ -1,10 +1,17 @@
 language: python
-python:
-  - "3.6" # Enough to test on 1 version. We are anyways installing version 3.7 on travis before
-          # testing
 
-# command to install dependencies
-install:
+python:
+  - "3.6"
+
+env:
+  - PYTORCH_PACKAGE=pytorch-cpu
+  - PYTORCH_PACKAGE=pytorch-nightly-cpu
+
+stages:
+  - Lint Check
+  - Test
+
+before_install: &before_install
   - sudo apt-get update
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
@@ -12,19 +19,29 @@ install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
+  # Useful for debugging any issues with conda
   - conda info -a
-
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy -c pytorch
+  - conda create -q -n test-environment -c pytorch python=$TRAVIS_PYTHON_VERSION $PYTORCH_PACKAGE
   - source activate test-environment
+
+install:
   - python setup.py install
   - pip install --upgrade pytest pytest-cov coverage
-  - pip install flake8
 
-# command to run tests
 script:
-  - pytest --cov=./ ./test/*
-  - flake8 torchgan/
+  - py.test --cov torchgan --cov-report term-missing
 
-# command for coverage results
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+jobs:
+  include:
+    - stage: Lint Check
+      python: "3.6"
+      before_install: # nothing to do
+      install: pip install flake8
+      script: flake8 torchgan/
+      after_success: # nothing to do
+
+    # Auto Deploy to Pip and Conda from here itself
+
