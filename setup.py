@@ -34,6 +34,7 @@ VERSION = find_version('torchgan', '__init__.py')
 
 requirements = [
     'numpy',
+    'pillow==5.3.0',
     'torch',
     'torchvision',
 ]
