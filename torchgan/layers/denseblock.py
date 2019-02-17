@@ -1,8 +1,14 @@
 import torch
 import torch.nn as nn
 
-__all__ = ['BasicBlock2d', 'BottleneckBlock2d', 'TransitionBlock2d', 'TransitionBlockTranspose2d',
-           'DenseBlock2d']
+__all__ = [
+    "BasicBlock2d",
+    "BottleneckBlock2d",
+    "TransitionBlock2d",
+    "TransitionBlockTranspose2d",
+    "DenseBlock2d",
+]
+
 
 class BasicBlock2d(nn.Module):
     r"""Basic Block Module as described in `"Densely Connected Convolutional Networks by Huang et.
@@ -24,17 +30,34 @@ class BasicBlock2d(nn.Module):
         nonlinearity (torch.nn.Module, optional): Activation to be applied. Defaults to
                                                   ``torch.nn.LeakyReLU``.
     """
-    def __init__(self, in_channels, out_channels, kernel, stride=1, padding=0,
-                 batchnorm=True, nonlinearity=None):
+
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel,
+        stride=1,
+        padding=0,
+        batchnorm=True,
+        nonlinearity=None,
+    ):
         super(BasicBlock2d, self).__init__()
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         if batchnorm is True:
             self.model = nn.Sequential(
-                nn.BatchNorm2d(in_channels), nl,
-                nn.Conv2d(in_channels, out_channels, kernel, stride, padding, bias=False))
+                nn.BatchNorm2d(in_channels),
+                nl,
+                nn.Conv2d(
+                    in_channels, out_channels, kernel, stride, padding, bias=False
+                ),
+            )
         else:
-            self.model = nn.Sequential(nl, nn.Conv2d(in_channels, out_channels,
-                kernel, stride, padding, bias=True))
+            self.model = nn.Sequential(
+                nl,
+                nn.Conv2d(
+                    in_channels, out_channels, kernel, stride, padding, bias=True
+                ),
+            )
 
     def forward(self, x):
         r"""Computes the output of the basic dense block
@@ -46,6 +69,7 @@ class BasicBlock2d(nn.Module):
             4D Tensor by concatenating the input to the output of the internal model.
         """
         return torch.cat([x, self.model(x)], 1)
+
 
 class BottleneckBlock2d(nn.Module):
     r"""Bottleneck Block Module as described in `"Densely Connected Convolutional Networks by Huang
@@ -72,21 +96,53 @@ class BottleneckBlock2d(nn.Module):
         nonlinearity (torch.nn.Module, optional): Activation to be applied. Defaults to
                                                   ``torch.nn.LeakyReLU``.
     """
-    def __init__(self, in_channels, out_channels, kernel, stride=1, padding=0,
-                 bottleneck_channels=None, batchnorm=True, nonlinearity=None):
+
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel,
+        stride=1,
+        padding=0,
+        bottleneck_channels=None,
+        batchnorm=True,
+        nonlinearity=None,
+    ):
         super(BottleneckBlock2d, self).__init__()
-        bottleneck_channels = 4 * in_channels if bottleneck_channels is None else bottleneck_channels
+        bottleneck_channels = (
+            4 * in_channels if bottleneck_channels is None else bottleneck_channels
+        )
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         if batchnorm is True:
             self.model = nn.Sequential(
-                nn.BatchNorm2d(in_channels), nl,
+                nn.BatchNorm2d(in_channels),
+                nl,
                 nn.Conv2d(in_channels, bottleneck_channels, 1, 1, 0, bias=False),
-                nn.BatchNorm2d(bottleneck_channels), nl,
-                nn.Conv2d(bottleneck_channels, out_channels, kernel, stride, padding, bias=False))
+                nn.BatchNorm2d(bottleneck_channels),
+                nl,
+                nn.Conv2d(
+                    bottleneck_channels,
+                    out_channels,
+                    kernel,
+                    stride,
+                    padding,
+                    bias=False,
+                ),
+            )
         else:
             self.model = nn.Sequential(
-                nl, nn.Conv2d(in_channels, bottleneck_channels, 1, 1, 0, bias=True),
-                nl, nn.Conv2d(bottleneck_channels, out_channels, kernel, stride, padding, bias=True))
+                nl,
+                nn.Conv2d(in_channels, bottleneck_channels, 1, 1, 0, bias=True),
+                nl,
+                nn.Conv2d(
+                    bottleneck_channels,
+                    out_channels,
+                    kernel,
+                    stride,
+                    padding,
+                    bias=True,
+                ),
+            )
 
     def forward(self, x):
         r"""Computes the output of the bottleneck dense block
@@ -98,6 +154,7 @@ class BottleneckBlock2d(nn.Module):
             4D Tensor by concatenating the input to the output of the internal model.
         """
         return torch.cat([x, self.model(x)], 1)
+
 
 class TransitionBlock2d(nn.Module):
     r"""Transition Block Module as described in `"Densely Connected Convolutional Networks by Huang
@@ -116,17 +173,34 @@ class TransitionBlock2d(nn.Module):
         nonlinearity (torch.nn.Module, optional): Activation to be applied. Defaults to
                                                   ``torch.nn.LeakyReLU``.
     """
-    def __init__(self, in_channels, out_channels, kernel, stride=1, padding=0,
-                 batchnorm=True, nonlinearity=None):
+
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel,
+        stride=1,
+        padding=0,
+        batchnorm=True,
+        nonlinearity=None,
+    ):
         super(TransitionBlock2d, self).__init__()
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         if batchnorm is True:
             self.model = nn.Sequential(
-                nn.BatchNorm2d(in_channels), nl,
-                nn.Conv2d(in_channels, out_channels, kernel, stride, padding, bias=False))
+                nn.BatchNorm2d(in_channels),
+                nl,
+                nn.Conv2d(
+                    in_channels, out_channels, kernel, stride, padding, bias=False
+                ),
+            )
         else:
-            self.model = nn.Sequential(nl, nn.Conv2d(in_channels, out_channels, kernel,
-                stride, padding, bias=True))
+            self.model = nn.Sequential(
+                nl,
+                nn.Conv2d(
+                    in_channels, out_channels, kernel, stride, padding, bias=True
+                ),
+            )
 
     def forward(self, x):
         r"""Computes the output of the transition block
@@ -138,6 +212,7 @@ class TransitionBlock2d(nn.Module):
             4D Tensor by applying the ``model`` on ``x``.
         """
         return self.model(x)
+
 
 class TransitionBlockTranspose2d(nn.Module):
     r"""Transition Block Transpose Module is constructed by simply reversing the effect of
@@ -153,17 +228,34 @@ class TransitionBlockTranspose2d(nn.Module):
         nonlinearity (torch.nn.Module, optional): Activation to be applied. Defaults to
                                                   ``torch.nn.LeakyReLU``.
     """
-    def __init__(self, in_channels, out_channels, kernel, stride=1, padding=0,
-                 batchnorm=True, nonlinearity=None):
+
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel,
+        stride=1,
+        padding=0,
+        batchnorm=True,
+        nonlinearity=None,
+    ):
         super(TransitionBlockTranspose2d, self).__init__()
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         if batchnorm is True:
             self.model = nn.Sequential(
-                nn.BatchNorm2d(in_channels), nl,
-                nn.ConvTranspose2d(in_channels, out_channels, kernel, stride, padding, bias=False))
+                nn.BatchNorm2d(in_channels),
+                nl,
+                nn.ConvTranspose2d(
+                    in_channels, out_channels, kernel, stride, padding, bias=False
+                ),
+            )
         else:
-            self.model = nn.Sequential(nl, nn.ConvTranspose2d(in_channels, out_channels, kernel,
-                stride, padding, bias=True))
+            self.model = nn.Sequential(
+                nl,
+                nn.ConvTranspose2d(
+                    in_channels, out_channels, kernel, stride, padding, bias=True
+                ),
+            )
 
     def forward(self, x):
         r"""Computes the output of the transition block transpose
@@ -175,6 +267,7 @@ class TransitionBlockTranspose2d(nn.Module):
             4D Tensor by applying the ``model`` on ``x``.
         """
         return self.model(x)
+
 
 class DenseBlock2d(nn.Module):
     r"""Dense Block Module as described in `"Densely Connected Convolutional Networks by Huang
@@ -195,15 +288,35 @@ class DenseBlock2d(nn.Module):
         nonlinearity (torch.nn.Module, optional): Activation to be applied. Defaults to
                                                   ``torch.nn.LeakyReLU``.
     """
-    def __init__(self, depth, in_channels, growth_rate, block, kernel, stride=1, padding=0,
-                 batchnorm=True, nonlinearity=None):
+
+    def __init__(
+        self,
+        depth,
+        in_channels,
+        growth_rate,
+        block,
+        kernel,
+        stride=1,
+        padding=0,
+        batchnorm=True,
+        nonlinearity=None,
+    ):
         super(DenseBlock2d, self).__init__()
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         model = []
         for i in range(depth):
             # FIXME(Aniket1998): There is no way to pass an option for bottleneck channels
-            model.append(block(in_channels + i * growth_rate, growth_rate, kernel,
-                stride, padding, batchnorm=batchnorm, nonlinearity=nl))
+            model.append(
+                block(
+                    in_channels + i * growth_rate,
+                    growth_rate,
+                    kernel,
+                    stride,
+                    padding,
+                    batchnorm=batchnorm,
+                    nonlinearity=nl,
+                )
+            )
         self.model = nn.Sequential(*model)
 
     def forward(self, x):

@@ -3,7 +3,8 @@ import torch.nn.functional as F
 from .loss import GeneratorLoss, DiscriminatorLoss
 from ..utils import reduce
 
-__all__ = ['FeatureMatchingGeneratorLoss']
+__all__ = ["FeatureMatchingGeneratorLoss"]
+
 
 class FeatureMatchingGeneratorLoss(GeneratorLoss):
     r"""Feature Matching Generator loss from
@@ -25,6 +26,7 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
             If ``sum`` the elements of the output are summed.
         override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
+
     def forward(self, fx, fgz):
         r"""Computes the loss for the given input.
 
@@ -41,7 +43,15 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
         """
         return F.mse_loss(fgz, fx, reduction=self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_generator, real_inputs, device, labels=None):
+    def train_ops(
+        self,
+        generator,
+        discriminator,
+        optimizer_generator,
+        real_inputs,
+        device,
+        labels=None,
+    ):
         r"""Defines the standard ``train_ops`` used for feature matching.
 
         The ``standard optimization algorithm`` for the ``generator`` defined in this train_ops
@@ -70,31 +80,35 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
             Scalar value of the loss.
         """
         if self.override_train_ops is not None:
-            return self.override_train_ops(generator, discriminator, optimizer_generator, device, labels)
+            return self.override_train_ops(
+                generator, discriminator, optimizer_generator, device, labels
+            )
         else:
-            if labels is None and generator.label_type == 'required':
-                raise Exception('GAN model requires labels for training')
+            if labels is None and generator.label_type == "required":
+                raise Exception("GAN model requires labels for training")
             batch_size = real_inputs.size(0)
             noise = torch.randn(batch_size, generator.encoding_dims, device=device)
             optimizer_generator.zero_grad()
-            if generator.label_type == 'generated':
-                label_gen = torch.randint(0, generator.num_classes, (batch_size,), device=device)
-            if generator.label_type == 'none':
+            if generator.label_type == "generated":
+                label_gen = torch.randint(
+                    0, generator.num_classes, (batch_size,), device=device
+                )
+            if generator.label_type == "none":
                 fake = generator(noise)
-            elif generator.label_type == 'required':
+            elif generator.label_type == "required":
                 fake = generator(noise, labels)
-            elif generator.label_type == 'generated':
+            elif generator.label_type == "generated":
                 fake = generator(noise, label_gen)
 
-            if discriminator.label_type == 'none':
+            if discriminator.label_type == "none":
                 fx = discriminator(real_inputs, feature_matching=True)
                 fgz = discriminator(fake, feature_matching=True)
             else:
-                if discriminator.label_type == 'generated':
+                if discriminator.label_type == "generated":
                     fx = discriminator(real_inputs, label_gen, feature_matching=True)
                 else:
                     fx = discriminator(real_inputs, labels, feature_matching=True)
-                if generator.label_type == 'generated':
+                if generator.label_type == "generated":
                     fgz = discriminator(fake, label_gen, feature_matching=True)
                 else:
                     fgz = discriminator(fake, labels, feature_matching=True)

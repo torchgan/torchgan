@@ -7,7 +7,8 @@ from ..models.model import Generator, Discriminator
 from ..losses.loss import GeneratorLoss, DiscriminatorLoss
 from ..logging.logger import Logger
 
-__all__ = ['Trainer']
+__all__ = ["Trainer"]
+
 
 class Trainer(object):
     r"""Base class for all Trainers for various GANs.
@@ -68,9 +69,24 @@ class Trainer(object):
                     [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
                     sample_size=64, epochs=20)
     """
-    def __init__(self, models, losses_list, metrics_list=None, device=torch.device("cuda:0"),
-                 ncritic=1, epochs=5, sample_size=8, checkpoints="./model/gan", retain_checkpoints=5,
-                 recon="./images", log_dir=None, test_noise=None, nrow=8, **kwargs):
+
+    def __init__(
+        self,
+        models,
+        losses_list,
+        metrics_list=None,
+        device=torch.device("cuda:0"),
+        ncritic=1,
+        epochs=5,
+        sample_size=8,
+        checkpoints="./model/gan",
+        retain_checkpoints=5,
+        recon="./images",
+        log_dir=None,
+        test_noise=None,
+        nrow=8,
+        **kwargs
+    ):
         self.device = device
         self.model_names = []
         self.optimizer_names = []
@@ -94,7 +110,9 @@ class Trainer(object):
             if "scheduler" in opt:
                 sched = opt["scheduler"]
                 if "args" in sched:
-                    self.schedulers.append(sched["name"](getattr(self, opt_name), **sched["args"]))
+                    self.schedulers.append(
+                        sched["name"](getattr(self, opt_name), **sched["args"])
+                    )
                 else:
                     self.schedulers.append(sched["name"](getattr(self, opt_name)))
 
@@ -122,10 +140,10 @@ class Trainer(object):
         self.batch_size = 1
 
         self.loss_information = {
-            'generator_losses': 0.0,
-            'discriminator_losses': 0.0,
-            'generator_iters': 0,
-            'discriminator_iters': 0,
+            "generator_losses": 0.0,
+            "discriminator_losses": 0.0,
+            "generator_iters": 0,
+            "discriminator_iters": 0,
         }
 
         assert ncritic != 0
@@ -140,11 +158,21 @@ class Trainer(object):
         self.last_retained_checkpoint = 0
         for key, val in kwargs.items():
             if key in self.__dict__:
-                warn("Overiding the default value of {} from {} to {}".format(key, getattr(self, key), val))
+                warn(
+                    "Overiding the default value of {} from {} to {}".format(
+                        key, getattr(self, key), val
+                    )
+                )
             setattr(self, key, val)
 
-        self.logger = Logger(self, losses_list, metrics_list, log_dir=log_dir,
-                             nrow=nrow, test_noise=test_noise)
+        self.logger = Logger(
+            self,
+            losses_list,
+            metrics_list,
+            log_dir=log_dir,
+            nrow=nrow,
+            test_noise=test_noise,
+        )
 
         self._store_loss_maps()
         self._store_metric_maps()
@@ -173,15 +201,15 @@ class Trainer(object):
         """
         if self.last_retained_checkpoint == self.retain_checkpoints:
             self.last_retained_checkpoint = 0
-        save_path = self.checkpoints + str(self.last_retained_checkpoint) + '.model'
+        save_path = self.checkpoints + str(self.last_retained_checkpoint) + ".model"
         self.last_retained_checkpoint += 1
         print("Saving Model at '{}'".format(save_path))
         model = {
-            'epoch': epoch + 1,
-            'loss_information': self.loss_information,
-            'loss_objects': self.losses,
-            'metric_objects': self.metrics,
-            'loss_logs': (self.logger.get_loss_viz()).logs
+            "epoch": epoch + 1,
+            "loss_information": self.loss_information,
+            "loss_objects": self.losses,
+            "metric_objects": self.metrics,
+            "loss_logs": (self.logger.get_loss_viz()).logs,
         }
         for save_item in self.model_names + self.optimizer_names:
             model.update({save_item: (getattr(self, save_item)).state_dict()})
@@ -217,23 +245,23 @@ class Trainer(object):
                 from scratch. So make sure that item was saved.
         """
         if load_path == "":
-            load_path = self.checkpoints + str(self.last_retained_checkpoint) + '.model'
+            load_path = self.checkpoints + str(self.last_retained_checkpoint) + ".model"
         print("Loading Model From '{}'".format(load_path))
         try:
             checkpoint = torch.load(load_path)
-            self.start_epoch = checkpoint['epoch']
-            self.losses = checkpoint['loss_objects']
-            self.metrics = checkpoint['metric_objects']
-            self.loss_information = checkpoint['loss_information']
-            (self.logger.get_loss_viz()).logs = checkpoint['loss_logs']
+            self.start_epoch = checkpoint["epoch"]
+            self.losses = checkpoint["loss_objects"]
+            self.metrics = checkpoint["metric_objects"]
+            self.loss_information = checkpoint["loss_information"]
+            (self.logger.get_loss_viz()).logs = checkpoint["loss_logs"]
             for load_item in self.model_names + self.optimizer_names:
                 getattr(self, load_item).load_state_dict(checkpoint[load_item])
             if load_items is not None:
                 if type(load_items) is list:
                     for itms in load_items:
-                        setattr(self, itms, checkpoint['itms'])
+                        setattr(self, itms, checkpoint["itms"])
                 else:
-                    setattr(self, load_items, checkpoint['load_items'])
+                    setattr(self, load_items, checkpoint["load_items"])
         except:
             raise Exception("Model could not be loaded from {}.".format(load_path))
 
@@ -261,7 +289,7 @@ class Trainer(object):
                 if arg_name in self.__dict__:
                     arg_map.update({arg: arg_name})
             else:
-                if arg_name not in self.__dict__ and arg != 'kwargs' and arg != 'args':
+                if arg_name not in self.__dict__ and arg != "kwargs" and arg != "args":
                     raise Exception("Argument : {} not present.".format(arg_name))
                 else:
                     arg_map.update({arg: arg_name})
@@ -274,7 +302,9 @@ class Trainer(object):
         if self.metrics is not None:
             self.metric_arg_maps = {}
             for name, metric in self.metrics.items():
-                self.metric_arg_maps[name] = self._get_argument_maps(metric.arg_map, metric.metric_ops)
+                self.metric_arg_maps[name] = self._get_argument_maps(
+                    metric.arg_map, metric.metric_ops
+                )
 
     def _store_loss_maps(self):
         r"""Creates a mapping between the losses and the arguments from the object that need to be
@@ -282,7 +312,9 @@ class Trainer(object):
         """
         self.loss_arg_maps = {}
         for name, loss in self.losses.items():
-            self.loss_arg_maps[name] = self._get_argument_maps(loss.arg_map, loss.train_ops)
+            self.loss_arg_maps[name] = self._get_argument_maps(
+                loss.arg_map, loss.train_ops
+            )
 
     def _get_arguments(self, arg_map):
         r"""Get the argument values from the object and create a dictionary.
@@ -328,11 +360,17 @@ class Trainer(object):
                 # NOTE(avik-pal): In most cases this loss is meant to optimize the Discriminator
                 #                 but we might need to think of a better solution
                 if self.loss_information["generator_iters"] % self.ngen == 0:
-                    cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
+                    cur_loss = loss.train_ops(
+                        **self._get_arguments(self.loss_arg_maps[name])
+                    )
                     loss_logs.logs[name].append(cur_loss)
                     if type(cur_loss) is tuple:
-                        lgen, ldis, gen_iter, dis_iter = lgen + cur_loss[0], ldis + cur_loss[1],\
-                            gen_iter + 1, dis_iter + 1
+                        lgen, ldis, gen_iter, dis_iter = (
+                            lgen + cur_loss[0],
+                            ldis + cur_loss[1],
+                            gen_iter + 1,
+                            dis_iter + 1,
+                        )
                     else:
                         # NOTE(avik-pal): We assume that it is a Discriminator Loss by default.
                         ldis, dis_iter = ldis + cur_loss, dis_iter + 1
@@ -340,7 +378,9 @@ class Trainer(object):
                     grad_logs.update_grads(model_name, getattr(self, model_name))
             elif isinstance(loss, GeneratorLoss):
                 if self.loss_information["discriminator_iters"] % self.ncritic == 0:
-                    cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
+                    cur_loss = loss.train_ops(
+                        **self._get_arguments(self.loss_arg_maps[name])
+                    )
                     loss_logs.logs[name].append(cur_loss)
                     lgen, gen_iter = lgen + cur_loss, gen_iter + 1
                 for model_name in self.model_names:
@@ -349,7 +389,9 @@ class Trainer(object):
                         grad_logs.update_grads(model_name, model)
             elif isinstance(loss, DiscriminatorLoss):
                 if self.loss_information["generator_iters"] % self.ngen == 0:
-                    cur_loss = loss.train_ops(**self._get_arguments(self.loss_arg_maps[name]))
+                    cur_loss = loss.train_ops(
+                        **self._get_arguments(self.loss_arg_maps[name])
+                    )
                     loss_logs.logs[name].append(cur_loss)
                     ldis, dis_iter = ldis + cur_loss, dis_iter + 1
                 for model_name in self.model_names:
@@ -365,8 +407,9 @@ class Trainer(object):
         if self.metrics is not None:
             for name, metric in self.metrics.items():
                 metric_logs = self.logger.get_metric_viz()
-                metric_logs.logs[name].append(metric.metric_ops(\
-                    **self._get_arguments(self.metric_arg_maps[name])))
+                metric_logs.logs[name].append(
+                    metric.metric_ops(**self._get_arguments(self.metric_arg_maps[name]))
+                )
 
     def optim_ops(self):
         r"""Runs all the schedulers at the end of every epoch.
@@ -414,10 +457,10 @@ class Trainer(object):
                     self.real_inputs = data
 
                 lgen, ldis, gen_iter, dis_iter = self.train_iter()
-                self.loss_information['generator_losses'] += lgen
-                self.loss_information['discriminator_losses'] += ldis
-                self.loss_information['generator_iters'] += gen_iter
-                self.loss_information['discriminator_iters'] += dis_iter
+                self.loss_information["generator_losses"] += lgen
+                self.loss_information["discriminator_losses"] += ldis
+                self.loss_information["generator_iters"] += gen_iter
+                self.loss_information["discriminator_iters"] += dis_iter
 
                 self.logger.run_mid_epoch(self)
 

@@ -3,8 +3,10 @@ import torch
 import torch.distributions as distributions
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from torchgan.models import *
+
 
 class TestModels(unittest.TestCase):
     def test_dcgan_generator(self):
@@ -16,8 +18,15 @@ class TestModels(unittest.TestCase):
         nonlinearities = [None, torch.nn.ReLU()]
         last_nonlinearity = [None, torch.nn.LeakyReLU()]
         for i in range(2):
-            gen = DCGANGenerator(encodings[i], out_size[i], channels[i], step[i],
-                                 batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            gen = DCGANGenerator(
+                encodings[i],
+                out_size[i],
+                channels[i],
+                step[i],
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             z = torch.rand(10, encodings[i])
             x = gen(z)
             assert x.shape == (10, channels[i], out_size[i], out_size[i])
@@ -30,8 +39,14 @@ class TestModels(unittest.TestCase):
         nonlinearities = [None, torch.nn.ReLU()]
         last_nonlinearity = [None, torch.nn.LeakyReLU()]
         for i in range(2):
-            dis = DCGANDiscriminator(in_size[i], channels[i], step[i],
-                                     batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            dis = DCGANDiscriminator(
+                in_size[i],
+                channels[i],
+                step[i],
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             x = torch.rand(10, channels[i], in_size[i], in_size[i])
             loss = dis(x)
             assert loss.shape == (10,)
@@ -48,8 +63,16 @@ class TestModels(unittest.TestCase):
         for i in range(2):
             ch = step[i]
             x = torch.randn(10, encodings[i])
-            gen = ConditionalGANGenerator(classes[i], encodings[i], out_size[i], channels[i], ch,
-                                          batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            gen = ConditionalGANGenerator(
+                classes[i],
+                encodings[i],
+                out_size[i],
+                channels[i],
+                ch,
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             labels = torch.randint(0, classes[i], (10,))
             y = gen(x, labels)
             assert y.shape == (10, channels[i], out_size[i], out_size[i])
@@ -65,8 +88,15 @@ class TestModels(unittest.TestCase):
         for i in range(2):
             ch = step[i]
             x = torch.randn(10, channels[i], in_size[i], in_size[i])
-            gen = ConditionalGANDiscriminator(classes[i], in_size[i], channels[i], ch,
-                                              batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            gen = ConditionalGANDiscriminator(
+                classes[i],
+                in_size[i],
+                channels[i],
+                ch,
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             labels = torch.randint(0, classes[i], (10,))
             y = gen(x, labels)
             assert y.shape == (10,)
@@ -83,8 +113,16 @@ class TestModels(unittest.TestCase):
         for i in range(2):
             ch = step[i]
             x = torch.randn(10, encodings[i])
-            gen = ACGANGenerator(classes[i], encodings[i], out_size[i], channels[i], ch,
-                                          batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            gen = ACGANGenerator(
+                classes[i],
+                encodings[i],
+                out_size[i],
+                channels[i],
+                ch,
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             labels = torch.randint(0, classes[i], (10,))
             y = gen(x, labels)
             assert y.shape == (10, channels[i], out_size[i], out_size[i])
@@ -100,9 +138,16 @@ class TestModels(unittest.TestCase):
         for i in range(2):
             ch = step[i]
             x = torch.randn(10, channels[i], in_size[i], in_size[i])
-            gen = ACGANDiscriminator(classes[i], in_size[i], channels[i], ch,
-                                              batchnorm[i], nonlinearities[i], last_nonlinearity[i])
-            dx, cx = gen(x, mode='combine')
+            gen = ACGANDiscriminator(
+                classes[i],
+                in_size[i],
+                channels[i],
+                ch,
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
+            dx, cx = gen(x, mode="combine")
             assert dx.shape == (10,)
             assert cx.shape == (10, classes[i])
 
@@ -121,8 +166,17 @@ class TestModels(unittest.TestCase):
             x = torch.randn(10, encodings[i])
             cont = torch.rand(10, dim_cont[i])
             dis = torch.zeros(10, dim_dis[i])
-            gen = InfoGANGenerator(dim_cont[i], dim_dis[i], encodings[i], out_size[i], channels[i],
-                                   ch, batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            gen = InfoGANGenerator(
+                dim_cont[i],
+                dim_dis[i],
+                encodings[i],
+                out_size[i],
+                channels[i],
+                ch,
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             y = gen(x, cont, dis)
             assert y.shape == (10, channels[i], out_size[i], out_size[i])
 
@@ -137,8 +191,16 @@ class TestModels(unittest.TestCase):
         last_nonlinearity = [None, torch.nn.RReLU(0.25)]
         for i in range(2):
             x = torch.randn(10, channels[i], in_size[i], in_size[i])
-            D = InfoGANDiscriminator(dim_dis[i], dim_cont[i], in_size[i], channels[i], step[i],
-                                     batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            D = InfoGANDiscriminator(
+                dim_dis[i],
+                dim_cont[i],
+                in_size[i],
+                channels[i],
+                step[i],
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             y, dist_dis, dist_cont = D(x, True)
             assert y.shape == (10, 1, 1, 1)
             assert isinstance(dist_dis, distributions.OneHotCategorical)
@@ -156,8 +218,16 @@ class TestModels(unittest.TestCase):
         nonlinearities = [None, torch.nn.ReLU()]
         last_nonlinearity = [None, torch.nn.LeakyReLU()]
         for i in range(2):
-            gen = AutoEncodingGenerator(encodings[i], out_size[i], channels[i], step[i], scale[i],
-                                        batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            gen = AutoEncodingGenerator(
+                encodings[i],
+                out_size[i],
+                channels[i],
+                step[i],
+                scale[i],
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             z = torch.rand(10, encodings[i])
             x = gen(z)
             assert x.shape == (10, channels[i], out_size[i], out_size[i])
@@ -172,8 +242,16 @@ class TestModels(unittest.TestCase):
         nonlinearities = [None, torch.nn.ReLU()]
         last_nonlinearity = [None, torch.nn.LeakyReLU()]
         for i in range(2):
-            dis = AutoEncodingDiscriminator(in_size[i], channels[i], encodings[i], step[i], scale[i],
-                                            batchnorm[i], nonlinearities[i], last_nonlinearity[i])
+            dis = AutoEncodingDiscriminator(
+                in_size[i],
+                channels[i],
+                encodings[i],
+                step[i],
+                scale[i],
+                batchnorm[i],
+                nonlinearities[i],
+                last_nonlinearity[i],
+            )
             x = torch.rand(10, channels[i], in_size[i], in_size[i])
             loss = dis(x)
             assert loss.shape == (10,)

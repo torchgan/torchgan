@@ -4,7 +4,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from ..models import Generator, Discriminator
 
-__all__ = ['AutoEncodingGenerator', 'AutoEncodingDiscriminator']
+__all__ = ["AutoEncodingGenerator", "AutoEncodingDiscriminator"]
+
 
 class AutoEncodingGenerator(Generator):
     r"""Autoencoding Generator for Boundary Equilibrium GAN (BEGAN) from
@@ -31,12 +32,28 @@ class AutoEncodingGenerator(Generator):
             choices are 'none' if no label is needed, 'required' if the original labels are
             needed and 'generated' if labels are to be sampled from a distribution.
     """
-    def __init__(self, encoding_dims=100, out_size=32, out_channels=3, step_channels=64, scale_factor=2,
-                 batchnorm=True, nonlinearity=None, last_nonlinearity=None, label_type='none'):
+
+    def __init__(
+        self,
+        encoding_dims=100,
+        out_size=32,
+        out_channels=3,
+        step_channels=64,
+        scale_factor=2,
+        batchnorm=True,
+        nonlinearity=None,
+        last_nonlinearity=None,
+        label_type="none",
+    ):
         super(AutoEncodingGenerator, self).__init__(encoding_dims, label_type)
-        if out_size < (scale_factor ** 4) or ceil(log(out_size, scale_factor)) != log(out_size, scale_factor):
-            raise Exception('Target image size must be at least {} and a perfect power of {}'.format(scale_factor ** 4,
-                scale_factor))
+        if out_size < (scale_factor ** 4) or ceil(log(out_size, scale_factor)) != log(
+            out_size, scale_factor
+        ):
+            raise Exception(
+                "Target image size must be at least {} and a perfect power of {}".format(
+                    scale_factor ** 4, scale_factor
+                )
+            )
         num_repeats = int(log(out_size, scale_factor)) - 3
         same_filters = scale_factor + 1
         same_pad = scale_factor // 2
@@ -61,31 +78,61 @@ class AutoEncodingGenerator(Generator):
         if batchnorm is True:
             self.fc = nn.Sequential(
                 nn.Linear(self.encoding_dims, (init_dim ** 2) * self.n),
-                nn.BatchNorm1d((init_dim ** 2) * self.n), nl)
+                nn.BatchNorm1d((init_dim ** 2) * self.n),
+                nl,
+            )
             initial_unit = nn.Sequential(
                 nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
-                nn.BatchNorm2d(self.n), nl,
+                nn.BatchNorm2d(self.n),
+                nl,
                 nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
-                nn.BatchNorm2d(self.n), nl)
+                nn.BatchNorm2d(self.n),
+                nl,
+            )
             upsample_unit = nn.Sequential(
-                nn.ConvTranspose2d(self.n, self.n, upsample_filters,
-                    upsample_stride, upsample_pad, upsample_output_pad, bias=use_bias),
-                nn.BatchNorm2d(self.n), nl,
+                nn.ConvTranspose2d(
+                    self.n,
+                    self.n,
+                    upsample_filters,
+                    upsample_stride,
+                    upsample_pad,
+                    upsample_output_pad,
+                    bias=use_bias,
+                ),
+                nn.BatchNorm2d(self.n),
+                nl,
                 nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
-                nn.BatchNorm2d(self.n), nl)
+                nn.BatchNorm2d(self.n),
+                nl,
+            )
         else:
             self.fc = nn.Sequential(
-                nn.Linear(self.encoding_dims, (init_dim ** 2) * self.n), nl)
+                nn.Linear(self.encoding_dims, (init_dim ** 2) * self.n), nl
+            )
             initial_unit = nn.Sequential(
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias), nl,
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias), nl)
+                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nl,
+                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nl,
+            )
             upsample_unit = nn.Sequential(
-                nn.ConvTranspose2d(self.n, self.n, upsample_filters,
-                    upsample_stride, upsample_pad, upsample_output_pad, bias=use_bias), nl,
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias), nl)
+                nn.ConvTranspose2d(
+                    self.n,
+                    self.n,
+                    upsample_filters,
+                    upsample_stride,
+                    upsample_pad,
+                    upsample_output_pad,
+                    bias=use_bias,
+                ),
+                nl,
+                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nl,
+            )
 
         last_unit = nn.Sequential(
-            nn.Conv2d(self.n, self.ch, same_filters, 1, same_pad, bias=True), last_nl)
+            nn.Conv2d(self.n, self.ch, same_filters, 1, same_pad, bias=True), last_nl
+        )
         model = [initial_unit]
         for i in range(num_repeats):
             model.append(upsample_unit)
@@ -135,13 +182,30 @@ class AutoEncodingDiscriminator(Discriminator):
             choices are 'none' if no label is needed, 'required' if the original labels are
             needed and 'generated' if labels are to be sampled from a distribution.
     """
-    def __init__(self, in_size=32, in_channels=3, encoding_dims=100, step_channels=64, scale_factor=2,
-                 batchnorm=True, nonlinearity=None, last_nonlinearity=None, energy=True, embeddings=False,
-                 label_type='none'):
+
+    def __init__(
+        self,
+        in_size=32,
+        in_channels=3,
+        encoding_dims=100,
+        step_channels=64,
+        scale_factor=2,
+        batchnorm=True,
+        nonlinearity=None,
+        last_nonlinearity=None,
+        energy=True,
+        embeddings=False,
+        label_type="none",
+    ):
         super(AutoEncodingDiscriminator, self).__init__(in_channels, label_type)
-        if in_size < (scale_factor ** 4) or ceil(log(in_size, scale_factor)) != log(in_size, scale_factor):
-            raise Exception('Input image size must be at least {} and a perfect power of {}'.format(scale_factor ** 4,
-                scale_factor))
+        if in_size < (scale_factor ** 4) or ceil(log(in_size, scale_factor)) != log(
+            in_size, scale_factor
+        ):
+            raise Exception(
+                "Input image size must be at least {} and a perfect power of {}".format(
+                    scale_factor ** 4, scale_factor
+                )
+            )
         num_repeats = int(log(in_size, scale_factor)) - 3
         same_filters = scale_factor + 1
         same_pad = scale_factor // 2
@@ -160,40 +224,123 @@ class AutoEncodingDiscriminator(Discriminator):
         init_dim = scale_factor ** 3
         self.init_dim = init_dim
         model = []
-        model.append(nn.Sequential(
-            nn.Conv2d(self.input_dims, self.n, same_filters, 1, same_pad, bias=True), nl))
+        model.append(
+            nn.Sequential(
+                nn.Conv2d(
+                    self.input_dims, self.n, same_filters, 1, same_pad, bias=True
+                ),
+                nl,
+            )
+        )
         if batchnorm is True:
             for i in range(1, num_repeats + 1):
-                model.append(nn.Sequential(
-                    nn.Conv2d(self.n * i, self.n * i, same_filters, 1, same_pad, bias=use_bias),
-                    nn.BatchNorm2d(self.n * i), nl,
-                    nn.Conv2d(self.n * i, self.n * (i + 1), downsample_filters, downsample_stride,
-                        downsample_pad, bias=use_bias),
-                    nn.BatchNorm2d(self.n * (i + 1)), nl))
-            model.append(nn.Sequential(
-                nn.Conv2d(self.n * (num_repeats + 1), self.n * (num_repeats + 1),
-                    same_filters, 1, same_pad, bias=use_bias),
-                nn.BatchNorm2d(self.n * (num_repeats + 1)), nl,
-                nn.Conv2d(self.n * (num_repeats + 1), self.n * (num_repeats + 1),
-                    same_filters, 1, same_pad, bias=use_bias),
-                nn.BatchNorm2d(self.n * (num_repeats + 1)), nl))
+                model.append(
+                    nn.Sequential(
+                        nn.Conv2d(
+                            self.n * i,
+                            self.n * i,
+                            same_filters,
+                            1,
+                            same_pad,
+                            bias=use_bias,
+                        ),
+                        nn.BatchNorm2d(self.n * i),
+                        nl,
+                        nn.Conv2d(
+                            self.n * i,
+                            self.n * (i + 1),
+                            downsample_filters,
+                            downsample_stride,
+                            downsample_pad,
+                            bias=use_bias,
+                        ),
+                        nn.BatchNorm2d(self.n * (i + 1)),
+                        nl,
+                    )
+                )
+            model.append(
+                nn.Sequential(
+                    nn.Conv2d(
+                        self.n * (num_repeats + 1),
+                        self.n * (num_repeats + 1),
+                        same_filters,
+                        1,
+                        same_pad,
+                        bias=use_bias,
+                    ),
+                    nn.BatchNorm2d(self.n * (num_repeats + 1)),
+                    nl,
+                    nn.Conv2d(
+                        self.n * (num_repeats + 1),
+                        self.n * (num_repeats + 1),
+                        same_filters,
+                        1,
+                        same_pad,
+                        bias=use_bias,
+                    ),
+                    nn.BatchNorm2d(self.n * (num_repeats + 1)),
+                    nl,
+                )
+            )
             self.fc = nn.Sequential(
                 nn.Linear((init_dim ** 2) * (num_repeats + 1) * self.n, encoding_dims),
-                nn.BatchNorm1d(encoding_dims), last_nl)
+                nn.BatchNorm1d(encoding_dims),
+                last_nl,
+            )
         else:
             for i in range(1, num_repeats + 1):
-                model.append(nn.Sequential(
-                    nn.Conv2d(self.n * i, self.n * i, 3, 1, 1, bias=use_bias), nl,
-                    nn.Conv2d(self.n * i, self.n * (i + 1), downsample_filters, downsample_stride,
-                        downsample_pad, bias=use_bias), nl))
-            model.append(nn.Sequential(
-                nn.Conv2d(self.n * (num_repeats + 1), self.n * (num_repeats + 1), 3, 1, 1, bias=use_bias), nl,
-                nn.Conv2d(self.n * (num_repeats + 1), self.n * (num_repeats + 1), 3, 1, 1, bias=use_bias), nl))
+                model.append(
+                    nn.Sequential(
+                        nn.Conv2d(self.n * i, self.n * i, 3, 1, 1, bias=use_bias),
+                        nl,
+                        nn.Conv2d(
+                            self.n * i,
+                            self.n * (i + 1),
+                            downsample_filters,
+                            downsample_stride,
+                            downsample_pad,
+                            bias=use_bias,
+                        ),
+                        nl,
+                    )
+                )
+            model.append(
+                nn.Sequential(
+                    nn.Conv2d(
+                        self.n * (num_repeats + 1),
+                        self.n * (num_repeats + 1),
+                        3,
+                        1,
+                        1,
+                        bias=use_bias,
+                    ),
+                    nl,
+                    nn.Conv2d(
+                        self.n * (num_repeats + 1),
+                        self.n * (num_repeats + 1),
+                        3,
+                        1,
+                        1,
+                        bias=use_bias,
+                    ),
+                    nl,
+                )
+            )
             self.fc = nn.Sequential(
-                nn.Linear((init_dim ** 2) * (num_repeats + 1) * self.n, encoding_dims), last_nl)
+                nn.Linear((init_dim ** 2) * (num_repeats + 1) * self.n, encoding_dims),
+                last_nl,
+            )
         self.encoder = nn.Sequential(*model)
-        self.decoder = AutoEncodingGenerator(encoding_dims, in_size, in_channels, step_channels, scale_factor,
-                                             batchnorm, nonlinearity, last_nonlinearity)
+        self.decoder = AutoEncodingGenerator(
+            encoding_dims,
+            in_size,
+            in_channels,
+            step_channels,
+            scale_factor,
+            batchnorm,
+            nonlinearity,
+            last_nonlinearity,
+        )
         self.energy = energy
         self.embeddings = embeddings
         self._weight_initializer()

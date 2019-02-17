@@ -2,7 +2,8 @@ import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
 from .functional import dragan_gradient_penalty
 
-__all__ = ['DraganGradientPenalty']
+__all__ = ["DraganGradientPenalty"]
+
 
 class DraganGradientPenalty(DiscriminatorLoss):
     r"""Gradient Penalty for the DRAGAN discriminator from `"On Convergence and Stability of GANs
@@ -30,7 +31,8 @@ class DraganGradientPenalty(DiscriminatorLoss):
         k (float, optional) : Constant.
         override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
-    def __init__(self, reduction='mean', lambd=10.0, k=1.0, override_train_ops=None):
+
+    def __init__(self, reduction="mean", lambd=10.0, k=1.0, override_train_ops=None):
         super(DraganGradientPenalty, self).__init__(reduction)
         self.lambd = lambd
         self.override_train_ops = override_train_ops
@@ -49,10 +51,19 @@ class DraganGradientPenalty(DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return dragan_gradient_penalty(interpolate, d_interpolate, self.k, self.reduction)
+        return dragan_gradient_penalty(
+            interpolate, d_interpolate, self.k, self.reduction
+        )
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
-                  device, labels=None):
+    def train_ops(
+        self,
+        generator,
+        discriminator,
+        optimizer_discriminator,
+        real_inputs,
+        device,
+        labels=None,
+    ):
         r"""Defines the standard ``train_ops`` used by the DRAGAN Gradient Penalty.
 
         The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
@@ -78,21 +89,31 @@ class DraganGradientPenalty(DiscriminatorLoss):
             Scalar value of the loss.
         """
         if self.override_train_ops is not None:
-            return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
-                                           real_inputs, labels)
+            return self.override_train_ops(
+                self,
+                generator,
+                discriminator,
+                optimizer_discriminator,
+                real_inputs,
+                labels,
+            )
         else:
             # NOTE(avik-pal): We don't need the gradients for alpha and beta. It's there
             #                 to prevent an error while calling autograd.grad
-            alpha = torch.rand(size=real_inputs.shape, device=device, requires_grad=True)
+            alpha = torch.rand(
+                size=real_inputs.shape, device=device, requires_grad=True
+            )
             beta = torch.rand(size=real_inputs.shape, device=device, requires_grad=True)
             optimizer_discriminator.zero_grad()
             interpolate = real_inputs + (1 - alpha) * 0.5 * real_inputs.std() * beta
-            if generator.label_type == 'generated':
-                label_gen = torch.randint(0, generator.num_classes, (real_inputs.size(0),), device=device)
-            if discriminator.label_type == 'none':
+            if generator.label_type == "generated":
+                label_gen = torch.randint(
+                    0, generator.num_classes, (real_inputs.size(0),), device=device
+                )
+            if discriminator.label_type == "none":
                 d_interpolate = discriminator(interpolate)
             else:
-                if generator.label_type == 'generated':
+                if generator.label_type == "generated":
                     d_interpolate = discriminator(interpolate, label_gen)
                 else:
                     d_interpolate = discriminator(interpolate, labels)

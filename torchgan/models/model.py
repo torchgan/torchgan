@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 
-__all__ = ['Generator', 'Discriminator']
+__all__ = ["Generator", "Discriminator"]
+
 
 class Generator(nn.Module):
     r"""Base class for all Generator models. All Generator models must subclass this.
@@ -14,7 +15,7 @@ class Generator(nn.Module):
     """
     # FIXME(Aniket1998): If a user is overriding the default initializer, he must also
     # override the constructor. Find an efficient workaround by fixing the initialization mechanism
-    def __init__(self, encoding_dims, label_type='none'):
+    def __init__(self, encoding_dims, label_type="none"):
         super(Generator, self).__init__()
         self.encoding_dims = encoding_dims
         self.label_type = label_type
@@ -45,6 +46,7 @@ class Generator(nn.Module):
         """
         return [torch.randn(sample_size, self.encoding_dims, device=device)]
 
+
 class Discriminator(nn.Module):
     r"""Base class for all Discriminator models. All Discriminator models must subclass this.
 
@@ -54,7 +56,8 @@ class Discriminator(nn.Module):
             choices are 'none' if no label is needed, 'required' if the original labels are
             needed and 'generated' if labels are to be sampled from a distribution.
     """
-    def __init__(self, input_dims, label_type='none'):
+
+    def __init__(self, input_dims, label_type="none"):
         super(Discriminator, self).__init__()
         self.input_dims = input_dims
         self.label_type = label_type

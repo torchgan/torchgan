@@ -2,7 +2,8 @@ import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
 from ..utils import reduce
 
-__all__ = ['HistoricalAverageGeneratorLoss', 'HistoricalAverageDiscriminatorLoss']
+__all__ = ["HistoricalAverageGeneratorLoss", "HistoricalAverageDiscriminatorLoss"]
+
 
 class HistoricalAverageGeneratorLoss(GeneratorLoss):
     r"""Historical Average Generator Loss from
@@ -25,8 +26,13 @@ class HistoricalAverageGeneratorLoss(GeneratorLoss):
         override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
         lambd (float, optional): Hyperparameter lambda for scaling the Historical Average Penalty
     """
-    def __init__(self, reduction='elementwise_mean', override_train_ops=None, lambd=1.0):
-        super(HistoricalAverageGeneratorLoss, self).__init__(reduction, override_train_ops)
+
+    def __init__(
+        self, reduction="elementwise_mean", override_train_ops=None, lambd=1.0
+    ):
+        super(HistoricalAverageGeneratorLoss, self).__init__(
+            reduction, override_train_ops
+        )
         self.timesteps = 0
         self.sum_parameters = []
         self.lambd = lambd
@@ -48,6 +54,7 @@ class HistoricalAverageGeneratorLoss(GeneratorLoss):
         Returns:
             Scalar value of the loss.
     """
+
     def train_ops(self, generator, optimizer_generator):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, generator, optimizer_generator)
@@ -62,13 +69,16 @@ class HistoricalAverageGeneratorLoss(GeneratorLoss):
                 optimizer_generator.zero_grad()
                 loss = 0.0
                 for i, p in enumerate(generator.parameters()):
-                    loss += torch.sum((p - (self.sum_parameters[i].data / self.timesteps)) ** 2)
+                    loss += torch.sum(
+                        (p - (self.sum_parameters[i].data / self.timesteps)) ** 2
+                    )
                     self.sum_parameters[i] += p.data.clone()
                 self.timesteps += 1
                 loss *= self.lambd
                 loss.backward()
                 optimizer_generator.step()
                 return loss.item()
+
 
 class HistoricalAverageDiscriminatorLoss(DiscriminatorLoss):
     r"""Historical Average Discriminator Loss from
@@ -91,8 +101,13 @@ class HistoricalAverageDiscriminatorLoss(DiscriminatorLoss):
         override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
         lambd (float, optional): Hyperparameter lambda for scaling the Historical Average Penalty
     """
-    def __init__(self, reduction='elementwise_mean', override_train_ops=None, lambd=1.0):
-        super(HistoricalAverageDiscriminatorLoss, self).__init__(reduction, override_train_ops)
+
+    def __init__(
+        self, reduction="elementwise_mean", override_train_ops=None, lambd=1.0
+    ):
+        super(HistoricalAverageDiscriminatorLoss, self).__init__(
+            reduction, override_train_ops
+        )
         self.timesteps = 0
         self.sum_parameters = []
         self.lambd = lambd
@@ -114,6 +129,7 @@ class HistoricalAverageDiscriminatorLoss(DiscriminatorLoss):
         Returns:
             Scalar value of the loss.
     """
+
     def train_ops(self, discriminator, optimizer_discriminator):
         if self.override_train_ops is not None:
             return self.override_train_ops(self, discriminator, optimizer_discriminator)
@@ -128,7 +144,9 @@ class HistoricalAverageDiscriminatorLoss(DiscriminatorLoss):
                 optimizer_discriminator.zero_grad()
                 loss = 0.0
                 for i, p in enumerate(discriminator.parameters()):
-                    loss += torch.sum((p - (self.sum_parameters[i].data / self.timesteps)) ** 2)
+                    loss += torch.sum(
+                        (p - (self.sum_parameters[i].data / self.timesteps)) ** 2
+                    )
                     self.sum_parameters[i] += p.data.clone()
                 self.timesteps += 1
                 loss *= self.lambd

@@ -4,27 +4,40 @@ import torch.distributions as ds
 import math
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from torchgan.losses import *
 
+
 class TestLosses(unittest.TestCase):
-    def match_losses(self, l_g, l_d, dx, dgz, gen_loss_mean, gen_loss_sum, gen_loss_none,
-                     d_loss_mean, d_loss_sum, d_loss_none):
+    def match_losses(
+        self,
+        l_g,
+        l_d,
+        dx,
+        dgz,
+        gen_loss_mean,
+        gen_loss_sum,
+        gen_loss_none,
+        d_loss_mean,
+        d_loss_sum,
+        d_loss_none,
+    ):
         D_X = torch.Tensor(dx).view(-1, 1)
         D_GZ = torch.Tensor(dgz).view(-1, 1)
 
         self.assertAlmostEqual(d_loss_mean, l_d(D_X, D_GZ).item(), places=5)
-        l_d.reduction = 'sum'
+        l_d.reduction = "sum"
         self.assertAlmostEqual(d_loss_sum, l_d(D_X, D_GZ).item(), places=5)
-        l_d.reduction = 'none'
+        l_d.reduction = "none"
         loss_none = l_d(D_X, D_GZ).view(-1, 1)
         for i in range(4):
             self.assertAlmostEqual(d_loss_none[i], loss_none[i].item(), places=5)
 
         self.assertAlmostEqual(gen_loss_mean, l_g(D_GZ).item(), places=5)
-        l_g.reduction = 'sum'
+        l_g.reduction = "sum"
         self.assertAlmostEqual(gen_loss_sum, l_g(D_GZ).item(), places=5)
-        l_g.reduction = 'none'
+        l_g.reduction = "none"
         loss_none = l_g(D_GZ).view(-1, 1)
         for i in range(4):
             self.assertAlmostEqual(gen_loss_none[i], loss_none[i].item(), places=5)
@@ -43,8 +56,18 @@ class TestLosses(unittest.TestCase):
 
         w_g = WassersteinGeneratorLoss()
         w_d = WassersteinDiscriminatorLoss()
-        self.match_losses(w_g, w_d, dx, dgz, gen_loss_mean, gen_loss_sum, gen_loss_none,
-                          d_loss_mean, d_loss_sum, d_loss_none)
+        self.match_losses(
+            w_g,
+            w_d,
+            dx,
+            dgz,
+            gen_loss_mean,
+            gen_loss_sum,
+            gen_loss_none,
+            d_loss_mean,
+            d_loss_sum,
+            d_loss_none,
+        )
 
     def test_lsgan_loss(self):
         dx = [1.3, 2.9, 8.4, 6.3]
@@ -60,8 +83,18 @@ class TestLosses(unittest.TestCase):
 
         l_g = LeastSquaresGeneratorLoss()
         l_d = LeastSquaresDiscriminatorLoss()
-        self.match_losses(l_g, l_d, dx, dgz, gen_loss_mean, gen_loss_sum, gen_loss_none,
-                          d_loss_mean, d_loss_sum, d_loss_none)
+        self.match_losses(
+            l_g,
+            l_d,
+            dx,
+            dgz,
+            gen_loss_mean,
+            gen_loss_sum,
+            gen_loss_none,
+            d_loss_mean,
+            d_loss_sum,
+            d_loss_none,
+        )
 
     def test_minimax_loss(self):
         dx = [1.3, 2.9, 8.4, 6.3]
@@ -71,7 +104,12 @@ class TestLosses(unittest.TestCase):
 
         gen_loss_mean = -3.3642528 + factor
         gen_loss_sum = -13.457011 + 4 * factor
-        gen_loss_none = [-5.1214576 + factor, -1.7765441 + factor, -0.3430121 + factor, -6.215997 + factor]
+        gen_loss_none = [
+            -5.1214576 + factor,
+            -1.7765441 + factor,
+            -0.3430121 + factor,
+            -6.215997 + factor,
+        ]
 
         d_loss_mean = 3.1251488
         d_loss_sum = 12.500595
@@ -79,8 +117,18 @@ class TestLosses(unittest.TestCase):
 
         l_g = MinimaxGeneratorLoss(nonsaturating=False)
         l_d = MinimaxDiscriminatorLoss()
-        self.match_losses(l_g, l_d, dx, dgz, gen_loss_mean, gen_loss_sum, gen_loss_none,
-                          d_loss_mean, d_loss_sum, d_loss_none)
+        self.match_losses(
+            l_g,
+            l_d,
+            dx,
+            dgz,
+            gen_loss_mean,
+            gen_loss_sum,
+            gen_loss_none,
+            d_loss_mean,
+            d_loss_sum,
+            d_loss_none,
+        )
 
     def test_minimax_nonsaturating_loss(self):
         dx = [1.3, 2.9, 8.4, 6.3]
@@ -88,7 +136,7 @@ class TestLosses(unittest.TestCase):
 
         gen_loss_mean = 0.9509911
         gen_loss_sum = 3.8039644
-        gen_loss_none = [8.1960661e-03, 2.6328245e-01, 3.5297503e+00, 2.7356991e-03]
+        gen_loss_none = [8.1960661e-03, 2.6328245e-01, 3.5297503e00, 2.7356991e-03]
 
         d_loss_mean = 3.1251488
         d_loss_sum = 12.500595
@@ -96,8 +144,18 @@ class TestLosses(unittest.TestCase):
 
         l_g = MinimaxGeneratorLoss(nonsaturating=True)
         l_d = MinimaxDiscriminatorLoss()
-        self.match_losses(l_g, l_d, dx, dgz, gen_loss_mean, gen_loss_sum, gen_loss_none,
-                          d_loss_mean, d_loss_sum, d_loss_none)
+        self.match_losses(
+            l_g,
+            l_d,
+            dx,
+            dgz,
+            gen_loss_mean,
+            gen_loss_sum,
+            gen_loss_none,
+            d_loss_mean,
+            d_loss_sum,
+            d_loss_none,
+        )
 
     def test_mutual_info_penalty(self):
         real_loss_mean = 2.600133
@@ -117,11 +175,11 @@ class TestLosses(unittest.TestCase):
         loss_mean = mutualinfo(c_dis, c_cont, q_cat, q_cont)
         self.assertAlmostEqual(loss_mean.item(), real_loss_mean, 5)
 
-        mutualinfo.reduction = 'sum'
+        mutualinfo.reduction = "sum"
         loss_sum = mutualinfo(c_dis, c_cont, q_cat, q_cont)
         self.assertAlmostEqual(loss_sum.item(), real_loss_sum, 5)
 
-        mutualinfo.reduction = 'none'
+        mutualinfo.reduction = "none"
         loss = mutualinfo(c_dis, c_cont, q_cat, q_cont)
         for i in range(2):
             self.assertAlmostEqual(loss[i].item(), real_losses[i], 5)

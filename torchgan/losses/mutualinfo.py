@@ -2,7 +2,8 @@ import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
 from .functional import mutual_information_penalty
 
-__all__ = ['MutualInformationPenalty']
+__all__ = ["MutualInformationPenalty"]
+
 
 class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
     r"""Mutual Information Penalty as defined in
@@ -27,7 +28,8 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
         override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
     """
-    def __init__(self, lambd=1.0, reduction='mean', override_train_ops=None):
+
+    def __init__(self, lambd=1.0, reduction="mean", override_train_ops=None):
         super(MutualInformationPenalty, self).__init__(reduction, override_train_ops)
         self.lambd = lambd
 
@@ -45,13 +47,32 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return mutual_information_penalty(c_dis, c_cont, dist_dis, dist_cont, reduction=self.reduction)
+        return mutual_information_penalty(
+            c_dis, c_cont, dist_dis, dist_cont, reduction=self.reduction
+        )
 
-    def train_ops(self, generator, discriminator, optimizer_generator, optimizer_discriminator,
-                  dis_code, cont_code, device, batch_size):
+    def train_ops(
+        self,
+        generator,
+        discriminator,
+        optimizer_generator,
+        optimizer_discriminator,
+        dis_code,
+        cont_code,
+        device,
+        batch_size,
+    ):
         if self.override_train_ops is not None:
-            self.override_train_ops(generator, discriminator, optimizer_generator, optimizer_discriminator,
-                                    dis_code, cont_code, device, batch_size)
+            self.override_train_ops(
+                generator,
+                discriminator,
+                optimizer_generator,
+                optimizer_discriminator,
+                dis_code,
+                cont_code,
+                device,
+                batch_size,
+            )
         else:
             noise = torch.randn(batch_size, generator.encoding_dims, device=device)
             optimizer_discriminator.zero_grad()

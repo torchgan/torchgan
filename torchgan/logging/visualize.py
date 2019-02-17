@@ -2,13 +2,20 @@ import torch
 import torchvision
 from ..models.model import Generator, Discriminator
 from .backends import *
+
 if TENSORBOARD_LOGGING == 1:
     from tensorboardX import SummaryWriter
 if VISDOM_LOGGING == 1:
     import visdom
 
-__all__ = ['Visualize', 'LossVisualize', 'MetricVisualize',
-           'GradientVisualize', 'ImageVisualize']
+__all__ = [
+    "Visualize",
+    "LossVisualize",
+    "MetricVisualize",
+    "GradientVisualize",
+    "ImageVisualize",
+]
+
 
 class Visualize(object):
     r"""Base class for all Visualizations.
@@ -23,6 +30,7 @@ class Visualize(object):
         writer (tensorboardX.SummaryWriter, optonal): Send a `SummaryWriter` if you
             don't want to start a new SummaryWriter.
     """
+
     def __init__(self, visualize_list, visdom_port=8097, log_dir=None, writer=None):
         self.logs = {}
         for item in visualize_list:
@@ -80,8 +88,14 @@ class Visualize(object):
         """
         raise NotImplementedError
 
-    def __call__(self, *args, lock_console=False, lock_tensorboard=False, lock_visdom=False,
-                 **kwargs):
+    def __call__(
+        self,
+        *args,
+        lock_console=False,
+        lock_tensorboard=False,
+        lock_visdom=False,
+        **kwargs
+    ):
         if not lock_console and CONSOLE_LOGGING == 1:
             self.log_console(*args, **kwargs)
         if not lock_tensorboard and TENSORBOARD_LOGGING == 1:
@@ -89,6 +103,7 @@ class Visualize(object):
         if not lock_visdom and VISDOM_LOGGING == 1:
             self.log_visdom(*args, **kwargs)
         self.step_update()
+
 
 class LossVisualize(Visualize):
     r"""This class provides the Visualizations for Generator and Discriminator Losses.
@@ -103,6 +118,7 @@ class LossVisualize(Visualize):
         writer (tensorboardX.SummaryWriter, optonal): Send a `SummaryWriter` if you
             don't want to start a new SummaryWriter.
     """
+
     def log_tensorboard(self, running_losses):
         r"""Tensorboard logging function. This function logs the following:
 
@@ -115,22 +131,28 @@ class LossVisualize(Visualize):
             running_losses (dict): A dict with 2 items namely, ``Running Discriminator Loss``,
                 and ``Running Generator Loss``.
         """
-        self.writer.add_scalar("Running Discriminator Loss",
-                               running_losses["Running Discriminator Loss"],
-                               self.step)
-        self.writer.add_scalar("Running Generator Loss",
-                               running_losses["Running Generator Loss"],
-                               self.step)
-        self.writer.add_scalars("Running Losses",
-                                running_losses,
-                                self.step)
+        self.writer.add_scalar(
+            "Running Discriminator Loss",
+            running_losses["Running Discriminator Loss"],
+            self.step,
+        )
+        self.writer.add_scalar(
+            "Running Generator Loss",
+            running_losses["Running Generator Loss"],
+            self.step,
+        )
+        self.writer.add_scalars("Running Losses", running_losses, self.step)
         for name, value in self.logs.items():
             val = value[-1]
             if type(val) is tuple:
-                self.writer.add_scalar('Losses/{}-Generator'.format(name), val[0], self.step)
-                self.writer.add_scalar('Losses/{}-Discriminator'.format(name), val[1], self.step)
+                self.writer.add_scalar(
+                    "Losses/{}-Generator".format(name), val[0], self.step
+                )
+                self.writer.add_scalar(
+                    "Losses/{}-Discriminator".format(name), val[1], self.step
+                )
             else:
-                self.writer.add_scalar('Losses/{}'.format(name), val, self.step)
+                self.writer.add_scalar("Losses/{}".format(name), val, self.step)
 
     def log_console(self, running_losses):
         r"""Console logging function. This function logs the mean ``generator`` and ``discriminator``
@@ -141,7 +163,7 @@ class LossVisualize(Visualize):
                 and ``Running Generator Loss``.
         """
         for name, val in running_losses.items():
-            print('Mean {} : {}'.format(name, val))
+            print("Mean {} : {}".format(name, val))
 
     def log_visdom(self, running_losses):
         r"""Visdom logging function. This function logs the following:
@@ -155,40 +177,88 @@ class LossVisualize(Visualize):
             running_losses (dict): A dict with 2 items namely, ``Running Discriminator Loss``,
                 and ``Running Generator Loss``.
         """
-        self.vis.line([running_losses["Running Discriminator Loss"]], [self.step],
-                      win="Running Discriminator Loss", update="append",
-                      opts=dict(title="Running Discriminator Loss", xlabel="Time Step",
-                      ylabel="Running Loss"))
-        self.vis.line([running_losses["Running Generator Loss"]], [self.step],
-                      win="Running Generator Loss", update="append",
-                      opts=dict(title="Running Generator Loss", xlabel="Time Step",
-                      ylabel="Running Loss"))
-        self.vis.line([[running_losses["Running Discriminator Loss"],
-                      running_losses["Running Generator Loss"]]], [self.step],
-                      win="Running Losses", update="append",
-                      opts=dict(title="Running Losses", xlabel="Time Step",
-                      ylabel="Running Loss", legend=["Discriminator", "Generator"]))
+        self.vis.line(
+            [running_losses["Running Discriminator Loss"]],
+            [self.step],
+            win="Running Discriminator Loss",
+            update="append",
+            opts=dict(
+                title="Running Discriminator Loss",
+                xlabel="Time Step",
+                ylabel="Running Loss",
+            ),
+        )
+        self.vis.line(
+            [running_losses["Running Generator Loss"]],
+            [self.step],
+            win="Running Generator Loss",
+            update="append",
+            opts=dict(
+                title="Running Generator Loss",
+                xlabel="Time Step",
+                ylabel="Running Loss",
+            ),
+        )
+        self.vis.line(
+            [
+                [
+                    running_losses["Running Discriminator Loss"],
+                    running_losses["Running Generator Loss"],
+                ]
+            ],
+            [self.step],
+            win="Running Losses",
+            update="append",
+            opts=dict(
+                title="Running Losses",
+                xlabel="Time Step",
+                ylabel="Running Loss",
+                legend=["Discriminator", "Generator"],
+            ),
+        )
         for name, value in self.logs.items():
             val = value[-1]
             if type(val) is tuple:
                 name1 = "{}-Generator".format(name)
                 name2 = "{}-Discriminator".format(name)
-                self.vis.line([val[0]], [self.step], win=name1, update="append",
-                              opts=dict(title=name1, xlabel="Time Step", ylabel="Loss Value"))
-                self.vis.line([val[1]], [self.step], win=name2, update="append",
-                              opts=dict(title=name2, xlabel="Time Step", ylabel="Loss Value"))
+                self.vis.line(
+                    [val[0]],
+                    [self.step],
+                    win=name1,
+                    update="append",
+                    opts=dict(title=name1, xlabel="Time Step", ylabel="Loss Value"),
+                )
+                self.vis.line(
+                    [val[1]],
+                    [self.step],
+                    win=name2,
+                    update="append",
+                    opts=dict(title=name2, xlabel="Time Step", ylabel="Loss Value"),
+                )
             else:
-                self.vis.line([val], [self.step], win=name, update="append",
-                              opts=dict(title=name, xlabel="Time Step", ylabel="Loss Value"))
+                self.vis.line(
+                    [val],
+                    [self.step],
+                    win=name,
+                    update="append",
+                    opts=dict(title=name, xlabel="Time Step", ylabel="Loss Value"),
+                )
 
     def __call__(self, trainer, **kwargs):
-        running_generator_loss = trainer.loss_information["generator_losses"] /\
-            trainer.loss_information["generator_iters"]
-        running_discriminator_loss = trainer.loss_information["discriminator_losses"] /\
-            trainer.loss_information["discriminator_iters"]
-        running_losses = {"Running Discriminator Loss": running_discriminator_loss,
-                          "Running Generator Loss": running_generator_loss}
+        running_generator_loss = (
+            trainer.loss_information["generator_losses"]
+            / trainer.loss_information["generator_iters"]
+        )
+        running_discriminator_loss = (
+            trainer.loss_information["discriminator_losses"]
+            / trainer.loss_information["discriminator_iters"]
+        )
+        running_losses = {
+            "Running Discriminator Loss": running_discriminator_loss,
+            "Running Generator Loss": running_generator_loss,
+        }
         super(LossVisualize, self).__call__(running_losses, **kwargs)
+
 
 class MetricVisualize(Visualize):
     r"""This class provides the Visualizations for Metrics.
@@ -203,6 +273,7 @@ class MetricVisualize(Visualize):
         writer (tensorboardX.SummaryWriter, optonal): Send a `SummaryWriter` if you
             don't want to start a new SummaryWriter.
     """
+
     def log_tensorboard(self):
         r"""Tensorboard logging function. This function logs the values of the individual metrics.
         """
@@ -213,14 +284,20 @@ class MetricVisualize(Visualize):
         r"""Console logging function. This function logs the mean metrics.
         """
         for name, val in self.logs.items():
-            print('{} : {}'.format(name, val[-1]))
+            print("{} : {}".format(name, val[-1]))
 
     def log_visdom(self):
         r"""Visdom logging function. This function logs the values of the individual metrics.
         """
         for name, value in self.logs.items():
-            self.vis.line([value[-1]], [self.step], win=name, update="append",
-                          opts=dict(title=name, xlabel="Time Step", ylabel="Metric Value"))
+            self.vis.line(
+                [value[-1]],
+                [self.step],
+                win=name,
+                update="append",
+                opts=dict(title=name, xlabel="Time Step", ylabel="Metric Value"),
+            )
+
 
 class GradientVisualize(Visualize):
     r"""This class provides the Visualizations for the Gradients.
@@ -235,9 +312,10 @@ class GradientVisualize(Visualize):
         writer (tensorboardX.SummaryWriter, optonal): Send a `SummaryWriter` if you
             don't want to start a new SummaryWriter.
     """
+
     def __init__(self, visualize_list, visdom_port=8097, log_dir=None, writer=None):
         if visualize_list is None or len(visualize_list) == 0:
-            raise Exception('Gradient Visualizer requires list of model names')
+            raise Exception("Gradient Visualizer requires list of model names")
         self.logs = {}
         for item in visualize_list:
             self.logs[item] = [0.0]
@@ -253,8 +331,11 @@ class GradientVisualize(Visualize):
         Args:
             name (str): Name of the model whose gradients are to be logged.
         """
-        self.writer.add_scalar('Gradients/{}'.format(name), self.logs[name][len(self.logs[name]) - 1],
-                               self.step)
+        self.writer.add_scalar(
+            "Gradients/{}".format(name),
+            self.logs[name][len(self.logs[name]) - 1],
+            self.step,
+        )
 
     def log_console(self, name):
         r"""Console logging function. This function logs the mean gradients.
@@ -262,7 +343,9 @@ class GradientVisualize(Visualize):
         Args:
             name (str): Name of the model whose gradients are to be logged.
         """
-        print('{} Gradients : {}'.format(name, self.logs[name][len(self.logs[name]) - 1]))
+        print(
+            "{} Gradients : {}".format(name, self.logs[name][len(self.logs[name]) - 1])
+        )
 
     def log_visdom(self, name):
         r"""Visdom logging function. This function logs the values of the individual gradients.
@@ -270,8 +353,13 @@ class GradientVisualize(Visualize):
         Args:
             name (str): Name of the model whose gradients are to be logged.
         """
-        self.vis.line([self.logs[name][len(self.logs[name]) - 1]], [self.step], win=name, update="append",
-                      opts=dict(title=name, xlabel="Time Step", ylabel="Gradient"))
+        self.vis.line(
+            [self.logs[name][len(self.logs[name]) - 1]],
+            [self.step],
+            win=name,
+            update="append",
+            opts=dict(title=name, xlabel="Time Step", ylabel="Gradient"),
+        )
 
     def update_grads(self, name, model, eps=1e-5):
         r"""Updates the gradient logs.
@@ -295,12 +383,13 @@ class GradientVisualize(Visualize):
         """
         if CONSOLE_LOGGING == 1:
             for key, val in self.logs.items():
-                print('{} Mean Gradients : {}'.format(key, sum(val) / len(val)))
+                print("{} Mean Gradients : {}".format(key, sum(val) / len(val)))
 
     def __call__(self, trainer, **kwargs):
         for name in trainer.model_names:
             super(GradientVisualize, self).__call__(name, **kwargs)
             self.logs[name].append(0.0)
+
 
 class ImageVisualize(Visualize):
     r"""This class provides the Logging for the Images.
@@ -318,13 +407,27 @@ class ImageVisualize(Visualize):
             sampling.
         nrow (int, optional): Number of rows in which the image is to be stored.
     """
-    def __init__(self, trainer, visdom_port=8097, log_dir=None, writer=None, test_noise=None, nrow=8):
-        super(ImageVisualize, self).__init__([], visdom_port=visdom_port, log_dir=log_dir, writer=writer)
+
+    def __init__(
+        self,
+        trainer,
+        visdom_port=8097,
+        log_dir=None,
+        writer=None,
+        test_noise=None,
+        nrow=8,
+    ):
+        super(ImageVisualize, self).__init__(
+            [], visdom_port=visdom_port, log_dir=log_dir, writer=writer
+        )
         self.test_noise = []
         for model in trainer.model_names:
             if isinstance(getattr(trainer, model), Generator):
-                self.test_noise.append(getattr(trainer, model).sampler(trainer.sample_size, trainer.device)
-                                       if test_noise is None else test_noise)
+                self.test_noise.append(
+                    getattr(trainer, model).sampler(trainer.sample_size, trainer.device)
+                    if test_noise is None
+                    else test_noise
+                )
         self.step = 1
         self.nrow = nrow
 
@@ -369,7 +472,9 @@ class ImageVisualize(Visualize):
                 with torch.no_grad():
                     image = generator(*self.test_noise[pos])
                     image = torchvision.utils.make_grid(image)
-                    super(ImageVisualize, self).__call__(trainer, image, model, **kwargs)
+                    super(ImageVisualize, self).__call__(
+                        trainer, image, model, **kwargs
+                    )
                 self.step -= 1
                 pos = pos + 1
         self.step += 1 if pos > 0 else 0

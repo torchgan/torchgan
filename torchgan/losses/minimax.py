@@ -2,7 +2,8 @@ import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
 from .functional import minimax_generator_loss, minimax_discriminator_loss
 
-__all__ = ['MinimaxGeneratorLoss', 'MinimaxDiscriminatorLoss']
+__all__ = ["MinimaxGeneratorLoss", "MinimaxDiscriminatorLoss"]
+
 
 class MinimaxGeneratorLoss(GeneratorLoss):
     r"""Minimax game generator loss from the original GAN paper `"Generative Adversarial Networks
@@ -30,7 +31,8 @@ class MinimaxGeneratorLoss(GeneratorLoss):
         nonsaturating(bool, optional): Specifies whether to use the nonsaturating heuristic
             loss for the generator.
     """
-    def __init__(self, reduction='mean', nonsaturating=True, override_train_ops=None):
+
+    def __init__(self, reduction="mean", nonsaturating=True, override_train_ops=None):
         super(MinimaxGeneratorLoss, self).__init__(reduction, override_train_ops)
         self.nonsaturating = nonsaturating
 
@@ -73,7 +75,8 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
         override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
     """
-    def __init__(self, label_smoothing=0.0, reduction='mean', override_train_ops=None):
+
+    def __init__(self, label_smoothing=0.0, reduction="mean", override_train_ops=None):
         super(MinimaxDiscriminatorLoss, self).__init__(reduction, override_train_ops)
         self.label_smoothing = label_smoothing
 
@@ -91,4 +94,6 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return minimax_discriminator_loss(dx, dgz, label_smoothing=self.label_smoothing, reduction=self.reduction)
+        return minimax_discriminator_loss(
+            dx, dgz, label_smoothing=self.label_smoothing, reduction=self.reduction
+        )

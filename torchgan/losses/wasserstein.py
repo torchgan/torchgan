@@ -1,9 +1,17 @@
 import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
-from .functional import wasserstein_generator_loss, wasserstein_gradient_penalty, \
-    wasserstein_discriminator_loss
+from .functional import (
+    wasserstein_generator_loss,
+    wasserstein_gradient_penalty,
+    wasserstein_discriminator_loss,
+)
 
-__all__ = ['WassersteinGeneratorLoss', 'WassersteinDiscriminatorLoss', 'WassersteinGradientPenalty']
+__all__ = [
+    "WassersteinGeneratorLoss",
+    "WassersteinDiscriminatorLoss",
+    "WassersteinGradientPenalty",
+]
+
 
 class WassersteinGeneratorLoss(GeneratorLoss):
     r"""Wasserstein GAN generator loss from
@@ -26,6 +34,7 @@ class WassersteinGeneratorLoss(GeneratorLoss):
         override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
     """
+
     def forward(self, fgz):
         r"""Computes the loss for the given input.
 
@@ -65,8 +74,11 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
         override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
     """
-    def __init__(self, reduction='mean', clip=None, override_train_ops=None):
-        super(WassersteinDiscriminatorLoss, self).__init__(reduction, override_train_ops)
+
+    def __init__(self, reduction="mean", clip=None, override_train_ops=None):
+        super(WassersteinDiscriminatorLoss, self).__init__(
+            reduction, override_train_ops
+        )
         if (isinstance(clip, tuple) or isinstance(clip, list)) and len(clip) > 1:
             self.clip = clip
         else:
@@ -88,8 +100,15 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
         """
         return wasserstein_discriminator_loss(fx, fgz, self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator, real_inputs,
-            device, labels=None):
+    def train_ops(
+        self,
+        generator,
+        discriminator,
+        optimizer_discriminator,
+        real_inputs,
+        device,
+        labels=None,
+    ):
         r"""Defines the standard ``train_ops`` used by wasserstein discriminator loss.
 
         The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
@@ -117,14 +136,26 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
             Scalar value of the loss.
         """
         if self.override_train_ops is not None:
-            return self.override_train_ops(generator, discriminator,
-                    optimizer_discriminator, real_inputs, device, labels)
+            return self.override_train_ops(
+                generator,
+                discriminator,
+                optimizer_discriminator,
+                real_inputs,
+                device,
+                labels,
+            )
         else:
             if self.clip is not None:
                 for p in discriminator.parameters():
                     p.data.clamp_(self.clip[0], self.clip[1])
-            return super(WassersteinDiscriminatorLoss, self).train_ops(generator, discriminator,
-                    optimizer_discriminator, real_inputs, device, labels)
+            return super(WassersteinDiscriminatorLoss, self).train_ops(
+                generator,
+                discriminator,
+                optimizer_discriminator,
+                real_inputs,
+                device,
+                labels,
+            )
 
 
 class WassersteinGradientPenalty(DiscriminatorLoss):
@@ -153,7 +184,8 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         override_train_ops (function, optional): A function is passed to this argument,
             if the default ``train_ops`` is not to be used.
     """
-    def __init__(self, reduction='mean', lambd=10.0, override_train_ops=None):
+
+    def __init__(self, reduction="mean", lambd=10.0, override_train_ops=None):
         super(WassersteinGradientPenalty, self).__init__(reduction, override_train_ops)
         self.lambd = lambd
         self.override_train_ops = override_train_ops
@@ -176,8 +208,15 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         # relying on autograd
         return wasserstein_gradient_penalty(interpolate, d_interpolate, self.reduction)
 
-    def train_ops(self, generator, discriminator, optimizer_discriminator,
-            real_inputs, device, labels=None):
+    def train_ops(
+        self,
+        generator,
+        discriminator,
+        optimizer_discriminator,
+        real_inputs,
+        device,
+        labels=None,
+    ):
         r"""Defines the standard ``train_ops`` used by the Wasserstein Gradient Penalty.
 
         The ``standard optimization algorithm`` for the ``discriminator`` defined in this train_ops
@@ -205,28 +244,39 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
             Scalar value of the loss.
         """
         if self.override_train_ops is not None:
-            return self.override_train_ops(self, generator, discriminator, optimizer_discriminator,
-                   real_inputs, labels)
+            return self.override_train_ops(
+                self,
+                generator,
+                discriminator,
+                optimizer_discriminator,
+                real_inputs,
+                labels,
+            )
         else:
-            if labels is None and (generator.label_type == 'required' or discriminator.label_type == 'required'):
-                raise Exception('GAN model requires labels for training')
+            if labels is None and (
+                generator.label_type == "required"
+                or discriminator.label_type == "required"
+            ):
+                raise Exception("GAN model requires labels for training")
             batch_size = real_inputs.size(0)
             noise = torch.randn(batch_size, generator.encoding_dims, device=device)
-            if generator.label_type == 'generated':
-                label_gen = torch.randint(0, generator.num_classes, (batch_size,), device=device)
+            if generator.label_type == "generated":
+                label_gen = torch.randint(
+                    0, generator.num_classes, (batch_size,), device=device
+                )
             optimizer_discriminator.zero_grad()
-            if generator.label_type == 'none':
+            if generator.label_type == "none":
                 fake = generator(noise)
-            elif generator.label_type == 'required':
+            elif generator.label_type == "required":
                 fake = generator(noise, labels)
             else:
                 fake = generator(noise, label_gen)
             eps = torch.rand(1).item()
             interpolate = eps * real_inputs + (1 - eps) * fake
-            if discriminator.label_type == 'none':
+            if discriminator.label_type == "none":
                 d_interpolate = discriminator(interpolate)
             else:
-                if generator.label_type == 'generated':
+                if generator.label_type == "generated":
                     d_interpolate = discriminator(interpolate, label_gen)
                 else:
                     d_interpolate = discriminator(interpolate, labels)

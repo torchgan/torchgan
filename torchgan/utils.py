@@ -1,6 +1,7 @@
 import torch
 from pkgutil import iter_modules
 
+
 def reduce(x, reduction=None):
     r"""Applies reduction on a torch.Tensor.
 
@@ -19,6 +20,7 @@ def reduce(x, reduction=None):
         return torch.sum(x)
     else:
         return x
+
 
 def getenv_defaults(module_name):
     r"""Determines if a particular package is installed in the system.

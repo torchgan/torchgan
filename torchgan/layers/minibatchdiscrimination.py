@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-__all__ = ['MinibatchDiscrimination1d']
+__all__ = ["MinibatchDiscrimination1d"]
 
 # The original paper by Salimans et. al. discusses only 1D minibatch discrimination
 class MinibatchDiscrimination1d(nn.Module):
@@ -34,13 +34,16 @@ class MinibatchDiscrimination1d(nn.Module):
     Returns:
         A Tensor of size :math:`(N, in_features + out_features)` where :math:`N` is the batch size
     """
+
     def __init__(self, in_features, out_features, intermediate_features=16):
         super(MinibatchDiscrimination1d, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.intermediate_features = intermediate_features
 
-        self.T = nn.Parameter(torch.Tensor(in_features, out_features, intermediate_features))
+        self.T = nn.Parameter(
+            torch.Tensor(in_features, out_features, intermediate_features)
+        )
         nn.init.normal_(self.T)
 
     def forward(self, x):

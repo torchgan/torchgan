@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 
-__all__ = ['VirtualBatchNorm']
+__all__ = ["VirtualBatchNorm"]
+
 
 class VirtualBatchNorm(nn.Module):
     r"""Virtual Batch Normalization Module as proposed in the paper
@@ -26,6 +27,7 @@ class VirtualBatchNorm(nn.Module):
         in_features (int): Size of the input dimension to be normalized
         eps (float, optional): Value to be added to variance for numerical stability while normalizing
     """
+
     def __init__(self, in_features, eps=1e-5):
         super(VirtualBatchNorm, self).__init__()
         self.in_features = in_features

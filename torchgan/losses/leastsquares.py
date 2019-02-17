@@ -2,7 +2,8 @@ import torch
 from .loss import GeneratorLoss, DiscriminatorLoss
 from .functional import least_squares_generator_loss, least_squares_discriminator_loss
 
-__all__ = ['LeastSquaresGeneratorLoss', 'LeastSquaresDiscriminatorLoss']
+__all__ = ["LeastSquaresGeneratorLoss", "LeastSquaresDiscriminatorLoss"]
+
 
 class LeastSquaresGeneratorLoss(GeneratorLoss):
     r"""Least Squares GAN generator loss from `"Least Squares Generative Adversarial Networks
@@ -26,7 +27,8 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
         c (float, optional): Target generator label.
         override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
-    def __init__(self, reduction='mean', c=1.0, override_train_ops=None):
+
+    def __init__(self, reduction="mean", c=1.0, override_train_ops=None):
         super(LeastSquaresGeneratorLoss, self).__init__(reduction, override_train_ops)
         self.c = c
 
@@ -67,8 +69,11 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
         b (float, optional): Target discriminator label for real image.
         override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
-    def __init__(self, reduction='mean', a=0.0, b=1.0, override_train_ops=None):
-        super(LeastSquaresDiscriminatorLoss, self).__init__(reduction, override_train_ops)
+
+    def __init__(self, reduction="mean", a=0.0, b=1.0, override_train_ops=None):
+        super(LeastSquaresDiscriminatorLoss, self).__init__(
+            reduction, override_train_ops
+        )
         self.a = a
         self.b = b
 

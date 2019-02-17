@@ -4,7 +4,8 @@ import torch.nn.functional as F
 import torch.distributions as distributions
 from .dcgan import DCGANGenerator, DCGANDiscriminator
 
-__all__ = ['InfoGANGenerator', 'InfoGANDiscriminator']
+__all__ = ["InfoGANGenerator", "InfoGANDiscriminator"]
+
 
 class InfoGANGenerator(DCGANGenerator):
     r"""Generator for InfoGAN based on the Deep Convolutional GAN (DCGAN) architecture, from
@@ -36,17 +37,38 @@ class InfoGANGenerator(DCGANGenerator):
         >>> c_dis = torch.randn(10, 30)
         >>> x = G(z, c_cont, c_dis)
     """
-    def __init__(self, dim_dis, dim_cont, encoding_dims=100, out_size=32, out_channels=3,
-                 step_channels=64, batchnorm=True, nonlinearity=None, last_nonlinearity=None):
-        super(InfoGANGenerator, self).__init__(encoding_dims + dim_dis + dim_cont, out_size, out_channels,
-                                               step_channels, batchnorm, nonlinearity, last_nonlinearity)
+
+    def __init__(
+        self,
+        dim_dis,
+        dim_cont,
+        encoding_dims=100,
+        out_size=32,
+        out_channels=3,
+        step_channels=64,
+        batchnorm=True,
+        nonlinearity=None,
+        last_nonlinearity=None,
+    ):
+        super(InfoGANGenerator, self).__init__(
+            encoding_dims + dim_dis + dim_cont,
+            out_size,
+            out_channels,
+            step_channels,
+            batchnorm,
+            nonlinearity,
+            last_nonlinearity,
+        )
         self.encoding_dims = encoding_dims
         self.dim_cont = dim_cont
         self.dim_dis = dim_dis
 
     def forward(self, z, c_dis=None, c_cont=None):
-        z_cat = torch.cat([z, c_dis, c_cont],
-                          dim=1) if c_dis is not None and c_cont is not None else z
+        z_cat = (
+            torch.cat([z, c_dis, c_cont], dim=1)
+            if c_dis is not None and c_cont is not None
+            else z
+        )
         return super(InfoGANGenerator, self).forward(z_cat)
 
 
@@ -82,22 +104,44 @@ class InfoGANDiscriminator(DCGANDiscriminator):
         >>> x = torch.randn(10, 3, 32, 32)
         >>> score, q_categorical, q_gaussian = D(x, return_latents=True)
     """
-    def __init__(self, dim_dis, dim_cont, in_size=32, in_channels=3, step_channels=64,
-                 batchnorm=True, nonlinearity=None, last_nonlinearity=None, latent_nonlinearity=None):
+
+    def __init__(
+        self,
+        dim_dis,
+        dim_cont,
+        in_size=32,
+        in_channels=3,
+        step_channels=64,
+        batchnorm=True,
+        nonlinearity=None,
+        last_nonlinearity=None,
+        latent_nonlinearity=None,
+    ):
         self.dim_cont = dim_cont
         self.dim_dis = dim_dis
-        super(InfoGANDiscriminator, self).__init__(in_size, in_channels, step_channels, batchnorm,
-                                                   nonlinearity, last_nonlinearity)
+        super(InfoGANDiscriminator, self).__init__(
+            in_size,
+            in_channels,
+            step_channels,
+            batchnorm,
+            nonlinearity,
+            last_nonlinearity,
+        )
 
-        self.latent_nl = nn.LeakyReLU(0.2) if latent_nonlinearity is None else latent_nonlinearity
+        self.latent_nl = (
+            nn.LeakyReLU(0.2) if latent_nonlinearity is None else latent_nonlinearity
+        )
         d = self.n * 2 ** (in_size.bit_length() - 4)
         if batchnorm is True:
-            self.dist_conv = nn.Sequential(nn.Conv2d(d, d, 4, 1, 0, bias=not batchnorm),
-                                           nn.BatchNorm2d(d),
-                                           self.latent_nl)
+            self.dist_conv = nn.Sequential(
+                nn.Conv2d(d, d, 4, 1, 0, bias=not batchnorm),
+                nn.BatchNorm2d(d),
+                self.latent_nl,
+            )
         else:
-            self.dist_conv = nn.Sequential(nn.Conv2d(d, d, 4, 1, 0, bias=not batchnorm),
-                                           self.latent_nl)
+            self.dist_conv = nn.Sequential(
+                nn.Conv2d(d, d, 4, 1, 0, bias=not batchnorm), self.latent_nl
+            )
 
         self.dis_categorical = nn.Linear(d, self.dim_dis)
 
@@ -111,5 +155,11 @@ class InfoGANDiscriminator(DCGANDiscriminator):
         critic_score = self.disc(x)
         x = self.dist_conv(x).view(-1, x.size(1))
         dist_dis = distributions.OneHotCategorical(logits=self.dis_categorical(x))
-        dist_cont = distributions.Normal(loc=self.cont_mean(x), scale=torch.exp(0.5 * self.cont_logvar(x)))
-        return critic_score, dist_dis, dist_cont if return_latents is True else critic_score
+        dist_cont = distributions.Normal(
+            loc=self.cont_mean(x), scale=torch.exp(0.5 * self.cont_logvar(x))
+        )
+        return (
+            critic_score,
+            dist_dis,
+            dist_cont if return_latents is True else critic_score,
+        )

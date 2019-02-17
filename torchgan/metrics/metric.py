@@ -1,9 +1,11 @@
-__all__ = ['EvaluationMetric']
+__all__ = ["EvaluationMetric"]
+
 
 class EvaluationMetric(object):
     r"""
     Base class for all Evaluation Metrics
     """
+
     def __init__(self):
         self.arg_map = {}
 

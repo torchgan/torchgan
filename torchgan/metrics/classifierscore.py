@@ -4,7 +4,8 @@ import torchvision
 from .metric import EvaluationMetric
 from ..utils import reduce
 
-__all__ = ['ClassifierScore']
+__all__ = ["ClassifierScore"]
+
 
 class ClassifierScore(EvaluationMetric):
     r"""
@@ -22,9 +23,12 @@ class ClassifierScore(EvaluationMetric):
             it to the classifier. Look up the documentation of the torchvision models for this transforms.
         sample_size (int): Batch Size for calculation of Classifier Score.
     """
+
     def __init__(self, classifier=None, transform=None, sample_size=1):
         super(ClassifierScore, self).__init__()
-        self.classifier = torchvision.models.inception_v3(True) if classifier is None else classifier
+        self.classifier = (
+            torchvision.models.inception_v3(True) if classifier is None else classifier
+        )
         self.classifier.eval()
         self.transform = transform
         self.sample_size = sample_size
@@ -56,7 +60,7 @@ class ClassifierScore(EvaluationMetric):
         p = F.softmax(x, dim=1)
         q = torch.mean(p, dim=0)
         kl = torch.sum(p * (F.log_softmax(x, dim=1) - torch.log(q)), dim=1)
-        return torch.exp(reduce(kl, 'mean')).data
+        return torch.exp(reduce(kl, "mean")).data
 
     def metric_ops(self, generator, device):
         r"""Defines the set of operations necessary to compute the ClassifierScore.

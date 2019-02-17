@@ -1,11 +1,13 @@
 from .visualize import *
 from .backends import *
+
 if TENSORBOARD_LOGGING == 1:
     from tensorboardX import SummaryWriter
 if VISDOM_LOGGING == 1:
     import visdom
 
-__all__ = ['Logger']
+__all__ = ["Logger"]
+
 
 class Logger(object):
     r"""Base Logger class. It controls the executions of all the Visualizers and is deeply
@@ -39,19 +41,36 @@ class Logger(object):
             sampling.
         nrow (int, optional): Number of rows in which the image is to be stored.
     """
-    def __init__(self, trainer, losses_list, metrics_list=None, visdom_port=8097,
-                 log_dir=None, writer=None, nrow=8, test_noise=None):
+
+    def __init__(
+        self,
+        trainer,
+        losses_list,
+        metrics_list=None,
+        visdom_port=8097,
+        log_dir=None,
+        writer=None,
+        nrow=8,
+        test_noise=None,
+    ):
         if TENSORBOARD_LOGGING == 1:
             self.writer = SummaryWriter(log_dir) if writer is None else writer
         else:
             self.writer = None
         self.logger_end_epoch = []
         self.logger_mid_epoch = []
-        self.logger_end_epoch.append(ImageVisualize(trainer, writer=self.writer, test_noise=test_noise,
-                                                    nrow=nrow))
-        self.logger_mid_epoch.append(GradientVisualize(trainer.model_names, writer=self.writer))
+        self.logger_end_epoch.append(
+            ImageVisualize(
+                trainer, writer=self.writer, test_noise=test_noise, nrow=nrow
+            )
+        )
+        self.logger_mid_epoch.append(
+            GradientVisualize(trainer.model_names, writer=self.writer)
+        )
         if metrics_list is not None:
-            self.logger_end_epoch.append(MetricVisualize(metrics_list, writer=self.writer))
+            self.logger_end_epoch.append(
+                MetricVisualize(metrics_list, writer=self.writer)
+            )
         self.logger_mid_epoch.append(LossVisualize(losses_list, writer=self.writer))
 
     def get_loss_viz(self):
@@ -95,8 +114,10 @@ class Logger(object):
             trainer (torchgan.trainer.Trainer): The base trainer used for training.
         """
         for logger in self.logger_mid_epoch:
-            if type(logger).__name__ == "LossVisualize" or\
-               type(logger).__name__ == "GradientVisualize":
+            if (
+                type(logger).__name__ == "LossVisualize"
+                or type(logger).__name__ == "GradientVisualize"
+            ):
                 logger(trainer, lock_console=True)
             else:
                 logger(*args, lock_console=True)
