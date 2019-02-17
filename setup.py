@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-import os
 import io
+import os
 import re
 import shutil
 import sys
-from setuptools import setup, find_packages
-from pkg_resources import get_distribution, DistributionNotFound
+
+from pkg_resources import DistributionNotFound, get_distribution
+from setuptools import find_packages, setup
 
 
 def read(*names, **kwargs):

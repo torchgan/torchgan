@@ -1,6 +1,7 @@
 import torch
-from .loss import GeneratorLoss, DiscriminatorLoss
+
 from .functional import mutual_information_penalty
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = ["MutualInformationPenalty"]
 

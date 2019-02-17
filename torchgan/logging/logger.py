@@ -1,5 +1,5 @@
-from .visualize import *
 from .backends import *
+from .visualize import *
 
 if TENSORBOARD_LOGGING == 1:
     from tensorboardX import SummaryWriter

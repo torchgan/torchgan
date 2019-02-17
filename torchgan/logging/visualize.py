@@ -1,6 +1,7 @@
 import torch
 import torchvision
-from ..models.model import Generator, Discriminator
+
+from ..models.model import Discriminator, Generator
 from .backends import *
 
 if TENSORBOARD_LOGGING == 1:

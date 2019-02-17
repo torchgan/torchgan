@@ -1,6 +1,7 @@
 import torch
-from .loss import GeneratorLoss, DiscriminatorLoss
+
 from .functional import auxiliary_classification_loss
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = ["AuxiliaryClassifierGeneratorLoss", "AuxiliaryClassifierDiscriminatorLoss"]
 

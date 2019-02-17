@@ -1,6 +1,7 @@
 import torch
-from .loss import GeneratorLoss, DiscriminatorLoss
+
 from ..utils import reduce
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = ["HistoricalAverageGeneratorLoss", "HistoricalAverageDiscriminatorLoss"]
 

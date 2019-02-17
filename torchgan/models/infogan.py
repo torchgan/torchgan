@@ -1,8 +1,9 @@
 import torch
+import torch.distributions as distributions
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.distributions as distributions
-from .dcgan import DCGANGenerator, DCGANDiscriminator
+
+from .dcgan import DCGANDiscriminator, DCGANGenerator
 
 __all__ = ["InfoGANGenerator", "InfoGANDiscriminator"]
 

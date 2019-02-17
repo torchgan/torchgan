@@ -1,10 +1,11 @@
 import torch
-from .loss import GeneratorLoss, DiscriminatorLoss
+
 from .functional import (
+    wasserstein_discriminator_loss,
     wasserstein_generator_loss,
     wasserstein_gradient_penalty,
-    wasserstein_discriminator_loss,
 )
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = [
     "WassersteinGeneratorLoss",

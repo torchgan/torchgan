@@ -1,11 +1,13 @@
 import os
+from inspect import _empty, signature
+from warnings import warn
+
 import torch
 import torchvision
-from warnings import warn
-from inspect import signature, _empty
-from ..models.model import Generator, Discriminator
-from ..losses.loss import GeneratorLoss, DiscriminatorLoss
+
 from ..logging.logger import Logger
+from ..losses.loss import DiscriminatorLoss, GeneratorLoss
+from ..models.model import Discriminator, Generator
 
 __all__ = ["Trainer"]
 

@@ -1,7 +1,9 @@
+from math import ceil, log2
+
 import torch.nn as nn
 import torch.nn.functional as F
-from .model import Generator, Discriminator
-from math import ceil, log2
+
+from .model import Discriminator, Generator
 
 __all__ = ["DCGANGenerator", "DCGANDiscriminator"]
 

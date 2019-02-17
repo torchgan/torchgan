@@ -1,8 +1,10 @@
-import torch
 from math import ceil, log
+
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from ..models import Generator, Discriminator
+
+from ..models import Discriminator, Generator
 
 __all__ = ["AutoEncodingGenerator", "AutoEncodingDiscriminator"]
 

@@ -1,10 +1,11 @@
-import unittest
-import torch
 import os
 import sys
+import unittest
+
+import torch
+from torchgan.metrics import *
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-from torchgan.metrics import *
 
 
 class TestMetrics(unittest.TestCase):

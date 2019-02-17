@@ -1,6 +1,7 @@
-from ..utils import getenv_defaults
 import os
 import subprocess
+
+from ..utils import getenv_defaults
 
 # Backends available for Visualization
 

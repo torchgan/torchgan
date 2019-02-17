@@ -1,11 +1,12 @@
 import torch
-from .loss import GeneratorLoss, DiscriminatorLoss
+
 from ..models import AutoEncodingDiscriminator
 from .functional import (
+    energy_based_discriminator_loss,
     energy_based_generator_loss,
     energy_based_pulling_away_term,
-    energy_based_discriminator_loss,
 )
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = [
     "EnergyBasedGeneratorLoss",

@@ -1,19 +1,20 @@
-import unittest
-import torch
 import os
 import sys
+import unittest
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-import torchvision
-from torch.optim import Adam
+import torch
 import torch.utils.data as data
+import torchvision
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
-from torchgan.metrics import *
+from torch.optim import Adam
 from torchgan import *
-from torchgan.models import *
 from torchgan.losses import *
+from torchgan.metrics import *
+from torchgan.models import *
 from torchgan.trainer import Trainer
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 
 def mnist_dataloader():

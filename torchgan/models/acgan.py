@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from .dcgan import DCGANGenerator, DCGANDiscriminator
+
+from .dcgan import DCGANDiscriminator, DCGANGenerator
 
 __all__ = ["ACGANGenerator", "ACGANDiscriminator"]
 

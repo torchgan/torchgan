@@ -1,5 +1,6 @@
-import torch
 from pkgutil import iter_modules
+
+import torch
 
 
 def reduce(x, reduction=None):

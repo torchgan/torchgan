@@ -1,9 +1,10 @@
 import torch
-from .loss import GeneratorLoss, DiscriminatorLoss
+
 from .functional import (
-    boundary_equilibrium_generator_loss,
     boundary_equilibrium_discriminator_loss,
+    boundary_equilibrium_generator_loss,
 )
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = ["BoundaryEquilibriumGeneratorLoss", "BoundaryEquilibriumDiscriminatorLoss"]
 

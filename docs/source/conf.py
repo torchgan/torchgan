@@ -19,9 +19,11 @@
 #
 import os
 import sys
+import time
+
+import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-import sphinx_rtd_theme
 
 # -- General configuration ------------------------------------------------
 
@@ -104,7 +106,6 @@ master_doc = "index"
 
 # General information about the project.
 project = u"torchgan"
-import time
 
 copyright = u"2018-{}, Avik Pal & Aniket Das".format(time.strftime("%Y"))
 author = "Avik Pal & Aniket Das"

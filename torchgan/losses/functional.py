@@ -1,6 +1,7 @@
 import torch
-import torch.nn.functional as F
 import torch.autograd as autograd
+import torch.nn.functional as F
+
 from ..utils import reduce
 
 __all__ = [

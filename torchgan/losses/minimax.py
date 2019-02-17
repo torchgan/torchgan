@@ -1,6 +1,7 @@
 import torch
-from .loss import GeneratorLoss, DiscriminatorLoss
-from .functional import minimax_generator_loss, minimax_discriminator_loss
+
+from .functional import minimax_discriminator_loss, minimax_generator_loss
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = ["MinimaxGeneratorLoss", "MinimaxDiscriminatorLoss"]
 

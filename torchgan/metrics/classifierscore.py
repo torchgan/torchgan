@@ -1,8 +1,9 @@
 import torch
 import torch.nn.functional as F
 import torchvision
-from .metric import EvaluationMetric
+
 from ..utils import reduce
+from .metric import EvaluationMetric
 
 __all__ = ["ClassifierScore"]
 

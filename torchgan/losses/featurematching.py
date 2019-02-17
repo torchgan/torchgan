@@ -1,7 +1,8 @@
 import torch
 import torch.nn.functional as F
-from .loss import GeneratorLoss, DiscriminatorLoss
+
 from ..utils import reduce
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = ["FeatureMatchingGeneratorLoss"]
 

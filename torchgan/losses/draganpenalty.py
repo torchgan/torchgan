@@ -1,6 +1,7 @@
 import torch
-from .loss import GeneratorLoss, DiscriminatorLoss
+
 from .functional import dragan_gradient_penalty
+from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = ["DraganGradientPenalty"]
 
