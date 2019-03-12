@@ -1,0 +1,49 @@
+build: off
+
+environment:
+  global:
+      WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\windows_sdk.cmd"
+
+  matrix:
+      - PYTHON: "C:\\Python36-x64"
+        PYTHON_VERSION: "3.6.x"
+        ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        PLAT_NAME: "win-amd64"
+        PY_TAG: "cp36"
+
+      - PYTHON: "C:\\Python37-x64"
+        PYTHON_VERSION: "3.7.x"
+        ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        PLAT_NAME: "win-amd64"
+        PY_TAG: "cp37"
+
+platform:
+  - x64
+
+cache:
+  - C:\Users\appveyor\Downloads -> setup.py
+
+install:
+  # Log out the python version just so we know it
+  - ECHO "%PYTHON_VERSION%"
+
+  # update path to use installed pip
+  - set PATH=%PYTHON%\\scripts;%PATH%
+  - "%PYTHON%/python -m pip install --upgrade pip"
+
+  # Install torch with pip and other dependencies
+  - pip install "https://download.pytorch.org/whl/cpu/torch-1.0.1-%PY_TAG%-%PY_TAG%m-win_amd64.whl"
+  - pip install torchvision scipy 
+
+  # Now install spiceypy
+  - IF "%ARCH%"=="32" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86) ELSE (ECHO "probably a 64bit build")
+  - IF "%ARCH%"=="64" (call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64) ELSE (ECHO "probably a 32bit build")
+  - "%PYTHON%/python setup.py install"
+
+  - ECHO "Installed TorchGAN!"
+
+test_script:
+  - "%PYTHON%/python setup.py test"
+
