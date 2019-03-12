@@ -61,9 +61,10 @@ We appreciate all contributions. If you are planning to contribute bug-fixes, pl
 
 The `examples` directory contain a set of tutorials to get you started with torchgan. Some of these notebooks are available on Google Colab (*they are linked in the tutorials themselves*). Additionally, these tutorials can be tried out using the binder link provided.
 
-### Authors
+### Contributors
 
-This package is currently maintained by
+This package has been developed by
 * Avik Pal (@avik-pal)
 * Aniket Das (@Aniket1998)
-* Yatin Dandi (@yatindandi)
+
+We appreciate all contributors. For a full list of contributors go [here](https://github.com/torchgan/torchgan/graphs/contributors).
