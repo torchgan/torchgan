@@ -2,8 +2,11 @@ import os
 from inspect import _empty, signature
 from warnings import warn
 
+import time
 import torch
 import torchvision
+import fastprogress
+from fastprogress import master_bar, progress_bar
 
 from ..logging.logger import Logger
 from ..losses.loss import DiscriminatorLoss, GeneratorLoss
@@ -443,41 +446,46 @@ class Trainer(object):
         """
         for name in self.optimizer_names:
             getattr(self, name).zero_grad()
-
+        
+        mb=master_bar(range(self.epochs))
         for epoch in range(self.start_epoch, self.epochs):
+            
+            for j in progress_bar(range(100)):
 
-            for model in self.model_names:
-                getattr(self, model).train()
+                for model in self.model_names:
+                    getattr(self, model).train()
 
-            for data in data_loader:
-                if type(data) is tuple or type(data) is list:
-                    self.real_inputs = data[0].to(self.device)
-                    self.labels = data[1].to(self.device)
-                elif type(data) is torch.Tensor:
-                    self.real_inputs = data.to(self.device)
+                for data in data_loader:
+                    if type(data) is tuple or type(data) is list:
+                        self.real_inputs = data[0].to(self.device)
+                        self.labels = data[1].to(self.device)
+                    elif type(data) is torch.Tensor:
+                        self.real_inputs = data.to(self.device)
+                    else:
+                        self.real_inputs = data
+
+                    lgen, ldis, gen_iter, dis_iter = self.train_iter()
+                    self.loss_information["generator_losses"] += lgen
+                    self.loss_information["discriminator_losses"] += ldis
+                    self.loss_information["generator_iters"] += gen_iter
+                    self.loss_information["discriminator_iters"] += dis_iter
+
+                    self.logger.run_mid_epoch(self)
+
+                if "save_items" in kwargs:
+                    self.save_model(epoch, kwargs["save_items"])
                 else:
-                    self.real_inputs = data
+                    self.save_model(epoch)
 
-                lgen, ldis, gen_iter, dis_iter = self.train_iter()
-                self.loss_information["generator_losses"] += lgen
-                self.loss_information["discriminator_losses"] += ldis
-                self.loss_information["generator_iters"] += gen_iter
-                self.loss_information["discriminator_iters"] += dis_iter
+                for model in self.model_names:
+                    getattr(self, model).eval()
 
-                self.logger.run_mid_epoch(self)
-
-            if "save_items" in kwargs:
-                self.save_model(epoch, kwargs["save_items"])
-            else:
-                self.save_model(epoch)
-
-            for model in self.model_names:
-                getattr(self, model).eval()
-
-            self.eval_ops(**kwargs)
-            self.logger.run_end_epoch(self, epoch)
-            self.optim_ops()
-
+                self.eval_ops(**kwargs)
+                self.logger.run_end_epoch(self, epoch)
+                self.optim_ops()
+            mb.first_bar.comment = f'first bar stat'
+            mb.write(f'Finished epoch {epoch}.')
+            
         print("Training of the Model is Complete")
 
     def complete(self, **kwargs):
