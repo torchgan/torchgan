@@ -453,7 +453,7 @@ class ImageVisualize(Visualize):
         """
         save_path = "{}/epoch{}_{}.png".format(trainer.recon, self.step, model)
         print("Generating and Saving Images to {}".format(save_path))
-        torchvision.utils.save_image(image, save_path, nrow=self.nrow)
+        torchvision.utils.save_image(image, save_path)
 
     def log_visdom(self, trainer, image, model):
         r"""Logs a generated image in visdom at the end of an epoch.
@@ -472,7 +472,7 @@ class ImageVisualize(Visualize):
                 generator = getattr(trainer, model)
                 with torch.no_grad():
                     image = generator(*self.test_noise[pos])
-                    image = torchvision.utils.make_grid(image)
+                    image = torchvision.utils.make_grid(image, nrow=self.nrow, normalize=True, range=(-1, 1))
                     super(ImageVisualize, self).__call__(
                         trainer, image, model, **kwargs
                     )
