@@ -5,16 +5,12 @@ from ..losses.loss import DiscriminatorLoss, GeneratorLoss
 from ..models.model import Discriminator, Generator
 from .base_trainer import BaseTrainer
 
-__all__ = ["Trainer"]
+__all__ = ["ParallelTrainer"]
 
 
-class Trainer(BaseTrainer):
-    r"""Standard Trainer for various GANs. This has been designed to work only on one GPU in case
-    you are using a GPU.
-
-    Most of the functionalities provided by the Trainer are flexible enough and can be customized by
-    simply passing different arguments. You can train anything from a simple DCGAN to complex CycleGANs
-    without ever having to subclass this ``Trainer``.
+class ParallelTrainer(BaseTrainer):
+    r"""MultiGPU Trainer for GANs. Use the ``Trainer`` class for training on a single GPU or a CPU
+    machine.
 
     Args:
         models (dict): A dictionary containing a mapping between the variable name, storing the
@@ -24,11 +20,11 @@ class Trainer(BaseTrainer):
         losses_list (list): A list of the Loss Functions that need to be minimized. For a list of
             pre-defined losses look at :mod:`torchgan.losses`. All losses in the list must be a
             subclass of atleast ``GeneratorLoss`` or ``DiscriminatorLoss``.
+        devices (list): Devices in which the operations are to be carried out. If you
+            are using a CPU machine or a single GPU machine use the Trainer class.
         metrics_list (list, optional): List of Metric Functions that need to be logged. For a list of
             pre-defined metrics look at :mod:`torchgan.metrics`. All losses in the list must be a
             subclass of ``EvaluationMetric``.
-        device (torch.device, optional): Device in which the operation is to be carried out. If you
-            are using a CPU machine make sure that you change it for proper functioning.
         ncritic (int, optional): Setting it to a value will make the discriminator train that many
             times more than the generator. If it is set to a negative value the generator will be
             trained that many times more than the discriminator.
@@ -51,7 +47,7 @@ class Trainer(BaseTrainer):
     Any other argument that you need to store in the object can be simply passed via keyword arguments.
 
     Example:
-        >>> dcgan = Trainer(
+        >>> dcgan = ParallelTrainer(
                     {"generator": {"name": DCGANGenerator, "args": {"out_channels": 1, "step_channels":
                                    16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002,
                                    "betas": (0.5, 0.999)}}},
@@ -59,6 +55,7 @@ class Trainer(BaseTrainer):
                                        "step_channels": 16}, "optimizer": {"var": "opt_discriminator",
                                        "name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
                     [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
+                    [0, 1, 2],
                     sample_size=64, epochs=20)
     """
 
@@ -66,8 +63,8 @@ class Trainer(BaseTrainer):
         self,
         models,
         losses_list,
+        devices,
         metrics_list=None,
-        device=torch.device("cuda:0"),
         ncritic=1,
         epochs=5,
         sample_size=8,
@@ -79,10 +76,10 @@ class Trainer(BaseTrainer):
         nrow=8,
         **kwargs
     ):
-        super(Trainer, self).__init__(
+        super(ParallelTrainer, self).__init__(
             losses_list,
             metrics_list=metrics_list,
-            device=device,
+            device=devices[0],
             ncritic=ncritic,
             epochs=epochs,
             sample_size=sample_size,
@@ -94,6 +91,8 @@ class Trainer(BaseTrainer):
             nrow=nrow,
             **kwargs
         )
+
+        self.devices = devices
         self.model_names = []
         self.optimizer_names = []
         self.schedulers = []
@@ -103,6 +102,10 @@ class Trainer(BaseTrainer):
                 setattr(self, key, (model["name"](**model["args"])).to(self.device))
             else:
                 setattr(self, key, (model["name"]()).to(self.device))
+            for m in getattr(self, key)._modules:
+                getattr(self, key)._modules[m] = torch.nn.DataParallel(
+                    getattr(self, key)._modules[m], device_ids=devices
+                )
             opt = model["optimizer"]
             opt_name = "optimizer_{}".format(key)
             if "var" in opt:
