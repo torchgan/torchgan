@@ -36,14 +36,14 @@ readme = open("README.md").read()
 
 VERSION = find_version("torchgan", "__init__.py")
 
-requirements = ["numpy", "pillow==5.3.0", "torch", "torchvision"]
+requirements = ["numpy", "pillow==5.3.0"]
 
 setup(
     # Metadata
     name="torchgan",
     version=VERSION,
     author="Avik Pal & Aniket Das",
-    author_email="torchgan@gmail.com",
+    author_email="avikpal@cse.iitk.ac.in",
     url="https://github.com/torchgan/torchgan",
     description="Research Framework for easy and efficient training of GANs based on Pytorch",
     long_description=readme,

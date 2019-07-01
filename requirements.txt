@@ -1,4 +1,2 @@
 numpy
 pillow==5.3.0
-torch
-torchvision
