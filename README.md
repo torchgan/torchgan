@@ -2,6 +2,7 @@
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Build Status](https://travis-ci.org/torchgan/torchgan.svg?branch=master)](https://travis-ci.org/torchgan/torchgan)
+[![Build status](https://ci.appveyor.com/api/projects/status/lqo3bbsew83839c0/branch/master?svg=true)](https://ci.appveyor.com/project/avik-pal/torchgan/branch/master)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 [![Slack](https://img.shields.io/badge/chat-on%20slack-yellow.svg)](https://join.slack.com/t/torchgan/shared_invite/enQtNDkyMTQ2ODAyMzczLWEyZjc1ZDdmNTc3ZmNiODFmMmY2YjM2OTZmZTRlOTc3YWE5MTliZTBkZTkwNzQ2MDIwZmI0MGRjYjQwYTczMzQ)
 [![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://torchgan.readthedocs.io/en/stable/)
@@ -61,9 +62,10 @@ We appreciate all contributions. If you are planning to contribute bug-fixes, pl
 
 The `examples` directory contain a set of tutorials to get you started with torchgan. Some of these notebooks are available on Google Colab (*they are linked in the tutorials themselves*). Additionally, these tutorials can be tried out using the binder link provided.
 
-### Authors
+### Contributors
 
-This package is currently maintained by
+This package has been developed by
 * Avik Pal (@avik-pal)
 * Aniket Das (@Aniket1998)
-* Yatin Dandi (@yatindandi)
+
+We appreciate all contributors. For a full list of contributors go [here](https://github.com/torchgan/torchgan/graphs/contributors).

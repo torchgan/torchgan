@@ -17,6 +17,7 @@ class ClassifierScore(EvaluationMetric):
     Args:
         classifier (torch.nn.Module, optional) : The model to be used as a base to compute the classifier
             score. If ``None`` is passed the pretrained ``torchvision.models.inception_v3`` is used.
+
             .. note ::
                 Ensure that the classifier is on the same ``device`` as the Trainer to avoid sudden
                 crash.

@@ -15,3 +15,8 @@ ignore:
   - "setup.py"
   - "./test"
   - "./docs"
+
+comment:
+  layout: "header, diff"
+  behavior: default
+  require_changes: no
