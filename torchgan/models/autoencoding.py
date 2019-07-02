@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..models import Discriminator, Generator
+from .model import Discriminator, Generator
 
 __all__ = ["AutoEncodingGenerator", "AutoEncodingDiscriminator"]
 
