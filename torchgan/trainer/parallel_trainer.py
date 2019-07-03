@@ -131,7 +131,7 @@ class ParallelTrainer(BaseTrainer):
             metrics_list,
             log_dir=log_dir,
             nrow=nrow,
-            test_noise=test_noise
+            test_noise=test_noise,
         )
 
         self._store_loss_maps()

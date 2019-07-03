@@ -122,7 +122,7 @@ class Logger(object):
             else:
                 logger(*args, lock_console=True)
 
-    def run_end_epoch(self, trainer, epoch, *args):
+    def run_end_epoch(self, trainer, epoch, time_duration, *args):
         r"""Runs the Visualizers at the end of one epoch.
 
         Args:
@@ -130,6 +130,7 @@ class Logger(object):
             epoch (int): The epoch number which was completed.
         """
         print("Epoch {} Summary".format(epoch + 1))
+        print("Epoch time duration : {}".format(time_duration))
         for logger in self.logger_mid_epoch:
             if type(logger).__name__ == "LossVisualize":
                 logger(trainer)

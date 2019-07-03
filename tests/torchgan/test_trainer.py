@@ -8,6 +8,7 @@ import torchvision
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 from torch.optim import Adam
+
 from torchgan import *
 from torchgan.losses import *
 from torchgan.metrics import *
@@ -25,7 +26,7 @@ def mnist_dataloader():
             [
                 transforms.Pad((2, 2)),
                 transforms.ToTensor(),
-                transforms.Normalize(mean=(0.5, ), std=(0.5, )),
+                transforms.Normalize(mean=(0.5,), std=(0.5,)),
             ]
         ),
         download=True,

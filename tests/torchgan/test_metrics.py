@@ -3,6 +3,7 @@ import sys
 import unittest
 
 import torch
+
 from torchgan.metrics import *
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))

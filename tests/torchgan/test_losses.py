@@ -4,6 +4,7 @@ import unittest
 
 import torch
 import torch.distributions as ds
+
 from torchgan.losses import *
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))

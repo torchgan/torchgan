@@ -1,2 +1,2 @@
-from .metric import *
 from .classifierscore import *
+from .metric import *

@@ -3,6 +3,7 @@ import sys
 import unittest
 
 import torch
+
 from torchgan.layers import *
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
@@ -104,7 +105,7 @@ class TestLayers(unittest.TestCase):
         layer = DenseBlock2d(5, 3, 16, BottleneckBlock2d, 3, padding=1)
 
         self.match_layer_outputs(layer, input, (16, 83, 10, 10))
-    
+
     def test_self_attention2d(self):
         input = torch.rand(16, 88, 10, 10)
 
@@ -116,7 +117,7 @@ class TestLayers(unittest.TestCase):
         input = torch.rand(16, 3, 10, 10)
 
         layer = SpectralNorm2d(
-            torch.nn.Conv2d(3, 10, 3, padding=1),
-            power_iterations=10)
+            torch.nn.Conv2d(3, 10, 3, padding=1), power_iterations=10
+        )
 
         self.match_layer_outputs(layer, input, (16, 10, 10, 10))

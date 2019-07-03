@@ -1,2 +1,2 @@
-from .visualize import *
 from .logger import *
+from .visualize import *
