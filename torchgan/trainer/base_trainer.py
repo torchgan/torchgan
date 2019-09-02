@@ -402,10 +402,7 @@ class BaseTrainer(object):
             for model in self.model_names:
                 getattr(self, model).train()
 
-            for progress_bar_iter, data in zip(
-                progress_bar(range(len(data_loader)), parent=master_bar_iter),
-                data_loader,
-            ):
+            for data in progress_bar(data_loader, parent=master_bar_iter):
 
                 master_bar_iter.child.comment = f"Epoch {epoch+1} Progress"
 
