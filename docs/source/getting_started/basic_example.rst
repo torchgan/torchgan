@@ -17,7 +17,7 @@ First we import the necessary files
     import torchvision.transforms as transforms
     import torchgan
     from torchgan.models import DCGANGenerator, DCGANDiscriminator
-    from torchgan.losses import MinimaxGeneratorLoss, MinimaxDiscriminatorLoss,
+    from torchgan.losses import MinimaxGeneratorLoss, MinimaxDiscriminatorLoss
     from torchgan.trainer import Trainer
 
 Now write a function which returns the ``data loader`` for ``CIFAR10``.
