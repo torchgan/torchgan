@@ -9,6 +9,7 @@ The :mod:`torchgan` package consists of various generative adversarial networks 
     :maxdepth: 2
 
     getting_started/installation
+    getting_started/citing
     getting_started/dependencies
     getting_started/philosophy
     getting_started/contributing

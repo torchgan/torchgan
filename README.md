@@ -54,6 +54,21 @@ The documentation for this package can be generated locally.
 
 Now open the corresponding file from `build` directory.
 
+### Supporting and Citing
+
+This software was developed as part of academic research. If you would like to help support it, please star the repository. If you use this software as part of your research, teaching, or other activities, we would be grateful if you could cite the following:
+
+```
+@misc{pal2019torchgan,
+    title={{TorchGAN: A Flexible Framework for GAN Training and Evaluation}},
+    author={Avik Pal, and Aniket Das},
+    year={2019},
+    eprint={1909.03410},
+    archivePrefix={arXiv},
+    primaryClass={cs.LG}
+}
+```
+
 ### Contributing
 
 We appreciate all contributions. If you are planning to contribute bug-fixes, please do so without any further discussion. If you plan to contribute new features, utility functions or extensions, please first open an issue and discuss the feature with us. For more detailed guidelines head over to the official documentation.
@@ -71,28 +86,4 @@ This package has been developed by
 This project exists thanks to all the people who contribute. 
 
 <a href="https://github.com/torchgan/torchgan/graphs/contributors"><img src="https://opencollective.com/torchgan/contributors.svg?width=890&button=false" /></a>
-
-
-### Backers
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/torchgan#backer)]
-
-<a href="https://opencollective.com/torchgan#backers" target="_blank"><img src="https://opencollective.com/torchgan/backers.svg?width=890"></a>
-
-
-### Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/torchgan#sponsor)]
-
-<a href="https://opencollective.com/torchgan/sponsor/0/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/1/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/2/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/3/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/4/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/5/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/6/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/7/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/8/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/torchgan/sponsor/9/website" target="_blank"><img src="https://opencollective.com/torchgan/sponsor/9/avatar.svg"></a>
-
 
