@@ -47,4 +47,3 @@ install:
 
 test_script:
   - "%PYTHON%/python setup.py test"
-
