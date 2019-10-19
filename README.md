@@ -69,6 +69,10 @@ This software was developed as part of academic research. If you would like to h
 }
 ```
 
+List of publications & submissions using TorchGAN (please open a pull request to add missing entries):
+
+* [Ward2ICU: A Vital Signs Dataset of Inpatients from the General Ward](https://arxiv.org/abs/1910.00752) [3778 Healthcare, CMU, Mater Dei Healthcare, Oct, 2019]
+
 ### Contributing
 
 We appreciate all contributions. If you are planning to contribute bug-fixes, please do so without any further discussion. If you plan to contribute new features, utility functions or extensions, please first open an issue and discuss the feature with us. For more detailed guidelines head over to the official documentation.
