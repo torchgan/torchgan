@@ -87,7 +87,6 @@ This package has been developed by
 * Avik Pal (@avik-pal)
 * Aniket Das (@Aniket1998)
 
-This project exists thanks to all the people who contribute. 
+This project exists thanks to all the people who contribute.
 
 <a href="https://github.com/torchgan/torchgan/graphs/contributors"><img src="https://opencollective.com/torchgan/contributors.svg?width=890&button=false" /></a>
-

@@ -31,6 +31,7 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
+
 VERSION = find_version("torchgan", "__init__.py")
 
 requirements = ["numpy", "pillow==5.3.0", "fastprogress"]

@@ -8,7 +8,6 @@ import torchvision
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 from torch.optim import Adam
-
 from torchgan import *
 from torchgan.losses import *
 from torchgan.metrics import *

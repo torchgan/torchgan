@@ -16,4 +16,3 @@ if you could cite the following:
         archivePrefix={arXiv},
         primaryClass={cs.LG}
     }
-

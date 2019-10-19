@@ -4,7 +4,6 @@ import unittest
 
 import torch
 import torch.distributions as distributions
-
 from torchgan.models import *
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
