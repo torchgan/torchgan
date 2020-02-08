@@ -34,8 +34,7 @@ jobs:
         - conda info -a
         - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
         - source activate test-environment
-        - conda install pytorch-cpu torchvision-cpu -c pytorch
-
+        - conda install pytorch torchvision cpuonly -c pytorch
       install:
         - python setup.py install
         - pip install --upgrade pytest pytest-cov coverage scipy
@@ -46,5 +45,3 @@ jobs:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
         - source deactivate
-
-  # Auto Deploy to Pip and Conda from here itself
