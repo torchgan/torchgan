@@ -34,7 +34,7 @@ def find_version(*file_paths):
 
 VERSION = find_version("torchgan", "__init__.py")
 
-requirements = ["numpy", "pillow==5.3.0", "fastprogress"]
+requirements = ["numpy", "pillow>=6.2.0", "fastprogress==0.1.20"]
 
 setup(
     # Metadata
