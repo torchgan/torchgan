@@ -34,8 +34,7 @@ install:
   - "%PYTHON%/python -m pip install --upgrade pip"
 
   # Install torch with pip and other dependencies
-  - pip install "https://download.pytorch.org/whl/cpu/torch-1.1.0-%PY_TAG%-%PY_TAG%m-win_amd64.whl"
-  - pip install "https://download.pytorch.org/whl/cpu/torchvision-0.3.0-%PY_TAG%-%PY_TAG%m-win_amd64.whl"
+  - pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
   - pip install scipy
 
   # Now install spiceypy
