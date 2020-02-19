@@ -1,15 +1,16 @@
-name: Python package
+name: CI Testing
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
-      max-parallel: 4
+      fail-fast: false
       matrix:
+        os: [ubuntu-18.04, windows-2016, macOS-10.15]
         python-version: [3.6, 3.7]
+        pytorch-version: [1.1, 1.4, nightly]
 
     steps:
     - uses: actions/checkout@v1
@@ -22,14 +23,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install scipy
+    - name: Install Pytorch 1.1
+      if: matrix.pytorch-version == "1.1"
+        pip install torch==1.1.0 torchvision==0.3.0 -f https://download.pytorch.org/whl/torch_stable.html
+    - name: Install Pytorch 1.4
+      if: matrix.pytorch-version == "1.4"
         pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+    - name: Install Pytorch Nightly
+      if: matrix.pytorch-version == "nightly"
+        pip install --pre torch torchvision -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
     - name: Lint with flake8
       run: |
         pip install flake8
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=79 --statistics
     - name: Test with pytest
       run: |
         pip install pytest
