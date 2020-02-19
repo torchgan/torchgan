@@ -1,15 +1,22 @@
+<div align="center">
+
 # TorchGAN
 
+**Framework for easy and efficient training of GANs based on Pytorch**
+
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Build Status](https://travis-ci.org/torchgan/torchgan.svg?branch=master)](https://travis-ci.org/torchgan/torchgan)
-[![Backers on Open Collective](https://opencollective.com/torchgan/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/torchgan/sponsors/badge.svg)](#sponsors) [![Build status](https://ci.appveyor.com/api/projects/status/lqo3bbsew83839c0/branch/master?svg=true)](https://ci.appveyor.com/project/avik-pal/torchgan/branch/master)
+[![Downloads](https://pepy.tech/badge/torchgan)](https://pepy.tech/project/torchgan)
+[![Downloads](https://pepy.tech/badge/torchgan/month)](https://pepy.tech/project/torchgan/month)
+[![Downloads](https://pepy.tech/badge/torchgan/week)](https://pepy.tech/project/torchgan/week)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 [![Slack](https://img.shields.io/badge/chat-on%20slack-yellow.svg)](https://join.slack.com/t/torchgan/shared_invite/enQtNDkyMTQ2ODAyMzczLWEyZjc1ZDdmNTc3ZmNiODFmMmY2YjM2OTZmZTRlOTc3YWE5MTliZTBkZTkwNzQ2MDIwZmI0MGRjYjQwYTczMzQ)
+
 [![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://torchgan.readthedocs.io/en/stable/)
 [![Latest Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://torchgan.readthedocs.io/en/latest/)
-[![codecov](https://codecov.io/gh/torchgan/torchgan/branch/master/graph/badge.svg)](https://codecov.io/gh/torchgan/torchgan)
+[![Codecov](https://codecov.io/gh/torchgan/torchgan/branch/master/graph/badge.svg)](https://codecov.io/gh/torchgan/torchgan)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/torchgan/torchgan/master)
 [![PyPI version](https://badge.fury.io/py/torchgan.svg)](https://badge.fury.io/py/torchgan)
+</div>
 
 TorchGAN is a [Pytorch](https://pytorch.org) based framework for designing and developing Generative Adversarial Networks. This framework has been designed to provide building blocks for popular GANs and also to allow customization for cutting edge research. Using TorchGAN's modular structure allows
 
@@ -17,18 +24,30 @@ TorchGAN is a [Pytorch](https://pytorch.org) based framework for designing and d
 * Plug in your new Loss Function, new Architecture, etc. with the traditional ones.
 * Seamlessly visualize the training with a variety of logging backends.
 
+| System / PyTorch Version | 1.2 | 1.3 | 1.4 | nightly |
+| :---: | :---: | :---: | :---: | :---: |
+| Linux py3.6 (Travis) |  <center>—</center> |  <center>—</center> | [![Build Status](https://travis-ci.org/torchgan/torchgan.svg?branch=master)](https://travis-ci.org/torchgan/torchgan) |  <center>—</center> |
+| Linux py3.6 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| Linux py3.7 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| OSX py3.6 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| OSX py3.7 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| Windows py3.6 (Appveyor) |  <center>—</center> |  <center>—</center> | [![Build status](https://ci.appveyor.com/api/projects/status/lqo3bbsew83839c0?svg=true)](https://ci.appveyor.com/project/avik-pal/torchgan) |  <center>—</center> |
+| Windows py3.6 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| Windows py3.7 (Appveyor) |  <center>—</center> |  <center>—</center> | [![Build status](https://ci.appveyor.com/api/projects/status/lqo3bbsew83839c0?svg=true)](https://ci.appveyor.com/project/avik-pal/torchgan) |  <center>—</center> |
+| Windows py3.7 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+
 ### Installation
 
 Using pip (for stable release):
 
 ```bash
-  $ pip3 install torchgan
+  $ pip install torchgan
 ```
 
 Using pip (for latest master):
 
 ```bash
-  $ pip3 install git+https://github.com/torchgan/torchgan.git
+  $ pip install git+https://github.com/torchgan/torchgan.git
 ```
 
 From source:
