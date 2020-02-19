@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: [ubuntu-18.04, windows-2016, macOS-10.15]
         python-version: [3.6, 3.7]
-        pytorch-version: [1.1, 1.4, nightly]
+        pytorch-version: [1.1, 1.4, 'nightly']
 
     steps:
     - uses: actions/checkout@v1
@@ -33,7 +33,7 @@ jobs:
       run: |
         pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Install Pytorch Nightly
-      if: matrix.pytorch-version == nightly
+      if: matrix.pytorch-version == 'nightly'
       run: |
         pip install --pre torch torchvision -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
     - name: Lint with flake8
