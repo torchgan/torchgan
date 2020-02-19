@@ -1,6 +1,5 @@
 numpy
 pillow
-fastprogress==0.1.20
 scipy
 torch>=1.2
 torchvision>=0.4

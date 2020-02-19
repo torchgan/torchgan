@@ -5,7 +5,6 @@ from warnings import warn
 
 import torch
 import torchvision
-from fastprogress import master_bar, progress_bar
 
 from ..logging.logger import Logger
 from ..losses.loss import DiscriminatorLoss, GeneratorLoss
@@ -393,18 +392,14 @@ class BaseTrainer(object):
         for name in self.optimizer_names:
             getattr(self, name).zero_grad()
 
-        master_bar_iter = master_bar(range(self.start_epoch, self.epochs))
-        for epoch in master_bar_iter:
+        for epoch in range(self.start_epoch, self.epochs):
 
             start_time = time.time()
-            master_bar_iter.first_bar.comment = f"Training Progress"
 
             for model in self.model_names:
                 getattr(self, model).train()
 
-            for data in progress_bar(data_loader, parent=master_bar_iter):
-
-                master_bar_iter.child.comment = f"Epoch {epoch+1} Progress"
+            for data in data_loader:
 
                 if type(data) is tuple or type(data) is list:
                     self.real_inputs = data[0].to(self.device)
