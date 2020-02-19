@@ -1,5 +1,5 @@
 numpy
-pillow>=6.2.0
+pillow
 fastprogress==0.1.20
 scipy
 torch>=1.2
