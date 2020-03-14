@@ -74,6 +74,22 @@ The documentation for this package can be generated locally.
 
 Now open the corresponding file from `build` directory.
 
+### Tutorials
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/torchgan/torchgan/master)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/torchgan)
+
+The `tutorials` directory contain a set of tutorials to get you started with torchgan. These tutorials can be run using Google Colab or Binder. It is highly recommended that you follow the tutorials in the following order.
+
+1. Introductory Tutorials:
+    - [Tutorial 1: Introduction to TorchGAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%201:%20Introduction%20to%20TorchGAN.ipynb)
+    - [Tutorial 2: Custom Loss Functions](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%202:%20Custom%20Loss%20Functions.ipynb)
+2. Intermediate Tutorials:
+    - [Tutorial 3: CycleGAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%203:%20CycleGAN.ipynb)
+    - [Tutorial 4: Self Attention GAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%204:%20Self%20Attention%20GAN.ipynb)
+3. Advanced Tutorials:
+    - [Tutorial 5: Adversarial Autoencoder](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%205:%20Adversarial%20Autoencoder.ipynb)
+
 ### Supporting and Citing
 
 This software was developed as part of academic research. If you would like to help support it, please star the repository. If you use this software as part of your research, teaching, or other activities, we would be grateful if you could cite the following:
@@ -96,13 +112,6 @@ List of publications & submissions using TorchGAN (please open a pull request to
 ### Contributing
 
 We appreciate all contributions. If you are planning to contribute bug-fixes, please do so without any further discussion. If you plan to contribute new features, utility functions or extensions, please first open an issue and discuss the feature with us. For more detailed guidelines head over to the official documentation.
-
-### Tutorials
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/torchgan/torchgan/master)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/torchgan)
-
-The `tutorials` directory contain a set of tutorials to get you started with torchgan. These tutorials can be run using Google Colab or Binder.
 
 ### Contributors
 
