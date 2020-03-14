@@ -82,13 +82,13 @@ Now open the corresponding file from `build` directory.
 The `tutorials` directory contain a set of tutorials to get you started with torchgan. These tutorials can be run using Google Colab or Binder. It is highly recommended that you follow the tutorials in the following order.
 
 1. Introductory Tutorials:
-    - [Tutorial 1: Introduction to TorchGAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%201:%20Introduction%20to%20TorchGAN.ipynb)
-    - [Tutorial 2: Custom Loss Functions](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%202:%20Custom%20Loss%20Functions.ipynb)
+    - [Tutorial 1: Introduction to TorchGAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%201.%20Introduction%20to%20TorchGAN.ipynb)
+    - [Tutorial 2: Custom Loss Functions](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%202.%20Custom%20Loss%20Functions.ipynb)
 2. Intermediate Tutorials:
-    - [Tutorial 3: CycleGAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%203:%20CycleGAN.ipynb)
-    - [Tutorial 4: Self Attention GAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%204:%20Self%20Attention%20GAN.ipynb)
+    - [Tutorial 3: CycleGAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%203.%20CycleGAN.ipynb)
+    - [Tutorial 4: Self Attention GAN](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%204.%20Self%20Attention%20GAN.ipynb)
 3. Advanced Tutorials:
-    - [Tutorial 5: Adversarial Autoencoder](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%205:%20Adversarial%20Autoencoder.ipynb)
+    - [Tutorial 5: Adversarial Autoencoder](https://github.com/torchgan/torchgan/blob/master/tutorials/Tutorial%205.%20Adversarial%20Autoencoder.ipynb)
 
 ### Supporting and Citing
 
