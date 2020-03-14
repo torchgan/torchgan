@@ -9,3 +9,4 @@ model/
 images/
 mnist/
 .ipynb_checkpoints
+datasets
