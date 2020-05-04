@@ -33,8 +33,12 @@ class MinimaxGeneratorLoss(GeneratorLoss):
             loss for the generator.
     """
 
-    def __init__(self, reduction="mean", nonsaturating=True, override_train_ops=None):
-        super(MinimaxGeneratorLoss, self).__init__(reduction, override_train_ops)
+    def __init__(
+        self, reduction="mean", nonsaturating=True, override_train_ops=None
+    ):
+        super(MinimaxGeneratorLoss, self).__init__(
+            reduction, override_train_ops
+        )
         self.nonsaturating = nonsaturating
 
     def forward(self, dgz):
@@ -77,8 +81,12 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
             if the default ``train_ops`` is not to be used.
     """
 
-    def __init__(self, label_smoothing=0.0, reduction="mean", override_train_ops=None):
-        super(MinimaxDiscriminatorLoss, self).__init__(reduction, override_train_ops)
+    def __init__(
+        self, label_smoothing=0.0, reduction="mean", override_train_ops=None
+    ):
+        super(MinimaxDiscriminatorLoss, self).__init__(
+            reduction, override_train_ops
+        )
         self.label_smoothing = label_smoothing
 
     def forward(self, dx, dgz):
@@ -96,5 +104,8 @@ class MinimaxDiscriminatorLoss(DiscriminatorLoss):
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
         return minimax_discriminator_loss(
-            dx, dgz, label_smoothing=self.label_smoothing, reduction=self.reduction
+            dx,
+            dgz,
+            label_smoothing=self.label_smoothing,
+            reduction=self.reduction,
         )

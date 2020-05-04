@@ -59,7 +59,9 @@ class DCGANGenerator(Generator):
         if batchnorm is True:
             model.append(
                 nn.Sequential(
-                    nn.ConvTranspose2d(self.encoding_dims, d, 4, 1, 0, bias=use_bias),
+                    nn.ConvTranspose2d(
+                        self.encoding_dims, d, 4, 1, 0, bias=use_bias
+                    ),
                     nn.BatchNorm2d(d),
                     nl,
                 )
@@ -76,20 +78,25 @@ class DCGANGenerator(Generator):
         else:
             model.append(
                 nn.Sequential(
-                    nn.ConvTranspose2d(self.encoding_dims, d, 4, 1, 0, bias=use_bias),
+                    nn.ConvTranspose2d(
+                        self.encoding_dims, d, 4, 1, 0, bias=use_bias
+                    ),
                     nl,
                 )
             )
             for i in range(num_repeats):
                 model.append(
                     nn.Sequential(
-                        nn.ConvTranspose2d(d, d // 2, 4, 2, 1, bias=use_bias), nl
+                        nn.ConvTranspose2d(d, d // 2, 4, 2, 1, bias=use_bias),
+                        nl,
                     )
                 )
                 d = d // 2
 
         model.append(
-            nn.Sequential(nn.ConvTranspose2d(d, self.ch, 4, 2, 1, bias=True), last_nl)
+            nn.Sequential(
+                nn.ConvTranspose2d(d, self.ch, 4, 2, 1, bias=True), last_nl
+            )
         )
         self.model = nn.Sequential(*model)
         self._weight_initializer()
@@ -152,9 +159,17 @@ class DCGANDiscriminator(Discriminator):
         self.n = step_channels
         use_bias = not batchnorm
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
-        last_nl = nn.LeakyReLU(0.2) if last_nonlinearity is None else last_nonlinearity
+        last_nl = (
+            nn.LeakyReLU(0.2)
+            if last_nonlinearity is None
+            else last_nonlinearity
+        )
         d = self.n
-        model = [nn.Sequential(nn.Conv2d(self.input_dims, d, 4, 2, 1, bias=True), nl)]
+        model = [
+            nn.Sequential(
+                nn.Conv2d(self.input_dims, d, 4, 2, 1, bias=True), nl
+            )
+        ]
         if batchnorm is True:
             for i in range(num_repeats):
                 model.append(
@@ -168,10 +183,14 @@ class DCGANDiscriminator(Discriminator):
         else:
             for i in range(num_repeats):
                 model.append(
-                    nn.Sequential(nn.Conv2d(d, d * 2, 4, 2, 1, bias=use_bias), nl)
+                    nn.Sequential(
+                        nn.Conv2d(d, d * 2, 4, 2, 1, bias=use_bias), nl
+                    )
                 )
                 d *= 2
-        self.disc = nn.Sequential(nn.Conv2d(d, 1, 4, 1, 0, bias=use_bias), last_nl)
+        self.disc = nn.Sequential(
+            nn.Conv2d(d, 1, 4, 1, 0, bias=use_bias), last_nl
+        )
         self.model = nn.Sequential(*model)
         self._weight_initializer()
 

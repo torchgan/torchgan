@@ -6,7 +6,10 @@ from .functional import (
 )
 from .loss import DiscriminatorLoss, GeneratorLoss
 
-__all__ = ["BoundaryEquilibriumGeneratorLoss", "BoundaryEquilibriumDiscriminatorLoss"]
+__all__ = [
+    "BoundaryEquilibriumGeneratorLoss",
+    "BoundaryEquilibriumDiscriminatorLoss",
+]
 
 
 class BoundaryEquilibriumGeneratorLoss(GeneratorLoss):
@@ -107,7 +110,9 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
             A tuple of 3 loss values, namely the ``total loss``, ``loss due to real data`` and ``loss
             due to fake data``.
         """
-        return boundary_equilibrium_discriminator_loss(dx, dgz, self.k, self.reduction)
+        return boundary_equilibrium_discriminator_loss(
+            dx, dgz, self.k, self.reduction
+        )
 
     def set_k(self, k=0.0):
         r"""Change the default value of k
@@ -186,7 +191,9 @@ class BoundaryEquilibriumDiscriminatorLoss(DiscriminatorLoss):
             ):
                 raise Exception("GAN model requires labels for training")
             batch_size = real_inputs.size(0)
-            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
+            noise = torch.randn(
+                batch_size, generator.encoding_dims, device=device
+            )
             if generator.label_type == "generated":
                 label_gen = torch.randint(
                     0, generator.num_classes, (batch_size,), device=device

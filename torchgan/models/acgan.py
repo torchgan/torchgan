@@ -52,7 +52,9 @@ class ACGANGenerator(DCGANGenerator):
         )
         self.encoding_dims = encoding_dims
         self.num_classes = num_classes
-        self.label_embeddings = nn.Embedding(self.num_classes, self.encoding_dims)
+        self.label_embeddings = nn.Embedding(
+            self.num_classes, self.encoding_dims
+        )
 
     def forward(self, z, y):
         r"""Calculates the output tensor on passing the encoding ``z`` through the Generator.
@@ -115,7 +117,11 @@ class ACGANDiscriminator(DCGANDiscriminator):
             last_nonlinearity,
             label_type="none",
         )
-        last_nl = nn.LeakyReLU(0.2) if last_nonlinearity is None else last_nonlinearity
+        last_nl = (
+            nn.LeakyReLU(0.2)
+            if last_nonlinearity is None
+            else last_nonlinearity
+        )
         self.input_dims = in_channels
         self.num_classes = num_classes
         d = self.n * 2 ** (in_size.bit_length() - 4)

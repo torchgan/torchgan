@@ -99,7 +99,9 @@ class ParallelTrainer(BaseTrainer):
         for key, model in models.items():
             self.model_names.append(key)
             if "args" in model:
-                setattr(self, key, (model["name"](**model["args"])).to(self.device))
+                setattr(
+                    self, key, (model["name"](**model["args"])).to(self.device)
+                )
             else:
                 setattr(self, key, (model["name"]()).to(self.device))
             for m in getattr(self, key)._modules:
@@ -113,7 +115,9 @@ class ParallelTrainer(BaseTrainer):
             self.optimizer_names.append(opt_name)
             model_params = getattr(self, key).parameters()
             if "args" in opt:
-                setattr(self, opt_name, (opt["name"](model_params, **opt["args"])))
+                setattr(
+                    self, opt_name, (opt["name"](model_params, **opt["args"]))
+                )
             else:
                 setattr(self, opt_name, (opt["name"](model_params)))
             if "scheduler" in opt:
@@ -123,7 +127,9 @@ class ParallelTrainer(BaseTrainer):
                         sched["name"](getattr(self, opt_name), **sched["args"])
                     )
                 else:
-                    self.schedulers.append(sched["name"](getattr(self, opt_name)))
+                    self.schedulers.append(
+                        sched["name"](getattr(self, opt_name))
+                    )
 
         self.logger = Logger(
             self,

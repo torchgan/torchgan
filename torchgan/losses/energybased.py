@@ -121,7 +121,9 @@ class EnergyBasedPullingAwayTerm(GeneratorLoss):
     """
 
     def __init__(self, pt_ratio=0.1, override_train_ops=None):
-        super(EnergyBasedPullingAwayTerm, self).__init__("mean", override_train_ops)
+        super(EnergyBasedPullingAwayTerm, self).__init__(
+            "mean", override_train_ops
+        )
         self.pt_ratio = pt_ratio
 
     def forward(self, dgz, d_hid):
@@ -184,10 +186,16 @@ class EnergyBasedPullingAwayTerm(GeneratorLoss):
                     "EBGAN PT requires the Discriminator to be a AutoEncoder"
                 )
             if not generator.label_type == "none":
-                raise Exception("EBGAN PT supports models which donot require labels")
+                raise Exception(
+                    "EBGAN PT supports models which donot require labels"
+                )
             if not discriminator.embeddings:
-                raise Exception("EBGAN PT requires the embeddings for loss computation")
-            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
+                raise Exception(
+                    "EBGAN PT requires the embeddings for loss computation"
+                )
+            noise = torch.randn(
+                batch_size, generator.encoding_dims, device=device
+            )
             optimizer_generator.zero_grad()
             fake = generator(noise)
             d_hid, dgz = discriminator(fake)
@@ -258,7 +266,9 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return energy_based_discriminator_loss(dx, dgz, self.margin, self.reduction)
+        return energy_based_discriminator_loss(
+            dx, dgz, self.margin, self.reduction
+        )
 
     def train_ops(
         self,

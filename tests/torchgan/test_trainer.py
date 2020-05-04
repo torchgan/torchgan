@@ -68,7 +68,11 @@ class TestTrainer(unittest.TestCase):
         network_params = {
             "generator": {
                 "name": ConditionalGANGenerator,
-                "args": {"num_classes": 10, "out_channels": 1, "step_channels": 4},
+                "args": {
+                    "num_classes": 10,
+                    "out_channels": 1,
+                    "step_channels": 4,
+                },
                 "optimizer": {
                     "name": Adam,
                     "args": {"lr": 0.0002, "betas": (0.5, 0.999)},
@@ -76,7 +80,11 @@ class TestTrainer(unittest.TestCase):
             },
             "discriminator": {
                 "name": ConditionalGANDiscriminator,
-                "args": {"num_classes": 10, "in_channels": 1, "step_channels": 4},
+                "args": {
+                    "num_classes": 10,
+                    "in_channels": 1,
+                    "step_channels": 4,
+                },
                 "optimizer": {
                     "name": Adam,
                     "args": {"lr": 0.0002, "betas": (0.5, 0.999)},
@@ -97,7 +105,11 @@ class TestTrainer(unittest.TestCase):
         network_params = {
             "generator": {
                 "name": ACGANGenerator,
-                "args": {"num_classes": 10, "out_channels": 1, "step_channels": 4},
+                "args": {
+                    "num_classes": 10,
+                    "out_channels": 1,
+                    "step_channels": 4,
+                },
                 "optimizer": {
                     "name": Adam,
                     "args": {"lr": 0.0002, "betas": (0.5, 0.999)},
@@ -105,7 +117,11 @@ class TestTrainer(unittest.TestCase):
             },
             "discriminator": {
                 "name": ACGANDiscriminator,
-                "args": {"num_classes": 10, "in_channels": 1, "step_channels": 4},
+                "args": {
+                    "num_classes": 10,
+                    "in_channels": 1,
+                    "step_channels": 4,
+                },
                 "optimizer": {
                     "name": Adam,
                     "args": {"lr": 0.0002, "betas": (0.5, 0.999)},

@@ -1,6 +1,9 @@
 import torch
 
-from .functional import least_squares_discriminator_loss, least_squares_generator_loss
+from .functional import (
+    least_squares_discriminator_loss,
+    least_squares_generator_loss,
+)
 from .loss import DiscriminatorLoss, GeneratorLoss
 
 __all__ = ["LeastSquaresGeneratorLoss", "LeastSquaresDiscriminatorLoss"]
@@ -30,7 +33,9 @@ class LeastSquaresGeneratorLoss(GeneratorLoss):
     """
 
     def __init__(self, reduction="mean", c=1.0, override_train_ops=None):
-        super(LeastSquaresGeneratorLoss, self).__init__(reduction, override_train_ops)
+        super(LeastSquaresGeneratorLoss, self).__init__(
+            reduction, override_train_ops
+        )
         self.c = c
 
     def forward(self, dgz):
@@ -71,7 +76,9 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
         override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
 
-    def __init__(self, reduction="mean", a=0.0, b=1.0, override_train_ops=None):
+    def __init__(
+        self, reduction="mean", a=0.0, b=1.0, override_train_ops=None
+    ):
         super(LeastSquaresDiscriminatorLoss, self).__init__(
             reduction, override_train_ops
         )
@@ -92,4 +99,6 @@ class LeastSquaresDiscriminatorLoss(DiscriminatorLoss):
         Returns:
             scalar if reduction is applied else Tensor with dimensions (N, \*).
         """
-        return least_squares_discriminator_loss(dx, dgz, self.a, self.b, self.reduction)
+        return least_squares_discriminator_loss(
+            dx, dgz, self.a, self.b, self.reduction
+        )

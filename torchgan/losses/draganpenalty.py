@@ -33,7 +33,9 @@ class DraganGradientPenalty(DiscriminatorLoss):
         override_train_ops (function, optional): Function to be used in place of the default ``train_ops``
     """
 
-    def __init__(self, reduction="mean", lambd=10.0, k=1.0, override_train_ops=None):
+    def __init__(
+        self, reduction="mean", lambd=10.0, k=1.0, override_train_ops=None
+    ):
         super(DraganGradientPenalty, self).__init__(reduction)
         self.lambd = lambd
         self.override_train_ops = override_train_ops
@@ -104,12 +106,19 @@ class DraganGradientPenalty(DiscriminatorLoss):
             alpha = torch.rand(
                 size=real_inputs.shape, device=device, requires_grad=True
             )
-            beta = torch.rand(size=real_inputs.shape, device=device, requires_grad=True)
+            beta = torch.rand(
+                size=real_inputs.shape, device=device, requires_grad=True
+            )
             optimizer_discriminator.zero_grad()
-            interpolate = real_inputs + (1 - alpha) * 0.5 * real_inputs.std() * beta
+            interpolate = (
+                real_inputs + (1 - alpha) * 0.5 * real_inputs.std() * beta
+            )
             if generator.label_type == "generated":
                 label_gen = torch.randint(
-                    0, generator.num_classes, (real_inputs.size(0),), device=device
+                    0,
+                    generator.num_classes,
+                    (real_inputs.size(0),),
+                    device=device,
                 )
             if discriminator.label_type == "none":
                 d_interpolate = discriminator(interpolate)

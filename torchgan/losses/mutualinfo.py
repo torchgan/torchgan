@@ -31,7 +31,9 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
     """
 
     def __init__(self, lambd=1.0, reduction="mean", override_train_ops=None):
-        super(MutualInformationPenalty, self).__init__(reduction, override_train_ops)
+        super(MutualInformationPenalty, self).__init__(
+            reduction, override_train_ops
+        )
         self.lambd = lambd
 
     def forward(self, c_dis, c_cont, dist_dis, dist_cont):
@@ -75,7 +77,9 @@ class MutualInformationPenalty(GeneratorLoss, DiscriminatorLoss):
                 batch_size,
             )
         else:
-            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
+            noise = torch.randn(
+                batch_size, generator.encoding_dims, device=device
+            )
             optimizer_discriminator.zero_grad()
             optimizer_generator.zero_grad()
             fake = generator(noise, dis_code, cont_code)

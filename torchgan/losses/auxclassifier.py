@@ -3,7 +3,10 @@ import torch
 from .functional import auxiliary_classification_loss
 from .loss import DiscriminatorLoss, GeneratorLoss
 
-__all__ = ["AuxiliaryClassifierGeneratorLoss", "AuxiliaryClassifierDiscriminatorLoss"]
+__all__ = [
+    "AuxiliaryClassifierGeneratorLoss",
+    "AuxiliaryClassifierDiscriminatorLoss",
+]
 
 
 class AuxiliaryClassifierGeneratorLoss(GeneratorLoss):
@@ -72,7 +75,9 @@ class AuxiliaryClassifierGeneratorLoss(GeneratorLoss):
         noise = torch.randn(batch_size, generator.encoding_dims, device=device)
         optimizer_generator.zero_grad()
         if generator.label_type == "none":
-            raise Exception("Incorrect Model: ACGAN generator must require labels")
+            raise Exception(
+                "Incorrect Model: ACGAN generator must require labels"
+            )
         if generator.label_type == "required":
             fake = generator(noise, labels)
         elif generator.label_type == "generated":

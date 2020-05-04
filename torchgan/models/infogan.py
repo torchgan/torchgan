@@ -130,7 +130,9 @@ class InfoGANDiscriminator(DCGANDiscriminator):
         )
 
         self.latent_nl = (
-            nn.LeakyReLU(0.2) if latent_nonlinearity is None else latent_nonlinearity
+            nn.LeakyReLU(0.2)
+            if latent_nonlinearity is None
+            else latent_nonlinearity
         )
         d = self.n * 2 ** (in_size.bit_length() - 4)
         if batchnorm is True:
@@ -155,7 +157,9 @@ class InfoGANDiscriminator(DCGANDiscriminator):
             return x
         critic_score = self.disc(x)
         x = self.dist_conv(x).view(-1, x.size(1))
-        dist_dis = distributions.OneHotCategorical(logits=self.dis_categorical(x))
+        dist_dis = distributions.OneHotCategorical(
+            logits=self.dis_categorical(x)
+        )
         dist_cont = distributions.Normal(
             loc=self.cont_mean(x), scale=torch.exp(0.5 * self.cont_logvar(x))
         )

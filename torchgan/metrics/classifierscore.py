@@ -29,7 +29,9 @@ class ClassifierScore(EvaluationMetric):
     def __init__(self, classifier=None, transform=None, sample_size=1):
         super(ClassifierScore, self).__init__()
         self.classifier = (
-            torchvision.models.inception_v3(True) if classifier is None else classifier
+            torchvision.models.inception_v3(True)
+            if classifier is None
+            else classifier
         )
         self.classifier.eval()
         self.transform = transform
@@ -74,7 +76,9 @@ class ClassifierScore(EvaluationMetric):
         Returns:
             The Classifier Score (scalar quantity)
         """
-        noise = torch.randn(self.sample_size, generator.encoding_dims, device=device)
+        noise = torch.randn(
+            self.sample_size, generator.encoding_dims, device=device
+        )
         img = generator(noise).detach()
         score = self.__call__(img)
         return score

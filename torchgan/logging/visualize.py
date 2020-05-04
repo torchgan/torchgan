@@ -32,7 +32,9 @@ class Visualize(object):
             don't want to start a new SummaryWriter.
     """
 
-    def __init__(self, visualize_list, visdom_port=8097, log_dir=None, writer=None):
+    def __init__(
+        self, visualize_list, visdom_port=8097, log_dir=None, writer=None
+    ):
         self.logs = {}
         for item in visualize_list:
             name = type(item).__name__
@@ -153,7 +155,9 @@ class LossVisualize(Visualize):
                     "Losses/{}-Discriminator".format(name), val[1], self.step
                 )
             else:
-                self.writer.add_scalar("Losses/{}".format(name), val, self.step)
+                self.writer.add_scalar(
+                    "Losses/{}".format(name), val, self.step
+                )
 
     def log_console(self, running_losses):
         r"""Console logging function. This function logs the mean ``generator`` and ``discriminator``
@@ -227,14 +231,18 @@ class LossVisualize(Visualize):
                     [self.step],
                     win=name1,
                     update="append",
-                    opts=dict(title=name1, xlabel="Time Step", ylabel="Loss Value"),
+                    opts=dict(
+                        title=name1, xlabel="Time Step", ylabel="Loss Value"
+                    ),
                 )
                 self.vis.line(
                     [val[1]],
                     [self.step],
                     win=name2,
                     update="append",
-                    opts=dict(title=name2, xlabel="Time Step", ylabel="Loss Value"),
+                    opts=dict(
+                        title=name2, xlabel="Time Step", ylabel="Loss Value"
+                    ),
                 )
             else:
                 self.vis.line(
@@ -242,7 +250,9 @@ class LossVisualize(Visualize):
                     [self.step],
                     win=name,
                     update="append",
-                    opts=dict(title=name, xlabel="Time Step", ylabel="Loss Value"),
+                    opts=dict(
+                        title=name, xlabel="Time Step", ylabel="Loss Value"
+                    ),
                 )
 
     def __call__(self, trainer, **kwargs):
@@ -279,7 +289,9 @@ class MetricVisualize(Visualize):
         r"""Tensorboard logging function. This function logs the values of the individual metrics.
         """
         for name, value in self.logs.items():
-            self.writer.add_scalar("Metrics/{}".format(name), value[-1], self.step)
+            self.writer.add_scalar(
+                "Metrics/{}".format(name), value[-1], self.step
+            )
 
     def log_console(self):
         r"""Console logging function. This function logs the mean metrics.
@@ -296,7 +308,9 @@ class MetricVisualize(Visualize):
                 [self.step],
                 win=name,
                 update="append",
-                opts=dict(title=name, xlabel="Time Step", ylabel="Metric Value"),
+                opts=dict(
+                    title=name, xlabel="Time Step", ylabel="Metric Value"
+                ),
             )
 
 
@@ -314,7 +328,9 @@ class GradientVisualize(Visualize):
             don't want to start a new SummaryWriter.
     """
 
-    def __init__(self, visualize_list, visdom_port=8097, log_dir=None, writer=None):
+    def __init__(
+        self, visualize_list, visdom_port=8097, log_dir=None, writer=None
+    ):
         if visualize_list is None or len(visualize_list) == 0:
             raise Exception("Gradient Visualizer requires list of model names")
         self.logs = {}
@@ -345,7 +361,9 @@ class GradientVisualize(Visualize):
             name (str): Name of the model whose gradients are to be logged.
         """
         print(
-            "{} Gradients : {}".format(name, self.logs[name][len(self.logs[name]) - 1])
+            "{} Gradients : {}".format(
+                name, self.logs[name][len(self.logs[name]) - 1]
+            )
         )
 
     def log_visdom(self, name):
@@ -384,7 +402,9 @@ class GradientVisualize(Visualize):
         """
         if CONSOLE_LOGGING == 1:
             for key, val in self.logs.items():
-                print("{} Mean Gradients : {}".format(key, sum(val) / len(val)))
+                print(
+                    "{} Mean Gradients : {}".format(key, sum(val) / len(val))
+                )
 
     def __call__(self, trainer, **kwargs):
         for name in trainer.model_names:
@@ -425,7 +445,9 @@ class ImageVisualize(Visualize):
         for model in trainer.model_names:
             if isinstance(getattr(trainer, model), Generator):
                 self.test_noise.append(
-                    getattr(trainer, model).sampler(trainer.sample_size, trainer.device)
+                    getattr(trainer, model).sampler(
+                        trainer.sample_size, trainer.device
+                    )
                     if test_noise is None
                     else test_noise
                 )
@@ -440,7 +462,9 @@ class ImageVisualize(Visualize):
             image (Image): The generated image.
             model (str): The name of the model which generated the ``image``.
         """
-        self.writer.add_image("Generated Samples/{}".format(model), image, self.step)
+        self.writer.add_image(
+            "Generated Samples/{}".format(model), image, self.step
+        )
 
     def log_console(self, trainer, image, model):
         r"""Saves a generated image at the end of an epoch. The path where the image is
@@ -463,7 +487,9 @@ class ImageVisualize(Visualize):
             image (Image): The generated image.
             model (str): The name of the model which generated the ``image``.
         """
-        self.vis.image(image, opts=dict(caption="Generated Samples/{}".format(model)))
+        self.vis.image(
+            image, opts=dict(caption="Generated Samples/{}".format(model))
+        )
 
     def __call__(self, trainer, **kwargs):
         pos = 0

@@ -151,7 +151,9 @@ class BaseTrainer(object):
         """
         if self.last_retained_checkpoint == self.retain_checkpoints:
             self.last_retained_checkpoint = 0
-        save_path = self.checkpoints + str(self.last_retained_checkpoint) + ".model"
+        save_path = (
+            self.checkpoints + str(self.last_retained_checkpoint) + ".model"
+        )
         self.last_retained_checkpoint += 1
         print("Saving Model at '{}'".format(save_path))
         model = {
@@ -195,7 +197,11 @@ class BaseTrainer(object):
                 from scratch. So make sure that item was saved.
         """
         if load_path == "":
-            load_path = self.checkpoints + str(self.last_retained_checkpoint) + ".model"
+            load_path = (
+                self.checkpoints
+                + str(self.last_retained_checkpoint)
+                + ".model"
+            )
         print("Loading Model From '{}'".format(load_path))
         try:
             checkpoint = torch.load(load_path)
@@ -213,7 +219,9 @@ class BaseTrainer(object):
                 else:
                     setattr(self, load_items, checkpoint["load_items"])
         except:
-            raise Exception("Model could not be loaded from {}.".format(load_path))
+            raise Exception(
+                "Model could not be loaded from {}.".format(load_path)
+            )
 
     def _get_argument_maps(self, default_map, func):
         r"""Extracts the signature of the `func`. Then it returns the list of arguments that
@@ -239,8 +247,14 @@ class BaseTrainer(object):
                 if arg_name in self.__dict__:
                     arg_map.update({arg: arg_name})
             else:
-                if arg_name not in self.__dict__ and arg != "kwargs" and arg != "args":
-                    raise Exception("Argument : {} not present.".format(arg_name))
+                if (
+                    arg_name not in self.__dict__
+                    and arg != "kwargs"
+                    and arg != "args"
+                ):
+                    raise Exception(
+                        "Argument : {} not present.".format(arg_name)
+                    )
                 else:
                     arg_map.update({arg: arg_name})
         return arg_map
@@ -306,7 +320,9 @@ class BaseTrainer(object):
         loss_logs = self.logger.get_loss_viz()
         grad_logs = self.logger.get_grad_viz()
         for name, loss in self.losses.items():
-            if isinstance(loss, GeneratorLoss) and isinstance(loss, DiscriminatorLoss):
+            if isinstance(loss, GeneratorLoss) and isinstance(
+                loss, DiscriminatorLoss
+            ):
                 # NOTE(avik-pal): In most cases this loss is meant to optimize the Discriminator
                 #                 but we might need to think of a better solution
                 if self.loss_information["generator_iters"] % self.ngen == 0:
@@ -325,9 +341,14 @@ class BaseTrainer(object):
                         # NOTE(avik-pal): We assume that it is a Discriminator Loss by default.
                         ldis, dis_iter = ldis + cur_loss, dis_iter + 1
                 for model_name in self.model_names:
-                    grad_logs.update_grads(model_name, getattr(self, model_name))
+                    grad_logs.update_grads(
+                        model_name, getattr(self, model_name)
+                    )
             elif isinstance(loss, GeneratorLoss):
-                if self.loss_information["discriminator_iters"] % self.ncritic == 0:
+                if (
+                    self.loss_information["discriminator_iters"] % self.ncritic
+                    == 0
+                ):
                     cur_loss = loss.train_ops(
                         **self._get_arguments(self.loss_arg_maps[name])
                     )
@@ -358,7 +379,9 @@ class BaseTrainer(object):
             for name, metric in self.metrics.items():
                 metric_logs = self.logger.get_metric_viz()
                 metric_logs.logs[name].append(
-                    metric.metric_ops(**self._get_arguments(self.metric_arg_maps[name]))
+                    metric.metric_ops(
+                        **self._get_arguments(self.metric_arg_maps[name])
+                    )
                 )
 
     def optim_ops(self):

@@ -28,7 +28,9 @@ __all__ = [
 def minimax_generator_loss(dgz, nonsaturating=True, reduction="mean"):
     if nonsaturating:
         target = torch.ones_like(dgz)
-        return F.binary_cross_entropy_with_logits(dgz, target, reduction=reduction)
+        return F.binary_cross_entropy_with_logits(
+            dgz, target, reduction=reduction
+        )
     else:
         target = torch.zeros_like(dgz)
         return -1.0 * F.binary_cross_entropy_with_logits(
@@ -39,8 +41,12 @@ def minimax_generator_loss(dgz, nonsaturating=True, reduction="mean"):
 def minimax_discriminator_loss(dx, dgz, label_smoothing=0.0, reduction="mean"):
     target_ones = torch.ones_like(dgz) * (1.0 - label_smoothing)
     target_zeros = torch.zeros_like(dx)
-    loss = F.binary_cross_entropy_with_logits(dx, target_ones, reduction=reduction)
-    loss += F.binary_cross_entropy_with_logits(dgz, target_zeros, reduction=reduction)
+    loss = F.binary_cross_entropy_with_logits(
+        dx, target_ones, reduction=reduction
+    )
+    loss += F.binary_cross_entropy_with_logits(
+        dgz, target_zeros, reduction=reduction
+    )
     return loss
 
 
@@ -52,13 +58,17 @@ def least_squares_generator_loss(dgz, c=1.0, reduction="mean"):
 
 
 def least_squares_discriminator_loss(dx, dgz, a=0.0, b=1.0, reduction="mean"):
-    return 0.5 * (reduce((dx - b) ** 2, reduction) + reduce((dgz - a) ** 2, reduction))
+    return 0.5 * (
+        reduce((dx - b) ** 2, reduction) + reduce((dgz - a) ** 2, reduction)
+    )
 
 
 # Mutual Information Penalty
 
 
-def mutual_information_penalty(c_dis, c_cont, dist_dis, dist_cont, reduction="mean"):
+def mutual_information_penalty(
+    c_dis, c_cont, dist_dis, dist_cont, reduction="mean"
+):
     log_probs = torch.Tensor(
         [
             torch.mean(dist.log_prob(c))
@@ -97,7 +107,9 @@ def wasserstein_gradient_penalty(interpolate, d_interpolate, reduction="mean"):
 # Dragan Penalty
 
 
-def dragan_gradient_penalty(interpolate, d_interpolate, k=1.0, reduction="mean"):
+def dragan_gradient_penalty(
+    interpolate, d_interpolate, k=1.0, reduction="mean"
+):
     grad_outputs = torch.ones_like(d_interpolate)
     gradients = autograd.grad(
         outputs=d_interpolate,
@@ -135,7 +147,9 @@ def energy_based_pulling_away_term(d_hid):
     d_hid_normalized = F.normalize(d_hid, p=2, dim=0)
     n = d_hid_normalized.size(0)
     d_hid_normalized = d_hid_normalized.view(n, -1)
-    similarity = torch.matmul(d_hid_normalized, d_hid_normalized.transpose(1, 0))
+    similarity = torch.matmul(
+        d_hid_normalized, d_hid_normalized.transpose(1, 0)
+    )
     loss_pt = torch.sum(similarity ** 2) / (n * (n - 1))
     return loss_pt
 

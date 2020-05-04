@@ -71,7 +71,9 @@ class Logger(object):
             self.logger_end_epoch.append(
                 MetricVisualize(metrics_list, writer=self.writer)
             )
-        self.logger_mid_epoch.append(LossVisualize(losses_list, writer=self.writer))
+        self.logger_mid_epoch.append(
+            LossVisualize(losses_list, writer=self.writer)
+        )
 
     def get_loss_viz(self):
         r"""Get the LossVisualize object.
@@ -97,9 +99,13 @@ class Logger(object):
                 over. Otherwise it is executed after every call to the ``train_iter``.
         """
         if mid_epoch:
-            self.logger_mid_epoch.append(visualize(*args, writer=self.writer, **kwargs))
+            self.logger_mid_epoch.append(
+                visualize(*args, writer=self.writer, **kwargs)
+            )
         else:
-            self.logger_end_epoch.append(visualize(*args, writer=self.writer, **kwargs))
+            self.logger_end_epoch.append(
+                visualize(*args, writer=self.writer, **kwargs)
+            )
 
     def close(self):
         r"""Turns off the tensorboard ``SummaryWriter`` if it were created.

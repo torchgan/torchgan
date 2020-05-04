@@ -37,7 +37,9 @@ class TestLayers(unittest.TestCase):
     def test_transposed_residula_block2d(self):
         input = torch.rand(16, 3, 10, 10)
 
-        layer = ResidualBlockTranspose2d([3, 16, 32, 3], [3, 3, 1], paddings=[1, 1, 0])
+        layer = ResidualBlockTranspose2d(
+            [3, 16, 32, 3], [3, 3, 1], paddings=[1, 1, 0]
+        )
 
         self.match_layer_outputs(layer, input, (16, 3, 10, 10))
 
