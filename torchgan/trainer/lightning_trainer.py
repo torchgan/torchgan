@@ -15,7 +15,7 @@ from torchgan.models import Discriminator, Generator
 import pytorch_lightning as pl
 
 
-class LightningTrainer(pl.LightningModule):
+class LightningGANModule(pl.LightningModule):
     r"""Trainer for TorchGAN built on top of Pytorch Lightning. This shall be the
     default trainer post 0.1 release and all other trainers shall be deprecated.
     """
@@ -30,9 +30,10 @@ class LightningTrainer(pl.LightningModule):
         ncritic=1,
         sample_size=8,
         test_noise=None,
-        batch_size=1,
         **kwargs,
     ):
+        super().__init__()
+
         self.model_names = []
         self.optimizer_names = []
         self.schedulers = []
@@ -104,14 +105,12 @@ class LightningTrainer(pl.LightningModule):
                 self.metrics[type(metric).__name__] = metric
 
         self.sample_size = sample_size
-        self.batch_size = batch_size
 
         # Not needed but we need to store this to avoid errors.
         # Also makes life simpler
         self.noise = None
         self.real_inputs = None
         self.labels = None
-        self.batch_size = 1
 
         self.generator_steps = 0
         self.discriminator_steps = 0
@@ -123,6 +122,10 @@ class LightningTrainer(pl.LightningModule):
         else:
             self.ncritic = 1
             self.ngen = abs(ncritic)
+
+        # This exists for convenience. We will handle the device from data in
+        # the `training_step` function
+        self.device = torch.device("cpu")
 
         for key, val in kwargs.items():
             if key in self.__dict__:
@@ -137,23 +140,18 @@ class LightningTrainer(pl.LightningModule):
         self.train_dataloader_cached = train_dataloader
         self.val_dataloader_cached = val_dataloader
 
+        self._store_loss_maps()
+        self._store_metric_maps()
+
+
     def configure_optimizers(self):
         optimizers = [getattr(self, name) for name in self.optimizer_names]
         return optimizers  # , self.schedulers
 
     @pl.data_loader
     def train_dataloader(self):
-        # TODO: Test if this actually works
         train_dataloader_cached = self.train_dataloader_cached
-        del self.train_dataloader_cached
         return train_dataloader_cached
-
-    @pl.data_loader
-    def val_dataloader(self):
-        # TODO: Test if this actually works
-        val_dataloader_cached = self.val_dataloader_cached
-        del self.val_dataloader_cached
-        return val_dataloader_cached
 
     def _get_argument_maps(self, default_map, func):
         r"""Extracts the signature of the `func`. Then it returns the list of
@@ -179,11 +177,12 @@ class LightningTrainer(pl.LightningModule):
             if arg in default_map:
                 arg_name = default_map[arg]
             if sig_param.default is not _empty:
-                if arg_name in self.__dict__:
+                if arg_name in self.__dict__ or arg_name in self.__dict__["_modules"]:
                     arg_map.update({arg: arg_name})
             else:
                 if (
                     arg_name not in self.__dict__
+                    and arg_name not in self.__dict__["_modules"]
                     and arg != "kwargs"
                     and arg != "args"
                 ):
@@ -226,7 +225,13 @@ class LightningTrainer(pl.LightningModule):
         """
         args = {}
         for key, val in arg_map.items():
-            args[key] = self.__dict__[val]
+            if val == "device":
+                args[key] = self._get_device_from_tensor(self.real_inputs)
+                continue
+            if val in self.__dict__:
+                args[key] = self.__dict__[val]
+            else:
+                args[key] = self.__dict__["_modules"][val]
         return args
 
     def optimizer_step(
@@ -243,15 +248,31 @@ class LightningTrainer(pl.LightningModule):
 
     def handle_data_batch(self, batch):
         if type(batch) in (tuple, list):
-            self.real_inputs = data[0].to(self.device)
-            self.labels = data[1].to(self.device)
-        elif type(data) is torch.Tensor:
-            self.real_inputs = data.to(self.device)
+            self.real_inputs = batch[0]
+            self.labels = batch[1]
+        elif type(batch) is torch.Tensor:
+            self.real_inputs = batch
         else:
-            self.real_inputs = data
+            self.real_inputs = batch
 
-    def training_step(self, batch, batch_idx, opt_idx):
+    def _unfreeze_parameters(self):
+        for name in self.model_names:
+            model = getattr(self, name)
+            for param in model.parameters():
+                param.requires_grad = True
+
+    def _get_device_from_tensor(self, x: torch.Tensor):
+        if self.on_gpu:
+            device = torch.device(f"cuda:{x.device.index}")
+            return device
+        return torch.device("cpu")
+
+    def training_step(self, batch, batch_idx, optimizer_idx):
         self.handle_data_batch(batch)
+        # FIXME: PyLightning seems to convert all the parameters to
+        #        require no grad.
+        self._unfreeze_parameters()
+
         gen_loss = 0.0
         dis_loss = 0.0
 
@@ -302,18 +323,9 @@ class LightningTrainer(pl.LightningModule):
         loss.requires_grad = True
         return {
             "loss": loss,
-            "log": {"Generator Loss": gen_loss, "DiscriminatorLoss": dis_loss},
+            "progress_bar": {"Generator Loss": gen_loss, "DiscriminatorLoss": dis_loss},
         }
 
-    #
-    # def validation_step(self, batch, batch_idx):
-    #     # OPTIONAL
-    #     x, y = batch
-    #     y_hat = self.forward(x)
-    #     return {'val_loss': F.cross_entropy(y_hat, y)}
-    #
-    # def validation_end(self, outputs):
-    #     # OPTIONAL
-    #     avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
-    #     tensorboard_logs = {'val_loss': avg_loss}
-    #     return {'avg_val_loss': avg_loss, 'log': tensorboard_logs}
+    def forward(x):
+        pass
+
