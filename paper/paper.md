@@ -82,30 +82,30 @@ TorchGAN provides high-quality implementations of various GAN models, metrics fo
 \begin{center}
     \begin{tabular}{ c c c c c }
         & TorchGAN & TFGAN & IBM GAN-Toolkit & HyperGAN\\
-        Vanila GAN \cite{gan2014} & \checkmark & \checkmark & \checkmark & \checkmark\\
-        DCGAN \cite{dcgan2015} & \checkmark & \checkmark & \checkmark & \checkmark\\
-        Wasserstein GAN \cite{arjovsky2017wasserstein} & \checkmark & \checkmark & \checkmark & \checkmark\\
-        Wasserstein GAN-GP \cite{gulrajani2017improved} & \checkmark & \checkmark & \checkmark & \checkmark\\
-        Inception Score \cite{salimans2016improved} & \checkmark & \checkmark & \checkmark & \\
-        InfoGAN \cite{chen2016infogan} & \checkmark & \checkmark & & \checkmark\\
-        Cycle GAN \cite{cyclegan} & \checkmark & \checkmark & & \checkmark\\
-        Least Squares GAN \cite{lsgan2017} & \checkmark & \checkmark & & \checkmark\\
-        Auxillary Classifier GAN \cite{odena2017ac} & \checkmark & \checkmark & & \\
-        Spectral Normalization GAN \cite{spectral2018} & \checkmark & \checkmark & & \\
-        Self Attention GAN \cite{selfattn2018} & \checkmark & \checkmark & & \\
-        Conditional GAN \cite{mirza2014conditional} & \checkmark & & \checkmark & \\
-        Energy Based GAN \cite{zhao2016energybased} & \checkmark & & & \checkmark\\
-        Boundary Equilibrium GAN \cite{berthelot2017began} & \checkmark & & & \\
-        DRAGAN-GP \cite{kodali2017convergence} & \checkmark & & & \\
-        Binary GAN \cite{dong2018training}& \checkmark & & & \\
-        Adversarial Autoencoders \cite{zhang2017adversarial} & \checkmark & & & \\
-        Historical Averaging \cite{salimans2016improved} & \checkmark & & & \\
-        Feature Matching \cite{salimans2016improved} & \checkmark & & & \\
-        Minibatch Discrimination \cite{salimans2016improved} & \checkmark & & & \\
-        Frechet Inception Distance \cite{brock2018large} & $\star$ & \checkmark & \checkmark & \\
-        Progressive GAN \cite{karras2017progressive} & $\star$ & \checkmark & & \\
-        Adversarially Learned Inference  \cite{dumoulin2016adversarially} & $\star$ & & & \checkmark \\
-        Star GAN \cite{Choi_2018} & & \checkmark & & \\
+        Vanila GAN & \checkmark & \checkmark & \checkmark & \checkmark\\
+        DCGAN & \checkmark & \checkmark & \checkmark & \checkmark\\
+        Wasserstein GAN & \checkmark & \checkmark & \checkmark & \checkmark\\
+        Wasserstein GAN-GP & \checkmark & \checkmark & \checkmark & \checkmark\\
+        Inception Score & \checkmark & \checkmark & \checkmark & \\
+        InfoGAN & \checkmark & \checkmark & & \checkmark\\
+        Cycle GAN & \checkmark & \checkmark & & \checkmark\\
+        Least Squares GAN & \checkmark & \checkmark & & \checkmark\\
+        Auxillary Classifier GAN & \checkmark & \checkmark & & \\
+        Spectral Normalization GAN & \checkmark & \checkmark & & \\
+        Self Attention GAN & \checkmark & \checkmark & & \\
+        Conditional GAN & \checkmark & & \checkmark & \\
+        Energy Based GAN & \checkmark & & & \checkmark\\
+        Boundary Equilibrium GAN & \checkmark & & & \\
+        DRAGAN-GP & \checkmark & & & \\
+        Binary GAN & \checkmark & & & \\
+        Adversarial Autoencoders & \checkmark & & & \\
+        Historical Averaging & \checkmark & & & \\
+        Feature Matching & \checkmark & & & \\
+        Minibatch Discrimination & \checkmark & & & \\
+        Frechet Inception Distance & $\star$ & \checkmark & \checkmark & \\
+        Progressive GAN & $\star$ & \checkmark & & \\
+        Adversarially Learned Inference & $\star$ & & & \checkmark \\
+        Star GAN & & \checkmark & & \\
     \end{tabular}
     \captionof{table}{Supported features of different frameworks. Features officially supported are marked "\checkmark", under active development are marked "$\star$" and those currently unsupported are left blank.}
     \label{tab:frameworks}
