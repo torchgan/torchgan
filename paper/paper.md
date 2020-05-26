@@ -78,42 +78,7 @@ trainer(train_loader)
 
 TorchGAN provides high-quality implementations of various GAN models, metrics for evaluating GANs, and various approaches for improving the stability of GAN training. We provide an overview of the features that are provided off the shelf by TorchGAN and compare them with the ones provided by other frameworks. Note that the list is not exhaustive as the modular and extensible structure of TorchGAN allows one to extend or modify these features, or use them as building blocks for more sophisticated models.
 
-
-\begin{center}
-    \begin{tabular}{ c c c c c }
-        \hline
-        & \textbf{TorchGAN} & \textbf{TFGAN} & \textbf{IBM GAN-Toolkit} & \textbf{HyperGAN}\\
-        \hline
-        Vanila GAN & \checkmark & \checkmark & \checkmark & \checkmark\\
-        DCGAN & \checkmark & \checkmark & \checkmark & \checkmark\\
-        Wasserstein GAN & \checkmark & \checkmark & \checkmark & \checkmark\\
-        Wasserstein GAN-GP & \checkmark & \checkmark & \checkmark & \checkmark\\
-        Inception Score & \checkmark & \checkmark & \checkmark & \\
-        InfoGAN & \checkmark & \checkmark & & \checkmark\\
-        Cycle GAN & \checkmark & \checkmark & & \checkmark\\
-        Least Squares GAN & \checkmark & \checkmark & & \checkmark\\
-        Auxillary Classifier GAN & \checkmark & \checkmark & & \\
-        Spectral Normalization GAN & \checkmark & \checkmark & & \\
-        Self Attention GAN & \checkmark & \checkmark & & \\
-        Conditional GAN & \checkmark & & \checkmark & \\
-        Energy Based GAN & \checkmark & & & \checkmark\\
-        Boundary Equilibrium GAN & \checkmark & & & \\
-        DRAGAN-GP & \checkmark & & & \\
-        Binary GAN & \checkmark & & & \\
-        Adversarial Autoencoders & \checkmark & & & \\
-        Historical Averaging & \checkmark & & & \\
-        Feature Matching & \checkmark & & & \\
-        Minibatch Discrimination & \checkmark & & & \\
-        Frechet Inception Distance & $\star$ & \checkmark & \checkmark & \\
-        Progressive GAN & $\star$ & \checkmark & & \\
-        Adversarially Learned Inference & $\star$ & & & \checkmark \\
-        Star GAN & & \checkmark & & \\
-        \hline
-    \end{tabular}
-    \captionof{table}{Supported features of different frameworks. Features officially supported are marked "\checkmark", under active development are marked "$\star$" and those currently unsupported are left blank.}
-    \label{tab:frameworks}
-\end{center}
-
+![Supported features of different frameowrks. Features officiallt supported are marked "$\checkmark$", under active development are marked "$\star$", and those currently unsupported are left blank.\label[tab:frameworks]](fig/features.png)
 
 Table \ref{tab:frameworks} summarizes the features supported by a variety of open-source GAN frameworks. It suggests that TorchGAN supports the widest variety of features among the frameworks being considered. For comparison, we only consider the models present in the official repository of a given framework or an associated officially maintained model-zoo/examples repository. We avoid comparisons with projects like Pytorch-GAN\footnote{https://github.com/eriklindernoren/PyTorch-GAN}, Keras-GAN\footnote{https://github.com/eriklindernoren/Keras-GAN}, etc., as these are not frameworks and hence cannot be extended to newer models.
 
@@ -121,7 +86,7 @@ Table \ref{tab:frameworks} summarizes the features supported by a variety of ope
 
 In order to demonstrate that TorchGAN incurs zero training overhead despite the high level of abstraction it provides, we compare the training time of TorchGAN with vanilla PyTorch implementations of DCGAN [@dcgan2015], CGAN [@mirza2014conditional], BEGAN [@berthelot2017began] and WGAN-GP [@gulrajani2017improved]. Figure \ref{tab:benchmarks} reports the training time for TorchGAN and Pytorch for 1 epoch, averaged over 8 runs.
 
-[Average Training Time: TorchGAN vs Pytorch Baselines.\label{tab:benchmarks}](fig/performance.png)
+![Average Training Time: TorchGAN vs Pytorch Baselines.\label{tab:benchmarks}](fig/performance.png)
 
 For a fair comparison, we disable any form of logging and compute the training time using the $\%timeit$ magic function. We train the models on the CIFAR10 [@Krizhevsky2009LearningML] and MNIST datasets, with a batch size of 128, on an Nvidia GTX Titan X GPU.
 
