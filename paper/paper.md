@@ -60,12 +60,12 @@ Table \ref{tab:frameworks} summarizes the features supported by a variety of ope
 
 In order to demonstrate that TorchGAN incurs zero training overhead despite the high level of abstraction it provides, we compare the training time of TorchGAN with vanilla PyTorch implementations of DCGAN [@dcgan2015], CGAN [@mirza2014conditional], BEGAN [@berthelot2017began] and WGAN-GP [@gulrajani2017improved]. Table \ref{tab:benchmarks} reports the training time for TorchGAN and Pytorch for 1 epoch, averaged over 8 runs.
 
-| | DCGAN *(CIFAR-10)* | CGAN *(MNIST)* | WGAN-GP *(MNIST)* | BEGAN *(MNIST)* | 
+| | DCGAN | CGAN | WGAN-GP | BEGAN | 
 |--|--|--|--|--|
-| **TorchGAN** |**15.9s $\pm$ 0.64s**| **21.8s $\pm$ 0.43s**| **30.6s $\pm$ 1.35s**| **86.0s $\pm$ 0.62s** |
+| **TorchGAN** | **15.9s $\pm$ 0.64s**| **21.8s $\pm$ 0.43s**| **30.6s $\pm$ 1.35s**| **86.0s $\pm$ 0.62s** |
 | **Pytorch** | 16.7s $\pm$ 0.24s| 22.4s $\pm$ 0.52s |31.1s $\pm$ 0.97s|87.0s $\pm$ 0.27s|
 
-Table: Average Training Time: TorchGAN vs Pytorch Baselines \label{tab:benchmarks}
+Table: Average Training Time: TorchGAN vs Pytorch Baselines. DCGAN is trained on CIFAR-10, and the other models are trained on MNIST \label{tab:benchmarks}
 
 For a fair comparison, we disable any form of logging and compute the training time using the $\%timeit$ magic function. We train the models on the CIFAR10 [@Krizhevsky2009LearningML] and MNIST datasets, with a batch size of 128, on an Nvidia GTX Titan X GPU.
 
