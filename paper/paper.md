@@ -36,39 +36,11 @@ GANs generally share a standard design paradigm, with the building blocks compri
 The core of the TorchGAN framework is a highly versatile trainer module, responsible for its flexibility and ease of use. The trainer requires specification of the generator and the discriminator architecture along with the optimizers associated with each of them, represented as a dictionary, as well as the list of associated loss functions, and optionally, evaluation metrics.  We provide an illustrative example for training DCGAN on CIFAR10. One can either choose from the in-built implementations of popular GAN models, losses and metrics or define custom variants of their own with minimal effort by extending the appropriate base classes. This extensibility is widely useful in research applications where the user only needs to write code for the model architecture and/or the loss function. The trainer automatically handles the intricacies of training with custom models/losses. The trainer also supports the usage of multiple generators and discriminators, allowing training of more sophisticated models such as Generative Multi Adversarial Networks [@gman]. Performance visualization is handled by a customizable Logger object, which, apart from console logging, currently supports the Tensorboard and Vizdom backends.
 
 ```python
-train_dataset = dsets.CIFAR10(
-    root='./cifar10',
-    train=True,
-    transform=transforms.Compose(
-        [transforms.ToTensor(),
-        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))]
-    ),
-    download=True
-)
+train_dataset = dsets.CIFAR10(root='./cifar10', train=True, transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))]), download=True)
 train_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True)
-
-trainer = Trainer({
-    "generator": {
-        "name": DCGANGenerator,
-        "args": {"out_channels": 3, "step_channels": 16},
-        "optimizer": {
-            "name": Adam,
-            "args": {"lr": 0.0002, "betas": (0.5, 0.999)}
-        }
-    }, 
-    "discriminator": {
-        "name": DCGANDiscriminator,
-        "args": {"in_channels": 3, "step_channels": 16},
-        "optimizer": {
-            "name": Adam,
-            "args": {"lr": 0.0002, "betas": (0.5, 0.999)}
-        }
-    }},
-    [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()],
-    sample_size=64,
-    epochs=20
-)
-
+trainer = Trainer(
+    {"generator": {"name": DCGANGenerator, "args": {"out_channels": 3, "step_channels": 16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}, 
+    "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 3, "step_channels": 16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}}, [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()], sample_size=64, epochs=20)
 trainer(train_loader)
 ```
 
