@@ -81,7 +81,9 @@ TorchGAN provides high-quality implementations of various GAN models, metrics fo
 
 \begin{center}
     \begin{tabular}{ c c c c c }
+        \hline\\
         & TorchGAN & TFGAN & IBM GAN-Toolkit & HyperGAN\\
+        \hline\\
         Vanila GAN & \checkmark & \checkmark & \checkmark & \checkmark\\
         DCGAN & \checkmark & \checkmark & \checkmark & \checkmark\\
         Wasserstein GAN & \checkmark & \checkmark & \checkmark & \checkmark\\
@@ -106,6 +108,7 @@ TorchGAN provides high-quality implementations of various GAN models, metrics fo
         Progressive GAN & $\star$ & \checkmark & & \\
         Adversarially Learned Inference & $\star$ & & & \checkmark \\
         Star GAN & & \checkmark & & \\
+        \hline
     \end{tabular}
     \captionof{table}{Supported features of different frameworks. Features officially supported are marked "\checkmark", under active development are marked "$\star$" and those currently unsupported are left blank.}
     \label{tab:frameworks}
@@ -120,10 +123,13 @@ In order to demonstrate that TorchGAN incurs zero training overhead despite the 
 
 \begin{center}
     \begin{tabular}{ c c c c c }
+        \hline\\
         & \textbf{DCGAN} & \textbf{CGAN} & \textbf{WGAN-GP} & \textbf{BEGAN} \\
+        \hline\\
         & \scriptsize{\textit{CIFAR-10}} & \scriptsize{\textit{MNIST}} & \scriptsize{\textit{MNIST}} & \scriptsize{\textit{MNIST}} \\
         \textbf{TorchGAN} & \textbf{15.9s $\pm$ 0.64s} & \textbf{21.8s $\pm$ 0.43s} & \textbf{30.6s $\pm$ 1.35s} & \textbf{86.0s $\pm$ 0.62s} \\
         \textbf{Pytorch}  & 16.7s $\pm$ 0.24s & 22.4s $\pm$ 0.52s & 31.1s $\pm$ 0.97s & 87.0s $\pm$ 0.27s \\
+        \hline
     \end{tabular}
     \captionof{table}{Average Training Time: TorchGAN vs Pytorch Baselines}
     \label{tab:benchmarks}
