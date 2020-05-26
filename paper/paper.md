@@ -79,6 +79,40 @@ trainer(train_loader)
 TorchGAN provides high-quality implementations of various GAN models, metrics for evaluating GANs, and various approaches for improving the stability of GAN training. We provide an overview of the features that are provided off the shelf by TorchGAN and compare them with the ones provided by other frameworks. Note that the list is not exhaustive as the modular and extensible structure of TorchGAN allows one to extend or modify these features, or use them as building blocks for more sophisticated models.
 
 
+\begin{center}
+    \begin{tabular}{ c c c c c }
+        & TorchGAN & TFGAN & IBM GAN-Toolkit & HyperGAN\\
+        Vanila GAN \cite{gan2014} & \checkmark & \checkmark & \checkmark & \checkmark\\
+        DCGAN \cite{dcgan2015} & \checkmark & \checkmark & \checkmark & \checkmark\\
+        Wasserstein GAN \cite{arjovsky2017wasserstein} & \checkmark & \checkmark & \checkmark & \checkmark\\
+        Wasserstein GAN-GP \cite{gulrajani2017improved} & \checkmark & \checkmark & \checkmark & \checkmark\\
+        Inception Score \cite{salimans2016improved} & \checkmark & \checkmark & \checkmark & \\
+        InfoGAN \cite{chen2016infogan} & \checkmark & \checkmark & & \checkmark\\
+        Cycle GAN \cite{cyclegan} & \checkmark & \checkmark & & \checkmark\\
+        Least Squares GAN \cite{lsgan2017} & \checkmark & \checkmark & & \checkmark\\
+        Auxillary Classifier GAN \cite{odena2017ac} & \checkmark & \checkmark & & \\
+        Spectral Normalization GAN \cite{spectral2018} & \checkmark & \checkmark & & \\
+        Self Attention GAN \cite{selfattn2018} & \checkmark & \checkmark & & \\
+        Conditional GAN \cite{mirza2014conditional} & \checkmark & & \checkmark & \\
+        Energy Based GAN \cite{zhao2016energybased} & \checkmark & & & \checkmark\\
+        Boundary Equilibrium GAN \cite{berthelot2017began} & \checkmark & & & \\
+        DRAGAN-GP \cite{kodali2017convergence} & \checkmark & & & \\
+        Binary GAN \cite{dong2018training}& \checkmark & & & \\
+        \makecell{Generative Multi Adversarial \\Networks (GMAN)} \cite{gman} & \checkmark & & & \\
+        Adversarial Autoencoders \cite{zhang2017adversarial} & \checkmark & & & \\
+        Historical Averaging \cite{salimans2016improved} & \checkmark & & & \\
+        Feature Matching \cite{salimans2016improved} & \checkmark & & & \\
+        Minibatch Discrimination \cite{salimans2016improved} & \checkmark & & & \\
+        Frechet Inception Distance \cite{brock2018large} & $\star$ & \checkmark & \checkmark & \\
+        Progressive GAN \cite{karras2017progressive} & $\star$ & \checkmark & & \\
+        Adversarially Learned Inference  \cite{dumoulin2016adversarially} & $\star$ & & & \checkmark \\
+        Star GAN \cite{Choi_2018} & & \checkmark & & \\
+    \end{tabular}
+    \captionof{table}{Supported features of different frameworks. Features officially supported are marked "\checkmark", under active development are marked "$\star$" and those currently unsupported are left blank.}
+    \label{tab:frameworks}
+\end{center}
+
+
 Table \ref{tab:frameworks} summarizes the features supported by a variety of open-source GAN frameworks. It suggests that TorchGAN supports the widest variety of features among the frameworks being considered. For comparison, we only consider the models present in the official repository of a given framework or an associated officially maintained model-zoo/examples repository. We avoid comparisons with projects like Pytorch-GAN\footnote{https://github.com/eriklindernoren/PyTorch-GAN}, Keras-GAN\footnote{https://github.com/eriklindernoren/Keras-GAN}, etc., as these are not frameworks and hence cannot be extended to newer models.
 
 # Performance
