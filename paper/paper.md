@@ -78,7 +78,7 @@ trainer(train_loader)
 
 TorchGAN provides high-quality implementations of various GAN models, metrics for evaluating GANs, and various approaches for improving the stability of GAN training. We provide an overview of the features that are provided off the shelf by TorchGAN and compare them with the ones provided by other frameworks. Note that the list is not exhaustive as the modular and extensible structure of TorchGAN allows one to extend or modify these features, or use them as building blocks for more sophisticated models.
 
-![Supported features of different frameowrks. Features officiallt supported are marked "$\checkmark$", under active development are marked "$\star$", and those currently unsupported are left blank.\label[tab:frameworks]](fig/features.png)
+![Supported features of different frameowrks. Features officiallt supported are marked "$\checkmark$", under active development are marked "$\star$", and those currently unsupported are left blank.\label{tab:frameworks}](fig/features.png)
 
 Table \ref{tab:frameworks} summarizes the features supported by a variety of open-source GAN frameworks. It suggests that TorchGAN supports the widest variety of features among the frameworks being considered. For comparison, we only consider the models present in the official repository of a given framework or an associated officially maintained model-zoo/examples repository. We avoid comparisons with projects like Pytorch-GAN\footnote{https://github.com/eriklindernoren/PyTorch-GAN}, Keras-GAN\footnote{https://github.com/eriklindernoren/Keras-GAN}, etc., as these are not frameworks and hence cannot be extended to newer models.
 
