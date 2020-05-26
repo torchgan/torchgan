@@ -98,7 +98,6 @@ TorchGAN provides high-quality implementations of various GAN models, metrics fo
         Boundary Equilibrium GAN \cite{berthelot2017began} & \checkmark & & & \\
         DRAGAN-GP \cite{kodali2017convergence} & \checkmark & & & \\
         Binary GAN \cite{dong2018training}& \checkmark & & & \\
-        \makecell{Generative Multi Adversarial \\Networks (GMAN)} \cite{gman} & \checkmark & & & \\
         Adversarial Autoencoders \cite{zhang2017adversarial} & \checkmark & & & \\
         Historical Averaging \cite{salimans2016improved} & \checkmark & & & \\
         Feature Matching \cite{salimans2016improved} & \checkmark & & & \\
