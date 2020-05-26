@@ -43,12 +43,13 @@ train_dataset = dsets.CIFAR10(root='./cifar10', train=True,
 train_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True)
 trainer = Trainer(
     {"generator": {"name": DCGANGenerator, "args": {"out_channels": 3,
-        "step_channels": 16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002,
-            "betas": (0.5, 0.999)}}}, 
-    "discriminator": {"name": DCGANDiscriminator, "args": {"in_channels": 3,
-        "step_channels": 16}, "optimizer": {"name": Adam, "args": {"lr": 0.0002,
-            "betas": (0.5, 0.999)}}}}, [MinimaxGeneratorLoss(),
-            MinimaxDiscriminatorLoss()], sample_size=64, epochs=20)
+        "step_channels": 16}, "optimizer": {"name": Adam, "args":
+            {"lr": 0.0002, "betas": (0.5, 0.999)}}}, 
+    "discriminator": {"name": DCGANDiscriminator, "args":
+        {"in_channels": 3, "step_channels": 16}, "optimizer": {"name": Adam,
+            "args": {"lr": 0.0002, "betas": (0.5, 0.999)}}}},
+    [MinimaxGeneratorLoss(), MinimaxDiscriminatorLoss()], sample_size=64,
+    epochs=20)
 trainer(train_loader)
 ```
 
@@ -70,7 +71,7 @@ TorchGAN provides high-quality implementations of various GAN models, metrics fo
 | CycleGAN | $\checkmark$ | $\checkmark$ | | $\checkmark$ |
 | Least Squares GAN | $\checkmark$ | $\checkmark$ | | $\checkmark$ |
 | Auxillary Classifier GAN | $\checkmark$ | $\checkmark$ | | |
-| Spectral Normalization GAN | | $\checkmark$ | $\checkmark$ | |
+| Spectral Normalization GAN | $\checkmark$ | $\checkmark$ | $\checkmark$ | |
 | Self Attention GAN | $\checkmark$ | $\checkmark$ | | |
 | Conditional GAN | $\checkmark$ | | $\checkmark$ | |
 | Energy Based GAN | $\checkmark$ | | | $\checkmark$ |
