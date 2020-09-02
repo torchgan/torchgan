@@ -72,7 +72,7 @@ class ResidualBlock2d(nn.Module):
             )
             if batchnorm:
                 layers.append(nn.BatchNorm2d(filters[i]))
-            if i != len(filters):  # Last layer does not get an activation
+            if i != len(filters) - 1:  # Last layer does not get an activation
                 layers.append(nl)
         self.layers = nn.Sequential(*layers)
         self.shortcut = shortcut
@@ -164,7 +164,7 @@ class ResidualBlockTranspose2d(nn.Module):
             )
             if batchnorm:
                 layers.append(nn.BatchNorm2d(filters[i]))
-            if i != len(filters):  # Last layer does not get an activation
+            if i != len(filters) - 1:  # Last layer does not get an activation
                 layers.append(nl)
         self.layers = nn.Sequential(*layers)
         self.shortcut = shortcut
