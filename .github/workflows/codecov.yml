@@ -23,5 +23,5 @@ jobs:
     - name: Coverage Report
       run: |
         pip install pytest pytest-cov coverage scipy
-        python -m pytest --cov=torchgan /tests --cov-report term-missing
+        python -m pytest --cov=torchgan ./tests --cov-report term-missing
         bash <(curl -s https://codecov.io/bash)
