@@ -9,7 +9,6 @@
 [![Downloads](https://pepy.tech/badge/torchgan/month)](https://pepy.tech/project/torchgan/month)
 [![Downloads](https://pepy.tech/badge/torchgan/week)](https://pepy.tech/project/torchgan/week)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
-[![Slack](https://img.shields.io/badge/chat-on%20slack-yellow.svg)](https://join.slack.com/t/torchgan/shared_invite/enQtNDkyMTQ2ODAyMzczLWEyZjc1ZDdmNTc3ZmNiODFmMmY2YjM2OTZmZTRlOTc3YWE5MTliZTBkZTkwNzQ2MDIwZmI0MGRjYjQwYTczMzQ)
 
 [![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://torchgan.readthedocs.io/en/stable/)
 [![Latest Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://torchgan.readthedocs.io/en/latest/)
@@ -104,7 +103,8 @@ This software was developed as part of academic research. If you would like to h
 
 List of publications & submissions using TorchGAN (please open a pull request to add missing entries):
 
-* [Ward2ICU: A Vital Signs Dataset of Inpatients from the General Ward](https://arxiv.org/abs/1910.00752) [3778 Healthcare, CMU, Mater Dei Healthcare, Oct, 2019]
+* [Can GAN-Generated Network Traffic be used to Train Traffic Anomaly Classifiers?](https://ieeexplore.ieee.org/abstract/document/9284901?casa_token=9bEvJ3COOXMAAAAA:pz8TsMSrecv_ip1t9rEI7tYn_S_AQyZE_UrgYZ61vX_3Clu0Y17pFTUEpclAcBja13pPEqOsxypp)
+* [Ward2ICU: A Vital Signs Dataset of Inpatients from the General Ward](https://arxiv.org/abs/1910.00752)
 
 ### Contributing
 
