@@ -87,6 +87,7 @@ class EnergyBasedGeneratorLoss(GeneratorLoss):
             )
         else:
             if isinstance(discriminator, AutoEncodingDiscriminator):
+                orig_value = getattr(discriminator, "embeddings")
                 setattr(discriminator, "embeddings", False)
             loss = super(EnergyBasedGeneratorLoss, self).train_ops(
                 generator,
@@ -97,7 +98,7 @@ class EnergyBasedGeneratorLoss(GeneratorLoss):
                 labels,
             )
             if isinstance(discriminator, AutoEncodingDiscriminator):
-                setattr(discriminator, "embeddings", True)
+                setattr(discriminator, "embeddings", orig_value)
             return loss
 
 
@@ -300,6 +301,7 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
             )
         else:
             if isinstance(discriminator, AutoEncodingDiscriminator):
+                orig_value = getattr(discriminator, "embeddings")
                 setattr(discriminator, "embeddings", False)
             loss = super(EnergyBasedDiscriminatorLoss, self).train_ops(
                 generator,
@@ -310,5 +312,5 @@ class EnergyBasedDiscriminatorLoss(DiscriminatorLoss):
                 labels,
             )
             if isinstance(discriminator, AutoEncodingDiscriminator):
-                setattr(discriminator, "embeddings", True)
+                setattr(discriminator, "embeddings", orig_value)
             return loss
