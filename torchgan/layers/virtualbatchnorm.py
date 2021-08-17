@@ -71,7 +71,7 @@ class VirtualBatchNorm(nn.Module):
         bias = self.bias.view(*sizes)
         return x * scale + bias
 
-    def forward(self, x, clear = True):
+    def forward(self, x, clear=True):
         r"""Computes the output of the Virtual Batch Normalization
 
         Args:

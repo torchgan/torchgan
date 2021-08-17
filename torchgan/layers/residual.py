@@ -93,7 +93,11 @@ class ResidualBlock2d(nn.Module):
             out += self.shortcut(x)
         else:
             out += x
-        return out if self.last_nonlinearity is None else self.last_nonlinearity(out)
+        return (
+            out
+            if self.last_nonlinearity is None
+            else self.last_nonlinearity(out)
+        )
 
 
 class ResidualBlockTranspose2d(nn.Module):
@@ -185,4 +189,8 @@ class ResidualBlockTranspose2d(nn.Module):
             out += self.shortcut(x)
         else:
             out += x
-        return out if self.last_nonlinearity is None else self.last_nonlinearity(out)
+        return (
+            out
+            if self.last_nonlinearity is None
+            else self.last_nonlinearity(out)
+        )

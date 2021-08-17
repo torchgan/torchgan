@@ -43,8 +43,12 @@ class SpectralNorm2d(nn.Module):
         w = getattr(self.module, self.name)
         height = w.data.shape[0]
         width = w.view(height, -1).data.shape[1]
-        self.u = Parameter(w.data.new(height).normal_(0, 1), requires_grad=False)
-        self.v = Parameter(w.data.new(width).normal_(0, 1), requires_grad=False)
+        self.u = Parameter(
+            w.data.new(height).normal_(0, 1), requires_grad=False
+        )
+        self.v = Parameter(
+            w.data.new(width).normal_(0, 1), requires_grad=False
+        )
         self.u.data = self._l2normalize(self.u.data)
         self.v.data = self._l2normalize(self.v.data)
         self.w_bar = Parameter(w.data)
@@ -78,5 +82,7 @@ class SpectralNorm2d(nn.Module):
                 torch.mv(self.w_bar.view(height, -1), self.v)
             )
         sigma = self.u.dot(self.w_bar.view(height, -1).mv(self.v))
-        setattr(self.module, self.name, self.w_bar / sigma.expand_as(self.w_bar))
+        setattr(
+            self.module, self.name, self.w_bar / sigma.expand_as(self.w_bar)
+        )
         return self.module.forward(*args)

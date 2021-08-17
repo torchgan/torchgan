@@ -32,7 +32,9 @@ class TestLosses(unittest.TestCase):
         l_d.reduction = "none"
         loss_none = l_d(D_X, D_GZ).view(-1, 1)
         for i in range(4):
-            self.assertAlmostEqual(d_loss_none[i], loss_none[i].item(), places=5)
+            self.assertAlmostEqual(
+                d_loss_none[i], loss_none[i].item(), places=5
+            )
 
         self.assertAlmostEqual(gen_loss_mean, l_g(D_GZ).item(), places=5)
         l_g.reduction = "sum"
@@ -40,7 +42,9 @@ class TestLosses(unittest.TestCase):
         l_g.reduction = "none"
         loss_none = l_g(D_GZ).view(-1, 1)
         for i in range(4):
-            self.assertAlmostEqual(gen_loss_none[i], loss_none[i].item(), places=5)
+            self.assertAlmostEqual(
+                gen_loss_none[i], loss_none[i].item(), places=5
+            )
 
     def test_wasserstein_loss(self):
         dx = [1.3, 2.9, 8.4, 6.3]
@@ -136,7 +140,12 @@ class TestLosses(unittest.TestCase):
 
         gen_loss_mean = 0.9509911
         gen_loss_sum = 3.8039644
-        gen_loss_none = [8.1960661e-03, 2.6328245e-01, 3.5297503e00, 2.7356991e-03]
+        gen_loss_none = [
+            8.1960661e-03,
+            2.6328245e-01,
+            3.5297503e00,
+            2.7356991e-03,
+        ]
 
         d_loss_mean = 3.1251488
         d_loss_sum = 12.500595

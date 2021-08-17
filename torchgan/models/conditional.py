@@ -52,7 +52,9 @@ class ConditionalGANGenerator(DCGANGenerator):
         )
         self.encoding_dims = encoding_dims
         self.num_classes = num_classes
-        self.label_embeddings = nn.Embedding(self.num_classes, self.num_classes)
+        self.label_embeddings = nn.Embedding(
+            self.num_classes, self.num_classes
+        )
 
     def forward(self, z, y):
         r"""Calculates the output tensor on passing the encoding ``z`` through the Generator.
@@ -119,7 +121,9 @@ class ConditionalGANDiscriminator(DCGANDiscriminator):
         )
         self.input_dims = in_channels
         self.num_classes = num_classes
-        self.label_embeddings = nn.Embedding(self.num_classes, self.num_classes)
+        self.label_embeddings = nn.Embedding(
+            self.num_classes, self.num_classes
+        )
 
     def forward(self, x, y, feature_matching=False):
         r"""Calculates the output tensor on passing the image ``x`` through the Discriminator.

@@ -88,7 +88,9 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
             if labels is None and generator.label_type == "required":
                 raise Exception("GAN model requires labels for training")
             batch_size = real_inputs.size(0)
-            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
+            noise = torch.randn(
+                batch_size, generator.encoding_dims, device=device
+            )
             optimizer_generator.zero_grad()
             if generator.label_type == "generated":
                 label_gen = torch.randint(
@@ -106,9 +108,13 @@ class FeatureMatchingGeneratorLoss(GeneratorLoss):
                 fgz = discriminator(fake, feature_matching=True)
             else:
                 if discriminator.label_type == "generated":
-                    fx = discriminator(real_inputs, label_gen, feature_matching=True)
+                    fx = discriminator(
+                        real_inputs, label_gen, feature_matching=True
+                    )
                 else:
-                    fx = discriminator(real_inputs, labels, feature_matching=True)
+                    fx = discriminator(
+                        real_inputs, labels, feature_matching=True
+                    )
                 if generator.label_type == "generated":
                     fgz = discriminator(fake, label_gen, feature_matching=True)
                 else:

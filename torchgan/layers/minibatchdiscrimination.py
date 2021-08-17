@@ -56,7 +56,9 @@ class MinibatchDiscrimination1d(nn.Module):
             3D Torch Tensor of size :math: `(N,infeatures + outfeatures)` after applying Minibatch Discrimination
         """
         M = torch.mm(x, self.T.view(self.in_features, -1))
-        M = M.view(-1, self.out_features, self.intermediate_features).unsqueeze(0)
+        M = M.view(
+            -1, self.out_features, self.intermediate_features
+        ).unsqueeze(0)
         M_t = M.permute(1, 0, 2, 3)
         # Broadcasting reduces the matrix subtraction to the form desired in the paper
         out = torch.sum(torch.exp(-(torch.abs(M - M_t).sum(3))), dim=0) - 1

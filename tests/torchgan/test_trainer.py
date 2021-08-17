@@ -36,7 +36,7 @@ def mnist_dataloader():
         ),
         download=True,
     )
-    train_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True)
+    train_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True, drop_last=True)
     return train_loader
 
 
@@ -75,7 +75,7 @@ class TestTrainer(unittest.TestCase):
             device=torch.device("cpu"),
         )
         trainer(mnist_dataloader())
-    
+
     def test_trainer_autoencoding_models(self):
         network_params = {
             "generator": {
@@ -88,7 +88,11 @@ class TestTrainer(unittest.TestCase):
             },
             "discriminator": {
                 "name": AutoEncodingDiscriminator,
-                "args": {"in_channels": 1, "step_channels": 4, "energy": False},
+                "args": {
+                    "in_channels": 1,
+                    "step_channels": 4,
+                    "energy": False,
+                },
                 "optimizer": {
                     "name": Adam,
                     "args": {"lr": 0.0002, "betas": (0.5, 0.999)},
@@ -121,7 +125,11 @@ class TestTrainer(unittest.TestCase):
             },
             "discriminator": {
                 "name": AutoEncodingDiscriminator,
-                "args": {"in_channels": 1, "step_channels": 4, "embeddings": True},
+                "args": {
+                    "in_channels": 1,
+                    "step_channels": 4,
+                    "embeddings": True,
+                },
                 "optimizer": {
                     "name": Adam,
                     "args": {"lr": 0.0002, "betas": (0.5, 0.999)},
@@ -224,5 +232,38 @@ class TestTrainer(unittest.TestCase):
             sample_size=1,
             epochs=1,
             device=torch.device("cpu"),
+        )
+        trainer(mnist_dataloader())
+
+    def test_trainer_infogan(self):
+        network_params = {
+            "generator": {
+                "name": InfoGANGenerator,
+                "args": {"out_channels": 1, "step_channels": 4, "dim_dis": 128, "dim_cont": 128},
+                "optimizer": {
+                    "name": Adam,
+                    "args": {"lr": 0.0002, "betas": (0.5, 0.999)},
+                },
+            },
+            "discriminator": {
+                "name": InfoGANDiscriminator,
+                "args": {"in_channels": 1, "step_channels": 4, "dim_dis": 128, "dim_cont": 128},
+                "optimizer": {
+                    "name": Adam,
+                    "args": {"lr": 0.0002, "betas": (0.5, 0.999)},
+                },
+            },
+        }
+        losses_list = [MutualInformationPenalty()]
+        dis_code = torch.zeros(128, 128)
+        dis_code[:, 0] = 1
+        trainer = Trainer(
+            network_params,
+            losses_list,
+            sample_size=1,
+            epochs=1,
+            device=torch.device("cpu"),
+            dis_code=dis_code,
+            cont_code=torch.rand(128, 128),
         )
         trainer(mnist_dataloader())

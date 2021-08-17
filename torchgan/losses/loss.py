@@ -85,7 +85,9 @@ class GeneratorLoss(nn.Module):
         else:
             if labels is None and generator.label_type == "required":
                 raise Exception("GAN model requires labels for training")
-            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
+            noise = torch.randn(
+                batch_size, generator.encoding_dims, device=device
+            )
             optimizer_generator.zero_grad()
             if generator.label_type == "generated":
                 label_gen = torch.randint(
@@ -199,7 +201,9 @@ class DiscriminatorLoss(nn.Module):
             ):
                 raise Exception("GAN model requires labels for training")
             batch_size = real_inputs.size(0)
-            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
+            noise = torch.randn(
+                batch_size, generator.encoding_dims, device=device
+            )
             if generator.label_type == "generated":
                 label_gen = torch.randint(
                     0, generator.num_classes, (batch_size,), device=device

@@ -71,21 +71,20 @@ class Logger(object):
             self.logger_end_epoch.append(
                 MetricVisualize(metrics_list, writer=self.writer)
             )
-        self.logger_mid_epoch.append(LossVisualize(losses_list, writer=self.writer))
+        self.logger_mid_epoch.append(
+            LossVisualize(losses_list, writer=self.writer)
+        )
 
     def get_loss_viz(self):
-        r"""Get the LossVisualize object.
-        """
+        r"""Get the LossVisualize object."""
         return self.logger_mid_epoch[1]
 
     def get_metric_viz(self):
-        r"""Get the MetricVisualize object.
-        """
+        r"""Get the MetricVisualize object."""
         return self.logger_end_epoch[1]
 
     def get_grad_viz(self):
-        r"""Get the GradientVisualize object.
-        """
+        r"""Get the GradientVisualize object."""
         return self.logger_mid_epoch[0]
 
     def register(self, visualize, *args, mid_epoch=True, **kwargs):
@@ -97,13 +96,16 @@ class Logger(object):
                 over. Otherwise it is executed after every call to the ``train_iter``.
         """
         if mid_epoch:
-            self.logger_mid_epoch.append(visualize(*args, writer=self.writer, **kwargs))
+            self.logger_mid_epoch.append(
+                visualize(*args, writer=self.writer, **kwargs)
+            )
         else:
-            self.logger_end_epoch.append(visualize(*args, writer=self.writer, **kwargs))
+            self.logger_end_epoch.append(
+                visualize(*args, writer=self.writer, **kwargs)
+            )
 
     def close(self):
-        r"""Turns off the tensorboard ``SummaryWriter`` if it were created.
-        """
+        r"""Turns off the tensorboard ``SummaryWriter`` if it were created."""
         if self.writer is not None:
             self.writer.close()
 
