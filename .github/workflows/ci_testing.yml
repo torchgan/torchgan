@@ -29,7 +29,7 @@ jobs:
         fi
     - name: Install Pytorch 1.9
       if: matrix.pytorch-version == 1.9
-      run: /        
+      run: |
         if [ "$RUNNER_OS" == "macOS" ]; then
           pip install torch torchvision torchaudio
         else
