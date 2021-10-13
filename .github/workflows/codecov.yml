@@ -1,0 +1,28 @@
+name: Codecov
+on: [push]
+jobs:
+  run:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: '3.7'
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup Python
+      uses: actions/setup-python@master
+      with:
+        python-version: 3.7
+    - name: Install Pytorch 1.9
+      shell: bash
+      run: |
+        pip install requests
+        pip install torch==1.9.0+cpu torchvision==0.10.0+cpu torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install -r requirements.txt
+    - name: Coverage Report
+      run: |
+        pip install pytest pytest-cov coverage scipy
+        python -m pytest --cov=torchgan ./tests --cov-report term-missing
+        bash <(curl -s https://codecov.io/bash)

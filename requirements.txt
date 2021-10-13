@@ -3,3 +3,4 @@ pillow
 scipy
 torch>=1.2
 torchvision>=0.4
+wget

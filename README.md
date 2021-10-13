@@ -9,7 +9,6 @@
 [![Downloads](https://pepy.tech/badge/torchgan/month)](https://pepy.tech/project/torchgan/month)
 [![Downloads](https://pepy.tech/badge/torchgan/week)](https://pepy.tech/project/torchgan/week)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
-[![Slack](https://img.shields.io/badge/chat-on%20slack-yellow.svg)](https://join.slack.com/t/torchgan/shared_invite/enQtNDkyMTQ2ODAyMzczLWEyZjc1ZDdmNTc3ZmNiODFmMmY2YjM2OTZmZTRlOTc3YWE5MTliZTBkZTkwNzQ2MDIwZmI0MGRjYjQwYTczMzQ)
 
 [![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://torchgan.readthedocs.io/en/stable/)
 [![Latest Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://torchgan.readthedocs.io/en/latest/)
@@ -25,17 +24,14 @@ TorchGAN is a [Pytorch](https://pytorch.org) based framework for designing and d
 * Plug in your new Loss Function, new Architecture, etc. with the traditional ones.
 * Seamlessly visualize the training with a variety of logging backends.
 
-| System / PyTorch Version | 1.2 | 1.3 | 1.4 | nightly |
-| :---: | :---: | :---: | :---: | :---: |
-| Linux py3.6 (Travis) |  <center>—</center> |  <center>—</center> | [![Build Status](https://travis-ci.org/torchgan/torchgan.svg?branch=master)](https://travis-ci.org/torchgan/torchgan) |  <center>—</center> |
-| Linux py3.6 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
-| Linux py3.7 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
-| OSX py3.6 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
-| OSX py3.7 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
-| Windows py3.6 (Appveyor) |  <center>—</center> |  <center>—</center> | [![Build status](https://ci.appveyor.com/api/projects/status/lqo3bbsew83839c0?svg=true)](https://ci.appveyor.com/project/avik-pal/torchgan) |  <center>—</center> |
-| Windows py3.6 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
-| Windows py3.7 (Appveyor) |  <center>—</center> |  <center>—</center> | [![Build status](https://ci.appveyor.com/api/projects/status/lqo3bbsew83839c0?svg=true)](https://ci.appveyor.com/project/avik-pal/torchgan) |  <center>—</center> |
-| Windows py3.7 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| System / PyTorch Version | 1.8 | 1.9 | nightly |
+| :---: | :---: | :---: | :---: |
+| Linux py3.8 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| Linux py3.9 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| OSX py3.8 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| OSX py3.9 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| Windows py3.9 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
+| Windows py3.9 | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) | ![CI Testing](https://github.com/torchgan/torchgan/workflows/CI%20Testing/badge.svg) |
 
 ### Installation
 
@@ -107,7 +103,8 @@ This software was developed as part of academic research. If you would like to h
 
 List of publications & submissions using TorchGAN (please open a pull request to add missing entries):
 
-* [Ward2ICU: A Vital Signs Dataset of Inpatients from the General Ward](https://arxiv.org/abs/1910.00752) [3778 Healthcare, CMU, Mater Dei Healthcare, Oct, 2019]
+* [Can GAN-Generated Network Traffic be used to Train Traffic Anomaly Classifiers?](https://ieeexplore.ieee.org/abstract/document/9284901?casa_token=9bEvJ3COOXMAAAAA:pz8TsMSrecv_ip1t9rEI7tYn_S_AQyZE_UrgYZ61vX_3Clu0Y17pFTUEpclAcBja13pPEqOsxypp)
+* [Ward2ICU: A Vital Signs Dataset of Inpatients from the General Ward](https://arxiv.org/abs/1910.00752)
 
 ### Contributing
 

@@ -9,9 +9,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, windows-2019]
-        python-version: [3.6, 3.7]
-        pytorch-version: [1.2, 1.3, 1.4, 'nightly']
+        os: [ubuntu-20.04, windows-2019, macOS-11]
+        python-version: [3.8, 3.9]
+        pytorch-version: [1.8, 1.9, 'nightly']
 
     steps:
     - uses: actions/checkout@v1
@@ -19,22 +19,32 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Pytorch 1.2
-      if: matrix.pytorch-version == 1.2
+    - name: Install Pytorch 1.8
+      if: matrix.pytorch-version == 1.8
+      shell: bash
       run: |
-        pip install Pillow==6.1
-        pip install torch==1.2.0+cpu torchvision==0.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
-    - name: Install Pytorch 1.3
-      if: matrix.pytorch-version == 1.3
+        pip install requests
+        if [ "$RUNNER_OS" == "macOS" ]; then
+          pip install torch==1.8.0 torchvision==0.9.0 torchaudio==0.8.0
+        else
+          pip install torch==1.8.0+cpu torchvision==0.9.0+cpu torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
+        fi
+    - name: Install Pytorch 1.9
+      if: matrix.pytorch-version == 1.9
+      shell: bash
       run: |
-        pip install Pillow==6.1
-        pip install torch==1.3.1+cpu torchvision==0.4.2+cpu -f https://download.pytorch.org/whl/torch_stable.html
-    - name: Install Pytorch 1.4
-      if: matrix.pytorch-version == 1.4
-      run: pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        pip install requests
+        if [ "$RUNNER_OS" == "macOS" ]; then
+          pip install torch torchvision torchaudio
+        else
+          pip install torch==1.9.0+cpu torchvision==0.10.0+cpu torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
+        fi
     - name: Install Pytorch Nightly
       if: matrix.pytorch-version == 'nightly'
-      run: pip install --pre torch torchvision -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
+      shell: bash
+      run: |
+        pip install requests
+        pip install --pre torch torchvision -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -51,3 +61,4 @@ jobs:
       run: |
         pip install pytest
         pytest
+    

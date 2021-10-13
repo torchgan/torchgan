@@ -80,7 +80,9 @@ class WassersteinDiscriminatorLoss(DiscriminatorLoss):
         super(WassersteinDiscriminatorLoss, self).__init__(
             reduction, override_train_ops
         )
-        if (isinstance(clip, tuple) or isinstance(clip, list)) and len(clip) > 1:
+        if (isinstance(clip, tuple) or isinstance(clip, list)) and len(
+            clip
+        ) > 1:
             self.clip = clip
         else:
             self.clip = None
@@ -187,7 +189,9 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
     """
 
     def __init__(self, reduction="mean", lambd=10.0, override_train_ops=None):
-        super(WassersteinGradientPenalty, self).__init__(reduction, override_train_ops)
+        super(WassersteinGradientPenalty, self).__init__(
+            reduction, override_train_ops
+        )
         self.lambd = lambd
         self.override_train_ops = override_train_ops
 
@@ -207,7 +211,9 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
         # TODO(Aniket1998): Check for performance bottlenecks
         # If found, write the backprop yourself instead of
         # relying on autograd
-        return wasserstein_gradient_penalty(interpolate, d_interpolate, self.reduction)
+        return wasserstein_gradient_penalty(
+            interpolate, d_interpolate, self.reduction
+        )
 
     def train_ops(
         self,
@@ -260,7 +266,9 @@ class WassersteinGradientPenalty(DiscriminatorLoss):
             ):
                 raise Exception("GAN model requires labels for training")
             batch_size = real_inputs.size(0)
-            noise = torch.randn(batch_size, generator.encoding_dims, device=device)
+            noise = torch.randn(
+                batch_size, generator.encoding_dims, device=device
+            )
             if generator.label_type == "generated":
                 label_gen = torch.randint(
                     0, generator.num_classes, (batch_size,), device=device

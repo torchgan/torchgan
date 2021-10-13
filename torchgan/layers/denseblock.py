@@ -48,14 +48,24 @@ class BasicBlock2d(nn.Module):
                 nn.BatchNorm2d(in_channels),
                 nl,
                 nn.Conv2d(
-                    in_channels, out_channels, kernel, stride, padding, bias=False
+                    in_channels,
+                    out_channels,
+                    kernel,
+                    stride,
+                    padding,
+                    bias=False,
                 ),
             )
         else:
             self.model = nn.Sequential(
                 nl,
                 nn.Conv2d(
-                    in_channels, out_channels, kernel, stride, padding, bias=True
+                    in_channels,
+                    out_channels,
+                    kernel,
+                    stride,
+                    padding,
+                    bias=True,
                 ),
             )
 
@@ -110,14 +120,18 @@ class BottleneckBlock2d(nn.Module):
     ):
         super(BottleneckBlock2d, self).__init__()
         bottleneck_channels = (
-            4 * in_channels if bottleneck_channels is None else bottleneck_channels
+            4 * in_channels
+            if bottleneck_channels is None
+            else bottleneck_channels
         )
         nl = nn.LeakyReLU(0.2) if nonlinearity is None else nonlinearity
         if batchnorm is True:
             self.model = nn.Sequential(
                 nn.BatchNorm2d(in_channels),
                 nl,
-                nn.Conv2d(in_channels, bottleneck_channels, 1, 1, 0, bias=False),
+                nn.Conv2d(
+                    in_channels, bottleneck_channels, 1, 1, 0, bias=False
+                ),
                 nn.BatchNorm2d(bottleneck_channels),
                 nl,
                 nn.Conv2d(
@@ -132,7 +146,9 @@ class BottleneckBlock2d(nn.Module):
         else:
             self.model = nn.Sequential(
                 nl,
-                nn.Conv2d(in_channels, bottleneck_channels, 1, 1, 0, bias=True),
+                nn.Conv2d(
+                    in_channels, bottleneck_channels, 1, 1, 0, bias=True
+                ),
                 nl,
                 nn.Conv2d(
                     bottleneck_channels,
@@ -191,14 +207,24 @@ class TransitionBlock2d(nn.Module):
                 nn.BatchNorm2d(in_channels),
                 nl,
                 nn.Conv2d(
-                    in_channels, out_channels, kernel, stride, padding, bias=False
+                    in_channels,
+                    out_channels,
+                    kernel,
+                    stride,
+                    padding,
+                    bias=False,
                 ),
             )
         else:
             self.model = nn.Sequential(
                 nl,
                 nn.Conv2d(
-                    in_channels, out_channels, kernel, stride, padding, bias=True
+                    in_channels,
+                    out_channels,
+                    kernel,
+                    stride,
+                    padding,
+                    bias=True,
                 ),
             )
 
@@ -246,14 +272,24 @@ class TransitionBlockTranspose2d(nn.Module):
                 nn.BatchNorm2d(in_channels),
                 nl,
                 nn.ConvTranspose2d(
-                    in_channels, out_channels, kernel, stride, padding, bias=False
+                    in_channels,
+                    out_channels,
+                    kernel,
+                    stride,
+                    padding,
+                    bias=False,
                 ),
             )
         else:
             self.model = nn.Sequential(
                 nl,
                 nn.ConvTranspose2d(
-                    in_channels, out_channels, kernel, stride, padding, bias=True
+                    in_channels,
+                    out_channels,
+                    kernel,
+                    stride,
+                    padding,
+                    bias=True,
                 ),
             )
 

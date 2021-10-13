@@ -48,9 +48,9 @@ class AutoEncodingGenerator(Generator):
         label_type="none",
     ):
         super(AutoEncodingGenerator, self).__init__(encoding_dims, label_type)
-        if out_size < (scale_factor ** 4) or ceil(log(out_size, scale_factor)) != log(
-            out_size, scale_factor
-        ):
+        if out_size < (scale_factor ** 4) or ceil(
+            log(out_size, scale_factor)
+        ) != log(out_size, scale_factor):
             raise Exception(
                 "Target image size must be at least {} and a perfect power of {}".format(
                     scale_factor ** 4, scale_factor
@@ -84,10 +84,14 @@ class AutoEncodingGenerator(Generator):
                 nl,
             )
             initial_unit = nn.Sequential(
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nn.Conv2d(
+                    self.n, self.n, same_filters, 1, same_pad, bias=use_bias
+                ),
                 nn.BatchNorm2d(self.n),
                 nl,
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nn.Conv2d(
+                    self.n, self.n, same_filters, 1, same_pad, bias=use_bias
+                ),
                 nn.BatchNorm2d(self.n),
                 nl,
             )
@@ -103,7 +107,9 @@ class AutoEncodingGenerator(Generator):
                 ),
                 nn.BatchNorm2d(self.n),
                 nl,
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nn.Conv2d(
+                    self.n, self.n, same_filters, 1, same_pad, bias=use_bias
+                ),
                 nn.BatchNorm2d(self.n),
                 nl,
             )
@@ -112,9 +118,13 @@ class AutoEncodingGenerator(Generator):
                 nn.Linear(self.encoding_dims, (init_dim ** 2) * self.n), nl
             )
             initial_unit = nn.Sequential(
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nn.Conv2d(
+                    self.n, self.n, same_filters, 1, same_pad, bias=use_bias
+                ),
                 nl,
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nn.Conv2d(
+                    self.n, self.n, same_filters, 1, same_pad, bias=use_bias
+                ),
                 nl,
             )
             upsample_unit = nn.Sequential(
@@ -128,12 +138,15 @@ class AutoEncodingGenerator(Generator):
                     bias=use_bias,
                 ),
                 nl,
-                nn.Conv2d(self.n, self.n, same_filters, 1, same_pad, bias=use_bias),
+                nn.Conv2d(
+                    self.n, self.n, same_filters, 1, same_pad, bias=use_bias
+                ),
                 nl,
             )
 
         last_unit = nn.Sequential(
-            nn.Conv2d(self.n, self.ch, same_filters, 1, same_pad, bias=True), last_nl
+            nn.Conv2d(self.n, self.ch, same_filters, 1, same_pad, bias=True),
+            last_nl,
         )
         model = [initial_unit]
         for i in range(num_repeats):
@@ -199,10 +212,12 @@ class AutoEncodingDiscriminator(Discriminator):
         embeddings=False,
         label_type="none",
     ):
-        super(AutoEncodingDiscriminator, self).__init__(in_channels, label_type)
-        if in_size < (scale_factor ** 4) or ceil(log(in_size, scale_factor)) != log(
-            in_size, scale_factor
-        ):
+        super(AutoEncodingDiscriminator, self).__init__(
+            in_channels, label_type
+        )
+        if in_size < (scale_factor ** 4) or ceil(
+            log(in_size, scale_factor)
+        ) != log(in_size, scale_factor):
             raise Exception(
                 "Input image size must be at least {} and a perfect power of {}".format(
                     scale_factor ** 4, scale_factor
@@ -229,7 +244,12 @@ class AutoEncodingDiscriminator(Discriminator):
         model.append(
             nn.Sequential(
                 nn.Conv2d(
-                    self.input_dims, self.n, same_filters, 1, same_pad, bias=True
+                    self.input_dims,
+                    self.n,
+                    same_filters,
+                    1,
+                    same_pad,
+                    bias=True,
                 ),
                 nl,
             )
@@ -285,7 +305,9 @@ class AutoEncodingDiscriminator(Discriminator):
                 )
             )
             self.fc = nn.Sequential(
-                nn.Linear((init_dim ** 2) * (num_repeats + 1) * self.n, encoding_dims),
+                nn.Linear(
+                    (init_dim ** 2) * (num_repeats + 1) * self.n, encoding_dims
+                ),
                 nn.BatchNorm1d(encoding_dims),
                 last_nl,
             )
@@ -293,7 +315,9 @@ class AutoEncodingDiscriminator(Discriminator):
             for i in range(1, num_repeats + 1):
                 model.append(
                     nn.Sequential(
-                        nn.Conv2d(self.n * i, self.n * i, 3, 1, 1, bias=use_bias),
+                        nn.Conv2d(
+                            self.n * i, self.n * i, 3, 1, 1, bias=use_bias
+                        ),
                         nl,
                         nn.Conv2d(
                             self.n * i,
@@ -329,7 +353,9 @@ class AutoEncodingDiscriminator(Discriminator):
                 )
             )
             self.fc = nn.Sequential(
-                nn.Linear((init_dim ** 2) * (num_repeats + 1) * self.n, encoding_dims),
+                nn.Linear(
+                    (init_dim ** 2) * (num_repeats + 1) * self.n, encoding_dims
+                ),
                 last_nl,
             )
         self.encoder = nn.Sequential(*model)
