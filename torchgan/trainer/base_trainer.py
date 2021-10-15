@@ -202,9 +202,9 @@ class BaseTrainer(object):
                 + str(self.last_retained_checkpoint)
                 + ".model"
             )
-        print("Loading Model From '{}'".format(load_path))
+        print("Loading Model From '{}' to {}".format(load_path, self.device))
         try:
-            checkpoint = torch.load(load_path)
+            checkpoint = torch.load(load_path, map_location=self.device)
             self.start_epoch = checkpoint["epoch"]
             self.losses = checkpoint["loss_objects"]
             self.metrics = checkpoint["metric_objects"]
