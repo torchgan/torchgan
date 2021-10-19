@@ -9,6 +9,7 @@
 [![Downloads](https://pepy.tech/badge/torchgan/month)](https://pepy.tech/project/torchgan/month)
 [![Downloads](https://pepy.tech/badge/torchgan/week)](https://pepy.tech/project/torchgan/week)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02606/status.svg)](https://doi.org/10.21105/joss.02606)
 
 [![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://torchgan.readthedocs.io/en/stable/)
 [![Latest Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://torchgan.readthedocs.io/en/latest/)
@@ -91,13 +92,17 @@ The `tutorials` directory contain a set of tutorials to get you started with tor
 This software was developed as part of academic research. If you would like to help support it, please star the repository. If you use this software as part of your research, teaching, or other activities, we would be grateful if you could cite the following:
 
 ```
-@misc{pal2019torchgan,
-    title={{TorchGAN: A Flexible Framework for GAN Training and Evaluation}},
-    author={Avik Pal, and Aniket Das},
-    year={2019},
-    eprint={1909.03410},
-    archivePrefix={arXiv},
-    primaryClass={cs.LG}
+@article{Pal2021,
+  doi = {10.21105/joss.02606},
+  url = {https://doi.org/10.21105/joss.02606},
+  year = {2021},
+  publisher = {The Open Journal},
+  volume = {6},
+  number = {66},
+  pages = {2606},
+  author = {Avik Pal and Aniket Das},
+  title = {TorchGAN: A Flexible Framework for GAN Training and Evaluation},
+  journal = {Journal of Open Source Software}
 }
 ```
 
